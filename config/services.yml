@@ -1,0 +1,15 @@
+services:
+    clausi.raidplaner.controller:
+        class: clausi\raidplaner\controller\main
+        arguments:
+            - @config
+            - @controller.helper
+            - @template
+            - @user
+    clausi.raidplaner.listener:
+        class: clausi\raidplaner\event\main_listener
+        arguments:
+            - @controller.helper
+            - @template
+        tags:
+            - { name: event.listener }

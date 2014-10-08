@@ -1,0 +1,3 @@
+clausi_raidplaner_controller:
+    pattern: /raidplaner/{name}
+    defaults: { _controller: clausi.raidplaner.controller:handle }

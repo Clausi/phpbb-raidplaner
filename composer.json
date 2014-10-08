@@ -1,17 +1,17 @@
 {
-	"name": "clausi/phpbb-raidplaner",
+	"name": "clausi/raidplaner",
 	"type": "phpbb-extension",
 	"description": "Guild raidplaner.",
 	"homepage": "https://github.com/Clausi/phpbb-raidplaner/",
 	"version": "0.0.1",
 	"time": "2014-10-08",
-	"keywords": ["phpbb", "extension", "acme", "foobar"],
+	"keywords": ["phpbb", "extension", "raidplaner", "guild"],
 	"license": "GPL-2.0",
 	"authors": [
 		{
 			"name": "Clausi",
-			"homepage": "http://www.cklausi.de",
-			"email": "support@cklausi.de",
+			"homepage": "https://github.com/Clausi",
+			"email": "https://github.com/Clausi",
 			"role": "Developer"
 		}
 	],
