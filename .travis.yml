@@ -43,6 +43,7 @@ branches:
 before_install:
  - chmod +x travis/prepare-phpbb.sh
 
+
 install:
   - composer install --dev --no-interaction --prefer-source
   - travis/prepare-phpbb.sh $EXTNAME $PHPBB_BRANCH
