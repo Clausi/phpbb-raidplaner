@@ -32,6 +32,14 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 					'modes'				=> array('settings'),
 				),
 			)),
+			array('module.add', array(
+				'acp',
+				'ACP_RAIDPLANER_TITLE',
+				array(
+					'module_basename'	=> '\clausi\raidplaner\acp\main_module',
+					'modes'				=> array('raidplaner'),
+				),
+			)),
 			
 			array('custom', array(array($this, 'add_raidplaner_buff_data'))),
 			array('custom', array(array($this, 'add_raidplaner_comp_data'))),
@@ -114,11 +122,31 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'raidplaner_raids' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
+						'schema_id' =>array('UINT', NULL),
 						'event' => array('UINT', 0),
-						'start_time' => array('INT:11', '0'),
-						'invite_time' => array('INT:11', '0'),
-						'end_time' => array('INT:11', '0'),
+						'start_time' => array('INT:11', 0),
+						'invite_time' => array('INT:11', 0),
+						'end_time' => array('INT:11', 0),
+						'autoaccept' => array('TINT:1', 0),
 						'cancel' => array('TINT:1', 0),
+						'active' => array('TINT:1', 1),
+						'note' => array('TEXT', ''),
+					),
+					'PRIMARY_KEY'	=> array('id'),
+					'KEYS'		=> array(
+						'id' => array('PRIMARY', array('id'))
+					)
+				),
+				
+				$this->table_prefix . 'raidplaner_schema' => array(
+					'COLUMNS' => array(
+						'id' => array('UINT', NULL, 'auto_increment'),
+						'event' => array('UINT', 0),
+						'start_time' => array('INT:11', 0),
+						'invite_time' => array('INT:11', 0),
+						'end_time' => array('INT:11', 0),
+						'repeatable' => array('VCHAR:20', '0'),
+						'autoaccept' => array('TINT:1', 0),
 						'active' => array('TINT:1', 1),
 						'note' => array('TEXT', ''),
 					),
@@ -138,6 +166,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 		return array(
 			'drop_tables'    => array(
 				$this->table_prefix . 'raidplaner_raids',
+				$this->table_prefix . 'raidplaner_schema',
 				$this->table_prefix . 'raidplaner_raidattendees',
 				$this->table_prefix . 'raidplaner_logs',
 				$this->table_prefix . 'raidplaner_events',

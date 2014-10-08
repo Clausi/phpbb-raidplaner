@@ -11,7 +11,8 @@ class main_info
 			'title'		=> 'ACP_RAIDPLANER_TITLE',
 			'version'	=> '0.0.1',
 			'modes'		=> array(
-				'settings'	=> array('title' => 'ACP_RAIDPLANER', 'auth' => 'ext_clausi/raidplaner && acl_a_board', 'cat' => array('ACP_RAIDPLANER_TITLE')),
+				'settings'	=> array('title' => 'ACP_RAIDPLANER_SETTINGS', 'auth' => 'ext_clausi/raidplaner && acl_a_board', 'cat' => array('ACP_RAIDPLANER_TITLE')),
+				'raidplaner'	=> array('title' => 'ACP_RAIDPLANER', 'auth' => 'ext_clausi/raidplaner && acl_a_board', 'cat' => array('ACP_RAIDPLANER_TITLE')),
 			),
 		);
 	}

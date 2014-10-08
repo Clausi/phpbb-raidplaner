@@ -12,25 +12,51 @@ class main_module
 		global $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 
 		$user->add_lang('acp/common');
-		$this->tpl_name = 'raidplaner_body';
-		$this->page_title = $user->lang('ACP_RAIDPLANER_TITLE');
-		add_form_key('clausi/raidplaner');
-
-		if ($request->is_set_post('submit'))
+		if($mode === 'settings')
 		{
-			if (!check_form_key('clausi/raidplaner'))
+			$this->tpl_name = 'raidplaner_settings';
+			$this->page_title = $user->lang('ACP_RAIDPLANER_SETTINGS');
+			add_form_key('clausi/raidplaner');
+
+			if ($request->is_set_post('submit'))
 			{
-				trigger_error('FORM_INVALID');
+				if (!check_form_key('clausi/raidplaner'))
+				{
+					trigger_error('FORM_INVALID');
+				}
+
+				$config->set('clausi_raidplaner_goodbye', $request->variable('clausi_raidplaner_goodbye', 0));
+
+				trigger_error($user->lang('ACP_RAIDPLANER_SETTING_SAVED') . adm_back_link($this->u_action));
 			}
 
-			$config->set('clausi_raidplaner_goodbye', $request->variable('clausi_raidplaner_goodbye', 0));
-
-			trigger_error($user->lang('ACP_RAIDPLANER_SETTING_SAVED') . adm_back_link($this->u_action));
+			$template->assign_vars(array(
+				'U_ACTION'				=> $this->u_action,
+				'CLAUSI_RAIDPLANER_GOODBYE'		=> $config['clausi_raidplaner_goodbye'],
+			));
 		}
+		elseif($mode === 'raidplaner')
+		{
+			$this->tpl_name = 'raidplaner_schema';
+			$this->page_title = $user->lang('ACP_RAIDPLANER');
+			add_form_key('clausi/raidplaner');
+			
+			if ($request->is_set_post('submit'))
+			{
+				if (!check_form_key('clausi/raidplaner'))
+				{
+					trigger_error('FORM_INVALID');
+				}
 
-		$template->assign_vars(array(
-			'U_ACTION'				=> $this->u_action,
-			'CLAUSI_RAIDPLANER_GOODBYE'		=> $config['clausi_raidplaner_goodbye'],
-		));
+				//$config->set('clausi_raidplaner_goodbye', $request->variable('clausi_raidplaner_goodbye', 0));
+
+				trigger_error($user->lang('ACP_RAIDPLANER_SETTING_SAVED') . adm_back_link($this->u_action));
+			}
+			
+			$template->assign_vars(array(
+				'U_ACTION'				=> $this->u_action,
+				'CLAUSI_RAIDPLANER_GOODBYE'		=> $config['clausi_raidplaner_goodbye'],
+			));
+		}
 	}
 }
