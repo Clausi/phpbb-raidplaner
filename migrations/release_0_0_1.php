@@ -6,7 +6,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 {
 	public function effectively_installed()
 	{
-		return isset($this->config['clausi_raidplaner_goodbye']);
+		return false;
 	}
 
 	static public function depends_on()
