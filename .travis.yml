@@ -39,6 +39,9 @@ branches:
     - master
     - develop
     - /^develop-.*$/
+	
+before_install:
+ - chmod +x travis/prepare-phpbb.sh
 
 install:
   - composer install --dev --no-interaction --prefer-source
