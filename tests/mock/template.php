@@ -7,7 +7,7 @@
 *
 */
 
-namespace acme\demo\tests\clausi;
+namespace clausi\raidplaner\tests\mock;
 
 /**
 * Template Mock
