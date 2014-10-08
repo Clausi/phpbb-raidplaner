@@ -25,6 +25,9 @@ matrix:
   allow_failures:
     - php: hhvm
   fast_finish: true
+  
+before_install:
+ - chmod +x travis/prepare-phpbb.sh
 
 env:
   global:
