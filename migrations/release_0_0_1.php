@@ -167,7 +167,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 			'drop_tables'    => array(
 				$this->table_prefix . 'raidplaner_raids',
 				$this->table_prefix . 'raidplaner_schema',
-				$this->table_prefix . 'raidplaner_raidattendees',
+				$this->table_prefix . 'raidplaner_attendees',
 				$this->table_prefix . 'raidplaner_logs',
 				$this->table_prefix . 'raidplaner_events',
 				$this->table_prefix . 'raidplaner_comp',
