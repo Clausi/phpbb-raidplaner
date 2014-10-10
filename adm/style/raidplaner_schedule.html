@@ -1,7 +1,91 @@
 <!-- INCLUDE overall_header.html -->
 
+<!-- IF S_EDIT_RAIDPLANER_SCHEDULE -->
+<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
+
 <h1>{L_ACP_RAIDPLANER_SCHEDULE}</h1>
 
+<form id="schedules" method="post" action="{U_ACTION}">
+
+<fieldset>
+
+	<input type="hidden" name="action" value="add" />
+	
+	<label for="repeat_start">{L_REPEAT_START}</label>
+	<input type="datetime" id="repeat_start" name="repeat_start" />
+	
+	<label for="repeatable">{L_REPEATABLE}</label>
+	<select name="repeatable" id="repeatable">
+		<option value="daily">{L_NO_REPEAT}</option>
+		<option value="daily">{L_DAILY}</option>
+		<option value="daily">{L_WEEKLY}</option>
+		<option value="daily">{L_TWOWEEKLY}</option>
+		<option value="daily">{L_MONTHLY}</option>
+		<option value="daily">{L_YEARLY}</option>
+	</select>
+	
+	<label for="repeat_end">{L_REPEAT_END}</label>
+	<input type="datetime" name="repeat_end" />
+	<input class="button2" name="addreason" type="submit" value="{L_ADD_RAIDPLANER_SCHEDULE}" />
+	{S_FORM_TOKEN}
+
+	
+</fieldset>
+
+</form>
+
+<!-- ELSE -->
+<h1>{L_ACP_RAIDPLANER_SCHEDULE}</h1>
+
+<p>{L_ACP_RAIDPLANER_SCHEDULE_EXPLAIN}</p>
+
+<form id="acp_raidplaner_schedule" method="post" action="{U_ACTION}">
+
+<!-- IF .schedules -->
+	<table class="table1">
+		<col class="row1" /><col class="row1" /><col class="row2" />
+	<thead>
+	<tr>
+		<th>{L_REASON}</th>
+		<th>{L_USED_IN_REPORTS}</th>
+		<th>{L_OPTIONS}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<!-- BEGIN schedules -->
+		<tr>
+			<td>
+				<strong>{schedules.REASON_TITLE}<!-- IF schedules.S_OTHER_REASON --> *<!-- ENDIF --></strong>
+				<br /><span>{schedules.REASON_DESCRIPTION}</span>
+			</td>
+			<td style="width: 100px;">{schedules.REASON_COUNT}</td>
+			<td class="actions" style="width: 80px;">
+				<span class="up-disabled" style="display:none;">{ICON_MOVE_UP_DISABLED}</span>
+				<span class="up"><a href="{schedules.U_MOVE_UP}" data-ajax="row_up">{ICON_MOVE_UP}</a></span>
+				<span class="down-disabled" style="display:none;">{ICON_MOVE_DOWN_DISABLED}</span>
+				<span class="down"><a href="{schedules.U_MOVE_DOWN}" data-ajax="row_down">{ICON_MOVE_DOWN}</a></span>
+				<a href="{schedules.U_EDIT}">{ICON_EDIT}</a> 
+				<!-- IF schedules.U_DELETE -->
+					<a href="{schedules.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a>
+				<!-- ELSE -->
+					{ICON_DELETE_DISABLED}
+				<!-- ENDIF -->
+			</td>
+		</tr>
+	<!-- END reasons -->
+	</tbody>
+	</table>
+
+<!-- ENDIF -->
+
+<p class="quick">
+	<input class="button2" name="submit" type="submit" value="{L_ADD_RAIDPLANER_SCHEDULE}" />
+</p>
+{S_FORM_TOKEN}
+</fieldset>
+
+</form>
+<!-- ENDIF -->
 
 
 <!-- INCLUDE overall_footer.html -->

@@ -41,6 +41,8 @@ class main_module
 			$this->page_title = $user->lang('ACP_RAIDPLANER_SCHEDULE');
 			add_form_key('clausi/raidplaner');
 			
+			$action = $request->variable('action', 0);
+			
 			if ($request->is_set_post('submit'))
 			{
 				if (!check_form_key('clausi/raidplaner'))
@@ -48,13 +50,12 @@ class main_module
 					trigger_error('FORM_INVALID');
 				}
 
-				//$config->set('clausi_raidplaner_goodbye', $request->variable('clausi_raidplaner_goodbye', 0));
-
 				trigger_error($user->lang('ACP_RAIDPLANER_SETTING_SAVED') . adm_back_link($this->u_action));
 			}
+
 			
 			$template->assign_vars(array(
-				'U_ACTION' => $this->u_action,
+				'U_ACTION' => $this->u_action
 			));
 		}
 	}

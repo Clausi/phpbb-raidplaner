@@ -23,16 +23,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				'acp',
 				'ACP_RAIDPLANER_TITLE',
 				array(
-					'module_basename'	=> '\clausi\raidplaner\acp\main_module',
-					'modes'				=> array('settings'),
-				),
-			)),
-			array('module.add', array(
-				'acp',
-				'ACP_RAIDPLANER_TITLE',
-				array(
-					'module_basename'	=> '\clausi\raidplaner\acp\main_module',
-					'modes'				=> array('raidplaner'),
+					'module_basename' => '\clausi\raidplaner\acp\main_module',
+					'modes' => array('settings', 'schedule'),
 				),
 			)),
 			
@@ -141,6 +133,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'invite_time' => array('INT:11', 0),
 						'end_time' => array('INT:11', 0),
 						'repeatable' => array('VCHAR:20', '0'),
+						'repeat_start' => array('INT:11', 0),
+						'repeat_end' => array('INT:11', 0),
 						'autoaccept' => array('TINT:1', 0),
 						'active' => array('TINT:1', 1),
 						'note' => array('TEXT', ''),
