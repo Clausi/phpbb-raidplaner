@@ -25,20 +25,20 @@ class main_module
 					trigger_error('FORM_INVALID');
 				}
 
-				$config->set('clausi_raidplaner_goodbye', $request->variable('clausi_raidplaner_goodbye', 0));
+				$config->set('clausi_raidplaner_active', $request->variable('clausi_raidplaner_active', 0));
 
 				trigger_error($user->lang('ACP_RAIDPLANER_SETTING_SAVED') . adm_back_link($this->u_action));
 			}
 
 			$template->assign_vars(array(
-				'U_ACTION'				=> $this->u_action,
-				'CLAUSI_RAIDPLANER_GOODBYE'		=> $config['clausi_raidplaner_goodbye'],
+				'U_ACTION' => $this->u_action,
+				'CLAUSI_RAIDPLANER_ACTIVE' => $config['clausi_raidplaner_active'],
 			));
 		}
-		elseif($mode === 'raidplaner')
+		elseif($mode === 'schedule')
 		{
-			$this->tpl_name = 'raidplaner_schema';
-			$this->page_title = $user->lang('ACP_RAIDPLANER');
+			$this->tpl_name = 'raidplaner_schedule';
+			$this->page_title = $user->lang('ACP_RAIDPLANER_SCHEDULE');
 			add_form_key('clausi/raidplaner');
 			
 			if ($request->is_set_post('submit'))
@@ -54,8 +54,7 @@ class main_module
 			}
 			
 			$template->assign_vars(array(
-				'U_ACTION'				=> $this->u_action,
-				'CLAUSI_RAIDPLANER_GOODBYE'		=> $config['clausi_raidplaner_goodbye'],
+				'U_ACTION' => $this->u_action,
 			));
 		}
 	}

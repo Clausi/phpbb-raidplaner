@@ -2,13 +2,8 @@
 
 namespace clausi\raidplaner\migrations;
 
-class release_0_0_1 extends \phpbb\db\migration\migration
+class release_1_0_0 extends \phpbb\db\migration\migration
 {
-	public function effectively_installed()
-	{
-		return false;
-	}
-
 	static public function depends_on()
 	{
 		return array('\phpbb\db\migration\data\v310\alpha2');
@@ -17,7 +12,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('clausi_raidplaner_goodbye', 0)),
+			array('config.add', array('clausi_raidplaner_active', 0)),
 
 			array('module.add', array(
 				'acp',
@@ -122,7 +117,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'raidplaner_raids' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
-						'schema_id' =>array('UINT', NULL),
+						'schedule_id' =>array('UINT', NULL),
 						'event' => array('UINT', 0),
 						'start_time' => array('INT:11', 0),
 						'invite_time' => array('INT:11', 0),
@@ -138,7 +133,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 					)
 				),
 				
-				$this->table_prefix . 'raidplaner_schema' => array(
+				$this->table_prefix . 'raidplaner_schedule' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'event' => array('UINT', 0),
@@ -166,7 +161,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 		return array(
 			'drop_tables'    => array(
 				$this->table_prefix . 'raidplaner_raids',
-				$this->table_prefix . 'raidplaner_schema',
+				$this->table_prefix . 'raidplaner_schedule',
 				$this->table_prefix . 'raidplaner_attendees',
 				$this->table_prefix . 'raidplaner_logs',
 				$this->table_prefix . 'raidplaner_events',
@@ -199,7 +194,7 @@ class release_0_0_1 extends \phpbb\db\migration\migration
 	
 	public function add_raidplaner_comp_data()
 	{
-		$sql = "INSERT INTO `". $this->table_prefix . raidplaner_comp ."` (`class`, `role`, `buff`, `maybe`) VALUES
+		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_comp' ."` (`class`, `role`, `buff`, `maybe`) VALUES
 			('warrior', 'tank', 2, 1),
 			('warrior', 'tank', 15, 1),
 			('warrior', 'tank', 4, 0),

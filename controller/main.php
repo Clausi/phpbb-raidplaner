@@ -32,17 +32,35 @@ class main
 		$this->user = $user;
 	}
 
-	/**
-	* Raidplaner controller for route /raidplaner/{name}
-	*
-	* @param string		$name
-	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
-	*/
-	public function handle($name)
-	{
-		$l_message = !$this->config['clausi_raidplaner_goodbye'] ? 'RAIDPLANER_HELLO' : 'RAIDPLANER_GOODBYE';
-		$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang($l_message, $name));
 
-		return $this->helper->render('raidplaner_body.html', $name);
+	public function handle()
+	{
+		if($this->config['clausi_raidplaner_active'] == 0) 
+		{
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INACTIVE']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		
+		$this->template->assign_var('RAIDPLANER_MESSAGE', 'index');
+		return $this->helper->render('raidplaner_body.html', $this->user->lang['RAIDPLANER_PAGE']);
 	}
+
+	
+	public function view($id)
+	{
+		if($this->config['clausi_raidplaner_active'] == 0) 
+		{
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INACTIVE']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		if(!is_numeric($id))
+		{
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		
+		$this->template->assign_var('RAIDPLANER_MESSAGE', $id);
+		return $this->helper->render('raidplaner_body.html', $this->user->lang['RAIDPLANER_RAID'] . ': ' . $id);
+	}
+	
 }

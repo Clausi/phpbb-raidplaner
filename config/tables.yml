@@ -1,0 +1,8 @@
+parameters:
+    tables.clausi.raidplaner_raids: %core.table_prefix%raidplaner_raids
+    tables.clausi.raidplaner_schedule: %core.table_prefix%raidplaner_schedule
+    tables.clausi.raidplaner_attendees: %core.table_prefix%raidplaner_attendees
+    tables.clausi.raidplaner_logs: %core.table_prefix%raidplaner_logs
+    tables.clausi.raidplaner_events: %core.table_prefix%raidplaner_events
+    tables.clausi.raidplaner_comp: %core.table_prefix%raidplaner_comp
+    tables.clausi.raidplaner_buffs: %core.table_prefix%raidplaner_buffs
