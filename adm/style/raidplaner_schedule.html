@@ -5,7 +5,7 @@
 
 <h1>{L_ACP_RAIDPLANER_SCHEDULE}</h1>
 
-<form id="schedules" method="post" action="{U_ACTION}">
+<form id="n_schedules" method="post" action="{U_ACTION}">
 
 <fieldset>
 
@@ -24,6 +24,7 @@
 			<input type="datetime" id="repeat_start" class="datepicker" name="repeat_start" />
 		</dd>
 	</dl>
+	
 	<dl>
 		<dt>
 			<label for="repeatable">{L_REPEATABLE}</label>
@@ -32,15 +33,16 @@
 		</dt>
 		<dd>
 			<select name="repeatable" id="repeatable">
-				<option value="daily">{L_NO_REPEAT}</option>
+				<option value="no_repeat">{L_NO_REPEAT}</option>
 				<option value="daily">{L_DAILY}</option>
-				<option value="daily">{L_WEEKLY}</option>
-				<option value="daily">{L_TWOWEEKLY}</option>
-				<option value="daily">{L_MONTHLY}</option>
-				<option value="daily">{L_YEARLY}</option>
+				<option value="weekly">{L_WEEKLY}</option>
+				<option value="twoweekly">{L_TWOWEEKLY}</option>
+				<option value="monthly">{L_MONTHLY}</option>
+				<option value="yearly">{L_YEARLY}</option>
 			</select>
 		</dd>
 	</dl>
+	
 	<dl>
 		<dt>
 			<label for="repeat_end">
@@ -53,40 +55,58 @@
 			<input type="datetime" class="datepicker" name="repeat_end" />
 		</dd>
 	</dl>
+	
 	<dl>
 		<dt>
-			<label for="raidinvite">
+			<label for="invite_time_hour">
 				{L_RAIDINVITE}
 			</label>
 			<br />
 			<span>{L_RAIDTIME_EXPLAIN}</span>
 		</dt>
 		<dd>
-			<input type="time" id="raidinvite" name="raidinvite" />
+			<input type="number" min="0" max="23" id="invite_time_hour" name="invite_time_hour" /> :
+			<input type="number" min="0" max="59" id="invite_time_minute" name="invite_time_minute" />
 		</dd>
 	</dl>
+	
 	<dl>
 		<dt>
-			<label for="raidstart">
+			<label for="start_time_hour">
 				{L_RAIDSTART}
 			</label>
 			<br />
 			<span>{L_RAIDTIME_EXPLAIN}</span>
 		</dt>
 		<dd>
-			<input type="time" id="raidstart" name="raidstart" />
+			<input type="number" min="0" max="23" id="start_time_hour" name="start_time_hour" /> :
+			<input type="number" min="0" max="59" id="start_time_minute" name="start_time_minute" />
 		</dd>
 	</dl>
+	
 	<dl>
 		<dt>
-			<label for="raidend">
+			<label for="end_time_hour">
 				{L_RAIDEND}
 			</label>
 			<br />
 			<span>{L_RAIDTIME_EXPLAIN}</span>
 		</dt>
 		<dd>
-			<input type="time" id="raidend" name="raidend" />
+			<input type="number" min="0" max="23" id="end_time_hour" name="end_time_hour" /> :
+			<input type="number" min="0" max="59" id="end_time_minute" name="end_time_minute" />
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>
+			<label for="autoaccept">
+				{L_AUTOACCEPT}
+			</label>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="autoaccept" value="1" <!-- IF AUTOACCEPT -->checked="checked"<!-- ENDIF -->/> {L_YES} &nbsp;
+			<input type="radio" class="radio" name="autoaccept" value="0" <!-- IF not AUTOACCEPT -->checked="checked"<!-- ENDIF --> /> {L_NO}
 		</dd>
 	</dl>
 	
@@ -106,38 +126,41 @@
 
 <form id="acp_raidplaner_schedule" method="post" action="{U_ACTION_ADD}">
 <fieldset>
-<!-- IF .schedules -->
+<!-- IF .n_schedules -->
 	<table class="table1">
-		<col class="row1" /><col class="row1" /><col class="row2" />
+		
 	<thead>
 	<tr>
-		<th>{L_REASON}</th>
-		<th>{L_USED_IN_REPORTS}</th>
-		<th>{L_OPTIONS}</th>
+		<th>Event</th>
+		<th>Day</th>
+		<th>Repeat</th>
+		<th>Expire</th>
+		<th>Invite</th>
+		<th>Start</th>
+		<th>End</th>
+		<th>&nbsp;</th>
 	</tr>
 	</thead>
 	<tbody>
-	<!-- BEGIN schedules -->
+	<!-- BEGIN n_schedules -->
 		<tr>
-			<td>
-				<strong>{schedules.REASON_TITLE}<!-- IF schedules.S_OTHER_REASON --> *<!-- ENDIF --></strong>
-				<br /><span>{schedules.REASON_DESCRIPTION}</span>
-			</td>
-			<td style="width: 100px;">{schedules.REASON_COUNT}</td>
+			<td>{n_schedules.EVENT}</td>
+			<td>{n_schedules.DAY}</td>
+			<td>{n_schedules.REPEAT}</td>
+			<td>{n_schedules.EXPIRE}</td>
+			<td>{n_schedules.INVITE_TIME}</td>
+			<td>{n_schedules.START_TIME}</td>
+			<td>{n_schedules.END_TIME}</td>
 			<td class="actions" style="width: 80px;">
-				<span class="up-disabled" style="display:none;">{ICON_MOVE_UP_DISABLED}</span>
-				<span class="up"><a href="{schedules.U_MOVE_UP}" data-ajax="row_up">{ICON_MOVE_UP}</a></span>
-				<span class="down-disabled" style="display:none;">{ICON_MOVE_DOWN_DISABLED}</span>
-				<span class="down"><a href="{schedules.U_MOVE_DOWN}" data-ajax="row_down">{ICON_MOVE_DOWN}</a></span>
-				<a href="{schedules.U_EDIT}">{ICON_EDIT}</a> 
-				<!-- IF schedules.U_DELETE -->
-					<a href="{schedules.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a>
+				<a href="{n_schedules.U_EDIT}">{ICON_EDIT}</a> 
+				<!-- IF n_schedules.U_DELETE -->
+					<a href="{n_schedules.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a>
 				<!-- ELSE -->
 					{ICON_DELETE_DISABLED}
 				<!-- ENDIF -->
 			</td>
 		</tr>
-	<!-- END reasons -->
+	<!-- END n_schedules -->
 	</tbody>
 	</table>
 

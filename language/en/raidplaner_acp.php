@@ -17,6 +17,7 @@ $lang = array_merge($lang, array(
 	'ACP_RAIDPLANER_SCHEDULE_SAVED' => 'Schedule has been added!',
 	'ACP_RAIDPLANER_ACTIVE' => 'Raidplaner active?',
 	'ADD_RAIDPLANER_SCHEDULE' => 'Add scheduled raid',
+	'ACP_RAIDPLANER_ERROR' => 'Error',
 	
 	'REPEAT_START' => 'Repeat start',
 	'REPEAT_START_EXPLAIN' => 'Select the first day of your planned raids.',
@@ -37,4 +38,5 @@ $lang = array_merge($lang, array(
 	'RAIDTIME_EXPLAIN' => 'Timeformat: H:i',
 	'RAIDINVITE' => 'Raid invite time',
 	'RAIDEND' => 'Raid end time',
+	'AUTOACCEPT' => 'Set "sign on" status to members by default',
 ));
