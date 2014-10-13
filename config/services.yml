@@ -17,3 +17,14 @@ services:
             - @config
         tags:
             - { name: event.listener }
+    clausi.raidplaner.admin.controller:
+        class: clausi\raidplaner\controller\admin_controller
+        arguments:
+            - @config
+            - @dbal.conn
+            - @request
+            - @template
+            - @user
+            - @service_container
+            - %core.root_path%
+            - %core.php_ext%

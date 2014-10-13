@@ -10,26 +10,91 @@
 <fieldset>
 
 	<input type="hidden" name="action" value="add" />
+	<input type="hidden" name="show" value="add" />
 	
-	<label for="repeat_start">{L_REPEAT_START}</label>
-	<input type="datetime" id="repeat_start" name="repeat_start" />
+	<dl>
+		<dt>
+			<label for="repeat_start">
+				{L_REPEAT_START}
+			</label>
+			<br />
+			<span>{L_REPEAT_START_EXPLAIN}</span>
+		</dt>
+		<dd>
+			<input type="datetime" id="repeat_start" class="datepicker" name="repeat_start" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="repeatable">{L_REPEATABLE}</label>
+			<br />
+			<span>{L_REPEATABLE_EXPLAIN}</span>
+		</dt>
+		<dd>
+			<select name="repeatable" id="repeatable">
+				<option value="daily">{L_NO_REPEAT}</option>
+				<option value="daily">{L_DAILY}</option>
+				<option value="daily">{L_WEEKLY}</option>
+				<option value="daily">{L_TWOWEEKLY}</option>
+				<option value="daily">{L_MONTHLY}</option>
+				<option value="daily">{L_YEARLY}</option>
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="repeat_end">
+				{L_REPEAT_END}
+			</label>
+			<br />
+			<span>{L_REPEAT_END_EXPLAIN}</span>
+		</dt>
+		<dd>
+			<input type="datetime" class="datepicker" name="repeat_end" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="raidinvite">
+				{L_RAIDINVITE}
+			</label>
+			<br />
+			<span>{L_RAIDTIME_EXPLAIN}</span>
+		</dt>
+		<dd>
+			<input type="time" id="raidinvite" name="raidinvite" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="raidstart">
+				{L_RAIDSTART}
+			</label>
+			<br />
+			<span>{L_RAIDTIME_EXPLAIN}</span>
+		</dt>
+		<dd>
+			<input type="time" id="raidstart" name="raidstart" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="raidend">
+				{L_RAIDEND}
+			</label>
+			<br />
+			<span>{L_RAIDTIME_EXPLAIN}</span>
+		</dt>
+		<dd>
+			<input type="time" id="raidend" name="raidend" />
+		</dd>
+	</dl>
 	
-	<label for="repeatable">{L_REPEATABLE}</label>
-	<select name="repeatable" id="repeatable">
-		<option value="daily">{L_NO_REPEAT}</option>
-		<option value="daily">{L_DAILY}</option>
-		<option value="daily">{L_WEEKLY}</option>
-		<option value="daily">{L_TWOWEEKLY}</option>
-		<option value="daily">{L_MONTHLY}</option>
-		<option value="daily">{L_YEARLY}</option>
-	</select>
-	
-	<label for="repeat_end">{L_REPEAT_END}</label>
-	<input type="datetime" name="repeat_end" />
-	<input class="button2" name="addreason" type="submit" value="{L_ADD_RAIDPLANER_SCHEDULE}" />
+	<p class="submit-buttons">
+		<input class="button2" name="submit" type="submit" value="{L_ADD_RAIDPLANER_SCHEDULE}" />
+	</p>
 	{S_FORM_TOKEN}
 
-	
 </fieldset>
 
 </form>
@@ -39,8 +104,8 @@
 
 <p>{L_ACP_RAIDPLANER_SCHEDULE_EXPLAIN}</p>
 
-<form id="acp_raidplaner_schedule" method="post" action="{U_ACTION}">
-
+<form id="acp_raidplaner_schedule" method="post" action="{U_ACTION_ADD}">
+<fieldset>
 <!-- IF .schedules -->
 	<table class="table1">
 		<col class="row1" /><col class="row1" /><col class="row2" />
@@ -80,6 +145,7 @@
 
 <p class="quick">
 	<input class="button2" name="submit" type="submit" value="{L_ADD_RAIDPLANER_SCHEDULE}" />
+	<input type="hidden" name="show" value="showadd" />
 </p>
 {S_FORM_TOKEN}
 </fieldset>

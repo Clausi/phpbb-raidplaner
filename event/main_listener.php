@@ -12,11 +12,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 */
 class main_listener implements EventSubscriberInterface
 {
+	
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.user_setup' => 'load_language_on_setup',
-			'core.page_header' => 'add_page_header_link',
+			'core.user_setup'	=> 'load_language_on_setup',
+			'core.page_header'	=> 'add_page_header_link',
+			// ACP event
+			'core.permissions'	=> 'add_permission',
 		);
 	}
 
@@ -46,9 +49,16 @@ class main_listener implements EventSubscriberInterface
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = array(
 			'ext_name' => 'clausi/raidplaner',
-			'lang_set' => 'common',
+			'lang_set' => 'raidplaner_common',
 		);
 		$event['lang_set_ext'] = $lang_set_ext;
+	}
+	
+	public function add_permission($event)
+	{
+		$permissions = $event['permissions'];
+		$permissions['a_raidplaner'] = array('lang' => 'ACL_A_RAIDPLANER', 'cat' => 'misc');
+		$event['permissions'] = $permissions;
 	}
 
 	public function add_page_header_link($event)
