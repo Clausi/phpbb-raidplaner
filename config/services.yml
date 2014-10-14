@@ -28,3 +28,13 @@ services:
             - @service_container
             - %core.root_path%
             - %core.php_ext%
+    cron.task.core.raidplaner:
+        class: clausi\raidplaner\cron\task\core\raidplaner_cron
+        arguments:
+            - @config
+            - @dbal.conn
+            - @service_container
+        calls:
+            - [set_name, [cron.task.core.raidplaner_cron]]
+        tags:
+            - { name: cron.task }

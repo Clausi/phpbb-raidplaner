@@ -199,7 +199,7 @@ class admin_controller implements admin_interface
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
-			$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE id = '".$row['event_id']."' LIMIT 1";
+			$sql = "SELECT name, raidsize FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE id = '".$row['event_id']."' LIMIT 1";
 			$result_event = $this->db->sql_query($sql);
 			$row_event = $this->db->sql_fetchrow($result_event);
 			$this->db->sql_freeresult($result_event);
@@ -207,6 +207,7 @@ class admin_controller implements admin_interface
 			$this->template->assign_block_vars('n_schedules', array(
 				'ID' => $row['id'],
 				'EVENT' => $row_event['name'],
+				'RAIDSIZE' => $row_event['raidsize'],
 				'START_TIME' => $row['start_time'],
 				'END_TIME' => $row['end_time'],
 				'INVITE_TIME' => $row['invite_time'],
@@ -332,9 +333,9 @@ class admin_controller implements admin_interface
 		$this->template->assign_vars(array(
 			'ID' => $row['id'],
 			'EVENT_ID' => $row['event_id'],
-			'START_TIME' => date('H:i', $row['start_time']),
-			'END_TIME' => date('H:i', $row['end_time']),
-			'INVITE_TIME' => date('H:i', $row['invite_time']),
+			'START_TIME' => $row['start_time'],
+			'END_TIME' => $row['end_time'],
+			'INVITE_TIME' => $row['invite_time'],
 			'DAY' => date('l', $row['repeat_start']),
 			'REPEAT' => $row['repeatable'],
 			'REPEAT_START' => date('Y-m-d', $row['repeat_start']),

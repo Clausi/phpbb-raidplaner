@@ -13,6 +13,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			array('config.add', array('clausi_raidplaner_active', 0)),
+			array('config.add', array('clausi_raidplaner_cron_lastrun', 0)),
+			array('config.add', array('clausi_raidplaner_cron_interval', 60)),
 
 			array('module.add', array(
 				'acp',
@@ -72,6 +74,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'name' => array('VCHAR', ''),
 						'raidsize' => array('USINT', 20),
+						'precreate' => array('TINT:4', 4),
 						'deleted' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> array('id'),
@@ -118,6 +121,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'schedule_id' =>array('UINT', NULL),
+						'raid_time' => array('TIMESTAMP', 0),
 						'start_time' => array('TIMESTAMP', 0),
 						'invite_time' => array('TIMESTAMP', 0),
 						'end_time' => array('TIMESTAMP', 0),
@@ -125,7 +129,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'cancel' => array('TINT:1', 0),
 						'active' => array('TINT:1', 1),
 						'deleted' => array('TIMESTAMP', 0),
-						'note' => array('TEXT', ''),
+						'note' => array('TEXT', NULL),
 					),
 					'PRIMARY_KEY'	=> array('id'),
 					'KEYS'		=> array(
