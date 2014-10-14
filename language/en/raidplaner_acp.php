@@ -11,14 +11,26 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACP_RAIDPLANER_SCHEDULE_EXPLAIN' => 'Here you can add, edit and remove scheduled raids.',
 	'ACP_RAIDPLANER' => 'Raidplaner',
-	'ACP_RAIDPLANER_SETTING_SAVED' => 'Settings have been saved successfully!',
-	'ACP_RAIDPLANER_SCHEDULE_SAVED' => 'Schedule has been added!',
-	'ACP_RAIDPLANER_ACTIVE' => 'Raidplaner active?',
-	'ADD_RAIDPLANER_SCHEDULE' => 'Add scheduled raid',
 	'ACP_RAIDPLANER_ERROR' => 'Error',
 	
+	// Settings
+	'ACP_RAIDPLANER_SETTING_SAVED' => 'Settings have been saved successfully!',
+	'ACP_RAIDPLANER_ACTIVE' => 'Raidplaner active?',
+	
+	// Events
+	'ACP_ADD_RAIDEVENT' => 'Add event',
+	'ACP_EVENTID' => 'Event ID',
+	'ACP_EVENT' => 'Event',
+	'ACP_EVENTNAME' => 'Event name',
+	'ACP_RAIDSIZE' => 'raidsize',
+	'ACP_EDIT_RAIDEVENT' => 'Edit raid event',
+	'ACP_RAIDPLANER_EVENT_SAVED' => 'Event saved.',
+
+	// Schedule
+	'ACP_RAIDPLANER_SCHEDULE_EXPLAIN' => 'Here you can add, edit and remove scheduled raids.',
+	'ADD_RAIDPLANER_SCHEDULE' => 'Add scheduled raid',
+	'ACP_RAIDPLANER_SCHEDULE_SAVED' => 'Schedule has been added!',
 	'REPEAT_START' => 'Repeat start',
 	'REPEAT_START_EXPLAIN' => 'Select the first day of your planned raids.',
 	'REPEAT_END' => 'Repeat end',
@@ -32,7 +44,6 @@ $lang = array_merge($lang, array(
 	'TWOWEEKLY' => 'two weeks',
 	'MONTHLY' => 'monthly',
 	'YEARLY' => 'yearly',
-	
 	'RAIDSTART' => 'Raid start time',
 	'RAIDDATE_EXPLAIN' => 'Dateformat: Y-m-d',
 	'RAIDTIME_EXPLAIN' => 'Timeformat: H:i',

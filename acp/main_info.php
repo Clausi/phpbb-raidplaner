@@ -13,12 +13,17 @@ class main_info
 			'modes'		=> array(
 				'settings' => array(
 					'title' => 'ACP_RAIDPLANER_SETTINGS', 
-					'auth' => 'ext_clausi/raidplaner && acl_a_board', 
+					'auth' => 'ext_clausi/raidplaner && acl_a_raidplaner', 
+					'cat' => array('ACP_RAIDPLANER_TITLE')
+				),
+				'events' => array(
+					'title' => 'ACP_RAIDPLANER_EVENTS', 
+					'auth' => 'ext_clausi/raidplaner && acl_a_raidplaner', 
 					'cat' => array('ACP_RAIDPLANER_TITLE')
 				),
 				'schedule' => array(
 					'title' => 'ACP_RAIDPLANER_SCHEDULE', 
-					'auth' => 'ext_clausi/raidplaner && acl_a_board', 
+					'auth' => 'ext_clausi/raidplaner && acl_a_raidplaner', 
 					'cat' => array('ACP_RAIDPLANER_TITLE')
 				),
 			),

@@ -8,8 +8,6 @@ class main_module
 
 	function main($id, $mode)
 	{
-		// global $db, $user, $auth, $template, $cache, $request;
-		// global $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 		global $phpbb_container, $request, $user;
 
 		$user->add_lang_ext('clausi/raidplaner', 'raidplaner_acp');
@@ -25,6 +23,25 @@ class main_module
 				$admin_controller->display_options();
 			break;
 			
+			case 'events':
+				$this->tpl_name = 'raidplaner_events';
+				$this->page_title = $user->lang('ACP_RAIDPLANER_EVENTS');
+				
+				switch($action) 
+				{
+					case 'delete':
+						$admin_controller->set_page_url($this->u_action);
+						$admin_controller->delete_event($request->variable('id', 0));
+					break;
+					case 'edit':
+						$admin_controller->set_page_url($this->u_action);
+						$admin_controller->edit_event();
+					break;
+					default:
+						$admin_controller->display_events();
+				}
+			break;
+			
 			case 'schedule':
 				$this->tpl_name = 'raidplaner_schedule';
 				$this->page_title = $user->lang('ACP_RAIDPLANER_SCHEDULE');
@@ -34,6 +51,10 @@ class main_module
 					case 'add':
 						$admin_controller->set_page_url($this->u_action);
 						$admin_controller->add_schedule();
+					break;
+					case 'delete':
+						$admin_controller->set_page_url($this->u_action);
+						$admin_controller->delete_schedule($request->variable('id', 0));
 					break;
 					default:
 						$admin_controller->set_page_url($this->u_action);

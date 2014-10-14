@@ -14,4 +14,5 @@ $lang = array_merge($lang, array(
 	'ACP_RAIDPLANER_TITLE' => 'Raidplaner Module',
 	'ACP_RAIDPLANER_SETTINGS' => 'Settings',
 	'ACP_RAIDPLANER_SCHEDULE' => 'Schedule',
+	'ACP_RAIDPLANER_EVENTS' => 'Events',
 ));

@@ -12,6 +12,22 @@
 	<input type="hidden" name="action" value="add" />
 	<input type="hidden" name="show" value="add" />
 	
+	
+	<dl>
+		<dt>
+			<label for="event">
+				{L_ACP_EVENT}
+			</label>
+		</dt>
+		<dd>
+			<select name="event" id="event">
+				<!-- BEGIN n_events -->
+					<option value="{n_events.ID}">{n_events.NAME} ({n_events.RAIDSIZE})</option>
+				<!-- END n_events -->
+			</select>
+		</dd>
+	</dl>
+	
 	<dl>
 		<dt>
 			<label for="repeat_start">
@@ -58,43 +74,40 @@
 	
 	<dl>
 		<dt>
-			<label for="invite_time_hour">
+			<label for="invite_time">
 				{L_RAIDINVITE}
 			</label>
 			<br />
 			<span>{L_RAIDTIME_EXPLAIN}</span>
 		</dt>
 		<dd>
-			<input type="number" min="0" max="23" id="invite_time_hour" name="invite_time_hour" /> :
-			<input type="number" min="0" max="59" id="invite_time_minute" name="invite_time_minute" />
+			<input type="text" id="invite_time" name="invite_time" />
 		</dd>
 	</dl>
 	
 	<dl>
 		<dt>
-			<label for="start_time_hour">
+			<label for="start_time">
 				{L_RAIDSTART}
 			</label>
 			<br />
 			<span>{L_RAIDTIME_EXPLAIN}</span>
 		</dt>
 		<dd>
-			<input type="number" min="0" max="23" id="start_time_hour" name="start_time_hour" /> :
-			<input type="number" min="0" max="59" id="start_time_minute" name="start_time_minute" />
+			<input type="text" id="start_time" name="start_time" />
 		</dd>
 	</dl>
 	
 	<dl>
 		<dt>
-			<label for="end_time_hour">
+			<label for="end_time">
 				{L_RAIDEND}
 			</label>
 			<br />
 			<span>{L_RAIDTIME_EXPLAIN}</span>
 		</dt>
 		<dd>
-			<input type="number" min="0" max="23" id="end_time_hour" name="end_time_hour" /> :
-			<input type="number" min="0" max="59" id="end_time_minute" name="end_time_minute" />
+			<input type="text" id="end_time" name="end_time" />
 		</dd>
 	</dl>
 	
@@ -128,7 +141,7 @@
 <fieldset>
 <!-- IF .n_schedules -->
 	<table class="table1">
-		
+		<col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" /><col class="row2" />
 	<thead>
 	<tr>
 		<th>Event</th>

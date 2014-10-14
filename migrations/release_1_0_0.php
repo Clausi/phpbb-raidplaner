@@ -24,12 +24,19 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				'ACP_RAIDPLANER_TITLE',
 				array(
 					'module_basename' => '\clausi\raidplaner\acp\main_module',
-					'modes' => array('settings', 'schedule'),
+					'modes' => array('settings', 'schedule', 'events'),
 				),
 			)),
 			
+			// Add permission
+			array('permission.add', array('a_raidplaner', true)),
+			// Set permissions
+			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'a_raidplaner')),
+			array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'a_raidplaner')),
+			
 			array('custom', array(array($this, 'add_raidplaner_buff_data'))),
 			array('custom', array(array($this, 'add_raidplaner_comp_data'))),
+			array('custom', array(array($this, 'add_raidplaner_event_data'))),
 		);
 	}
 	
@@ -65,6 +72,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'name' => array('VCHAR', ''),
 						'raidsize' => array('USINT', 20),
+						'deleted' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> array('id'),
 					'KEYS'		=> array(
@@ -117,6 +125,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'autoaccept' => array('TINT:1', 0),
 						'cancel' => array('TINT:1', 0),
 						'active' => array('TINT:1', 1),
+						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', ''),
 					),
 					'PRIMARY_KEY'	=> array('id'),
@@ -136,7 +145,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'repeat_start' => array('TIMESTAMP', NULL),
 						'repeat_end' => array('TIMESTAMP', NULL),
 						'autoaccept' => array('TINT:1', 1),
-						'active' => array('TINT:1', 1),
+						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', NULL),
 					),
 					'PRIMARY_KEY'	=> array('id'),
@@ -163,6 +172,13 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'raidplaner_buffs',
 			),
 		);
+	}
+	
+	public function add_raidplaner_event_data()
+	{
+		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_events' ."` (`id`, `name`, `raidsize`) VALUES
+			(1, 'Mythic', 20);";
+		$result = $this->db->sql_query($sql);
 	}
 	
 	public function add_raidplaner_buff_data()

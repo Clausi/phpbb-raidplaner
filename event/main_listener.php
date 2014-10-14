@@ -2,9 +2,6 @@
 
 namespace clausi\raidplaner\event;
 
-/**
-* @ignore
-*/
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
