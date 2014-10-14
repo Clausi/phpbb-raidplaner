@@ -118,7 +118,6 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'schedule_id' =>array('UINT', NULL),
-						'event' => array('UINT', 0),
 						'start_time' => array('TIMESTAMP', 0),
 						'invite_time' => array('TIMESTAMP', 0),
 						'end_time' => array('TIMESTAMP', 0),
@@ -137,10 +136,10 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'raidplaner_schedule' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
-						'event' => array('UINT', 0),
-						'start_time' => array('TIMESTAMP', NULL),
-						'invite_time' => array('TIMESTAMP', NULL),
-						'end_time' => array('TIMESTAMP', NULL),
+						'event_id' => array('UINT', 0),
+						'invite_time' => array('VCHAR:20', NULL),
+						'start_time' => array('VCHAR:20', NULL),
+						'end_time' => array('VCHAR:20', NULL),
 						'repeatable' => array('VCHAR:20', 'NULL'),
 						'repeat_start' => array('TIMESTAMP', NULL),
 						'repeat_end' => array('TIMESTAMP', NULL),
@@ -177,7 +176,9 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	public function add_raidplaner_event_data()
 	{
 		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_events' ."` (`id`, `name`, `raidsize`) VALUES
-			(1, 'Mythic', 20);";
+			(1, 'Mythic', 20),
+			(2, 'Heroic', 30),
+			(3, 'Normal', 30);";
 		$result = $this->db->sql_query($sql);
 	}
 	

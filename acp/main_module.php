@@ -52,6 +52,10 @@ class main_module
 						$admin_controller->set_page_url($this->u_action);
 						$admin_controller->add_schedule();
 					break;
+					case 'edit':
+						$admin_controller->set_page_url($this->u_action);
+						$admin_controller->edit_schedule($request->variable('id', 0));
+					break;
 					case 'delete':
 						$admin_controller->set_page_url($this->u_action);
 						$admin_controller->delete_schedule($request->variable('id', 0));

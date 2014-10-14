@@ -116,7 +116,7 @@ class admin_controller implements admin_interface
 		$sql_ary = array(
 			'deleted' => time(),
 		);
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event = ' . $id;
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $id;
 		$this->db->sql_query($sql);
 		
 		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_events') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE id = ' . $id;
@@ -183,12 +183,23 @@ class admin_controller implements admin_interface
 	
 	public function display_schedule()
 	{
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('clausi/raidplaner'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+			$action = $this->request->variable('action', 0);
+			if($action == 'edit') $this->edit_schedule($this->request->variable('id', 0));
+			
+			trigger_error($this->user->lang('ACP_RAIDPLANER_SCHEDULE_SAVED_SAVED') . adm_back_link($this->u_action));
+		}
 		
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " WHERE deleted = '0' AND repeatable != 'no_repeat' ORDER BY id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
-			$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE id = '".$row['event']."' LIMIT 1";
+			$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE id = '".$row['event_id']."' LIMIT 1";
 			$result_event = $this->db->sql_query($sql);
 			$row_event = $this->db->sql_fetchrow($result_event);
 			$this->db->sql_freeresult($result_event);
@@ -196,9 +207,9 @@ class admin_controller implements admin_interface
 			$this->template->assign_block_vars('n_schedules', array(
 				'ID' => $row['id'],
 				'EVENT' => $row_event['name'],
-				'START_TIME' => date('H:i', $row['start_time']),
-				'END_TIME' => date('H:i', $row['end_time']),
-				'INVITE_TIME' => date('H:i', $row['invite_time']),
+				'START_TIME' => $row['start_time'],
+				'END_TIME' => $row['end_time'],
+				'INVITE_TIME' => $row['invite_time'],
 				'DAY' => date('l', $row['repeat_start']),
 				'REPEAT' => $row['repeatable'],
 				'EXPIRE' => ($row['repeat_end']) ? $this->user->format_date($row['repeat_end']) : 'never',
@@ -239,14 +250,14 @@ class admin_controller implements admin_interface
 				if(!$event = $this->request->variable('event', 0)) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
 								
 				$sql_ary = array(
-					'event' => $event,
+					'event_id' => $event,
 					'repeat_start' => strtotime($repeat_start),
 					'repeat_end' => strtotime($repeat_end),
 					'repeatable' => $repeatable,
 					'autoaccept' => $autoaccept,
-					'invite_time' => strtotime($invite_time),
-					'start_time' => strtotime($start_time),
-					'end_time' => strtotime($end_time),
+					'invite_time' => $invite_time,
+					'start_time' => $start_time,
+					'end_time' => $end_time,
 				);
 				$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 				$this->db->sql_query($sql);
@@ -275,6 +286,85 @@ class admin_controller implements admin_interface
 		));
 	}
 	
+	public function edit_schedule($id)
+	{
+		add_form_key('clausi/raidplaner');
+		if ($this->request->is_set_post('submit'))
+		{
+
+			if (!check_form_key('clausi/raidplaner'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+			
+			if(!$repeat_start = $this->request->variable('repeat_start', '0')) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
+			$repeatable = $this->request->variable('repeatable', 'no_repeat');
+			$repeat_end = $this->request->variable('repeat_end', '0');
+			
+			if(!$invite_time = $this->request->variable('invite_time', '0')) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
+			if(!$start_time = $this->request->variable('start_time', '0')) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
+			if(!$end_time = $this->request->variable('end_time', '0')) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
+			
+			$autoaccept = $this->request->variable('autoaccept', 1);
+			
+			if(!$event = $this->request->variable('event', 0)) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
+							
+			$sql_ary = array(
+				'event_id' => $event,
+				'repeat_start' => strtotime($repeat_start),
+				'repeat_end' => strtotime($repeat_end),
+				'repeatable' => $repeatable,
+				'autoaccept' => $autoaccept,
+				'invite_time' => $invite_time,
+				'start_time' => $start_time,
+				'end_time' => $end_time,
+			);
+			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE id = '.$id;
+			$this->db->sql_query($sql);
+			
+			trigger_error($this->user->lang('ACP_RAIDPLANER_SCHEDULE_SAVED') . adm_back_link($this->u_action));
+		}
+		
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " WHERE id = '".$id."' LIMIT 1";
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$event_id = $row['event_id'];
+		$this->template->assign_vars(array(
+			'ID' => $row['id'],
+			'EVENT_ID' => $row['event_id'],
+			'START_TIME' => date('H:i', $row['start_time']),
+			'END_TIME' => date('H:i', $row['end_time']),
+			'INVITE_TIME' => date('H:i', $row['invite_time']),
+			'DAY' => date('l', $row['repeat_start']),
+			'REPEAT' => $row['repeatable'],
+			'REPEAT_START' => date('Y-m-d', $row['repeat_start']),
+			'AUTOACCEPT' => $row['autoaccept'],
+			'REPEAT_END' => ($row['repeat_end']) ? date('Y-m-d', $row['repeat_end']) : '',
+		));
+		$this->db->sql_freeresult($result);
+		
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE deleted = '0' ORDER BY id";
+		$result = $this->db->sql_query($sql);
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			if($row['id'] == $event_id) $event_name = $row['name'];
+			$this->template->assign_block_vars('n_events', array(
+				'ID' => $row['id'],
+				'NAME' => $row['name'],
+				'RAIDSIZE' => $row['raidsize'],
+			));
+		}
+		$this->db->sql_freeresult($result);
+		
+		$this->template->assign_vars(array(
+			'EVENT_NAME' => $event_name,
+			'S_EDIT_RAIDPLANER_SCHEDULE' => true,
+			'AUTOACCEPT' => true,
+			'U_BACK'	=> $this->u_action,
+			'U_ACTION'	=> $this->u_action . '&amp;action=edit',
+		));
+	}
+	
 	public function delete_schedule($id)
 	{
 		if(!$id) trigger_error('INVALID_ID');
@@ -283,6 +373,9 @@ class admin_controller implements admin_interface
 			'deleted' => time(),
 		);
 		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE id = ' . $id;
+		$this->db->sql_query($sql);
+		
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $id;
 		$this->db->sql_query($sql);
 	}
 	

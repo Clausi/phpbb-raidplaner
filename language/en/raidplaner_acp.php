@@ -30,7 +30,8 @@ $lang = array_merge($lang, array(
 	// Schedule
 	'ACP_RAIDPLANER_SCHEDULE_EXPLAIN' => 'Here you can add, edit and remove scheduled raids.',
 	'ADD_RAIDPLANER_SCHEDULE' => 'Add scheduled raid',
-	'ACP_RAIDPLANER_SCHEDULE_SAVED' => 'Schedule has been added!',
+	'ACP_RAIDPLANER_SCHEDULE_SAVED' => 'Schedule has been saved.',
+	'ACP_SAVE_RAIDPLANER_SCHEDULE' => 'Save schedule',
 	'REPEAT_START' => 'Repeat start',
 	'REPEAT_START_EXPLAIN' => 'Select the first day of your planned raids.',
 	'REPEAT_END' => 'Repeat end',
