@@ -9,6 +9,13 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	protected $config;
 	protected $db;
 	protected $container;
+	
+	protected $schedule_id;
+	protected $raid_time;
+	protected $invite_time;
+	protected $start_time;
+	protected $end_time;
+	protected $autoaccept;
 
 	
 	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, ContainerInterface $container)
@@ -24,15 +31,15 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	* @return null
 	*/
 	public function run()
-	{	echo "ja";
+	{
+		echo "run";
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat' AND 
 				(
 					repeat_end = '0' OR
 					repeat_end > '".time()."'
-				) AND 
-				repeat_start < '".time()."' 
+				) 
 			ORDER BY id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
@@ -42,30 +49,103 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			$row_event = $this->db->sql_fetchrow($result_event);
 			$this->db->sql_freeresult($result_event);
 			
-			$weekday = date('N', $row['repeat_start']);
+			$raid_day = date('N', $row['repeat_start']);
 			
 			$raid_start = explode(':', $row['start_time']);
 			
-			for($week = 0; $week <= $row_event['precreate']; $week++)
+			$this->schedule_id = $row['id'];
+			$this->invite_time = $row['invite_time'];
+			$this->start_time = $row['start_time'];
+			$this->end_time = $row['end_time'];
+			$this->autoaccept = $row['autoaccept'];
+			
+			for($day = 0; $day <= 7*$row_event['precreate']; $day++)
 			{
-				for($day = 0; $day <= 6; $day++)
+				$time = time()+($day*86400);
+				$this->raid_time = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time));
+				$repeat_start = mktime ($raid_start[0], $raid_start[1], 0, date("n", $row['repeat_start']), date("j", $row['repeat_start']), date("Y", $row['repeat_start']));
+				
+				if($repeat_start <= $this->raid_time)
 				{
-					$time = time()+($week*86400*7)+($day*86400);
-					$raid_time = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time));
-					echo $raid_time;
+					$current_day = date('N', $this->raid_time);
+
+					switch($row['repeatable'])
+					{
+						case 'daily':
+							if( ! $this->getRaids() )
+							{
+								$this->createRaid();
+							}
+						break;
+						case 'weekly':
+							if( $current_day == $raid_day && ! $this->getRaids() )
+							{
+								$this->createRaid();
+							}
+						break;
+						case 'twoweekly':
+							if( $current_day == $raid_day && ! $this->getRaids() )
+							{
+								$offsetTwoWeek = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time)-14, date("Y", $time)) - $this->raid_time;
+								if( $this->getRaids($offsetTwoWeek) || $this->raid_time == $repeat_start )
+								{
+									$this->createRaid();
+								}
+							}
+						break;
+						case 'monthly':
+							if( $current_day == $raid_day && ! $this->getRaids() )
+							{
+								$previousMonth = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time)-1, date("j", $time), date("Y", $time));
+								$offsetMonth = $previousMonth - $this->raid_time;
+								if( $this->getRaids($offsetMonth) || $this->raid_time == $repeat_start )
+								{
+									$this->createRaid();
+								}
+							}
+						break;
+						case 'yearly':
+							if( $current_day == $raid_day && ! $this->getRaids() )
+							{
+								$offsetYear = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time)-1) - $this->raid_time;
+								if( ! $this->getRaids($offsetYear) )
+								{
+									$this->createRaid();
+								}
+							}
+						break;
+					}
 				}
 			}
 			
-			$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND schedule_id = '". $row['id'] ."' ORDER BY id";
-			$result_raids = $this->db->sql_query($sql);
-			
-			
-			
-			$this->db->sql_freeresult($result_raids);
 		}
 		$this->db->sql_freeresult($result);
 		
 		$this->config->set('clausi_raidplaner_cron_lastrun', time());
+	}
+	
+	private function getRaids($offset = 0)
+	{
+		$sql = "SELECT COUNT(id) as count_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time = '".($this->raid_time+$offset)."' LIMIT 1";
+		$result = $this->db->sql_query($sql);
+		if($this->db->sql_fetchfield('count_id') > 0) return true;
+		
+		return false;
+	}
+	
+	private function createRaid()
+	{
+		$sql_ary = array(
+			'schedule_id' => $this->schedule_id,
+			'raid_time' => $this->raid_time,
+			'invite_time' => $this->invite_time,
+			'start_time' => $this->start_time,
+			'end_time' => $this->end_time,
+			'autoaccept' => $this->autoaccept,
+		);
+		
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
 	}
 	
 	/**
