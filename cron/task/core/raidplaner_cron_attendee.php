@@ -25,7 +25,7 @@ class raidplaner_cron_attendee extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		echo "run".'<br />';
+		// echo "run".'<br />';
 		
 		
 		$this->config->set('clausi_raidplaner_cron_attendee_lastrun', time());

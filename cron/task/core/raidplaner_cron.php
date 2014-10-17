@@ -32,7 +32,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		echo "run".'<br />';
+		// echo "run".'<br />';
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'
