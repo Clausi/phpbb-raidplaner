@@ -38,3 +38,13 @@ services:
             - [set_name, [cron.task.core.raidplaner_cron]]
         tags:
             - { name: cron.task }
+    cron.task.core.raidplanerattendee:
+        class: clausi\raidplaner\cron\task\core\raidplaner_cron_attendee
+        arguments:
+            - @config
+            - @dbal.conn
+            - @service_container
+        calls:
+            - [set_name, [cron.task.core.raidplaner_cron_attendee]]
+        tags:
+            - { name: cron.task }
