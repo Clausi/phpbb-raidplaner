@@ -55,6 +55,8 @@ class main_listener implements EventSubscriberInterface
 	{
 		$permissions = $event['permissions'];
 		$permissions['a_raidplaner'] = array('lang' => 'ACL_A_RAIDPLANER', 'cat' => 'misc');
+		$permissions['m_raidplaner'] = array('lang' => 'ACL_M_RAIDPLANER', 'cat' => 'misc');
+		$permissions['u_raidplaner'] = array('lang' => 'ACL_U_RAIDPLANER', 'cat' => 'misc');
 		$event['permissions'] = $permissions;
 	}
 

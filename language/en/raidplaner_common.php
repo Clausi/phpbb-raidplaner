@@ -15,4 +15,6 @@ $lang = array_merge($lang, array(
 	'RAIDPLANER_RAID' => 'Raid',
 	'RAIDPLANER_INACTIVE' => 'Raidplaner currently deactivated.',
 	'RAIDPLANER_INVALID_ID' => 'No valid raid id.',
+	'RAIDPLANER_CLASS' => 'Class',
+	'RAIDPLANER_ROLE' => 'Role',
 ));
