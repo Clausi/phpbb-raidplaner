@@ -32,7 +32,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		// echo "run".'<br />';
+		echo "run".'<br />';
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'
@@ -54,16 +54,18 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			$this->start_time = $row['start_time'];
 			$this->end_time = $row['end_time'];
 			$this->autoaccept = $row['autoaccept'];
+			
+			$repeat_start = mktime ($raid_start[0], $raid_start[1], 0, date("n", $row['repeat_start']), date("j", $row['repeat_start']), date("Y", $row['repeat_start']));
 
-			for($time = $row['repeat_start']; $time <= time()+(86400*7*$row_event['precreate']); $time += 86400)
+			for($time = $repeat_start; $time <= time()+(86400*7*$row_event['precreate']); $time += 86400)
 			{
 				$this->raid_time = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time));
-				$repeat_start = mktime ($raid_start[0], $raid_start[1], 0, date("n", $row['repeat_start']), date("j", $row['repeat_start']), date("Y", $row['repeat_start']));
 				if($row['repeat_end'] != 0) $repeat_end = mktime ($raid_start[0], $raid_start[1], 0, date("n", $row['repeat_end']), date("j", $row['repeat_end']), date("Y", $row['repeat_end']));
 				else $repeat_end = 0;
 				
 				if($repeat_start <= $this->raid_time && ($repeat_end == 0 || $repeat_end >= $this->raid_time))
 				{
+					
 					$current_day = date('N', $this->raid_time);
 
 					switch($row['repeatable'])
@@ -92,9 +94,14 @@ class raidplaner_cron extends \phpbb\cron\task\base
 						break;
 						/*
 						case 'monthly':
+							
 							if( $current_day == $raid_day && ! $this->getRaids() )
 							{
 								$offsetMonth = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time)-1, date("j", $time), date("Y", $time)) - $this->raid_time;
+								$monthlyDate = strtotime( date("Y-m-d", $this->raid_time) . " -1 month " );
+								$dayname = strtotime( date("Y-m-d", $monthlyDate) . " " . date('l', $this->raid_time) . " this week " );
+								$monthly = date("Y-m-d", $dayname);
+								echo date('d.m.Y H:i', $this->raid_time).' offset:' .  $monthly . '<br />';
 								if( $this->getRaids($offsetMonth) || $this->raid_time == $repeat_start )
 								{
 									$this->createRaid();

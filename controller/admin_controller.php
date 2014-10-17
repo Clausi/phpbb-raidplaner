@@ -20,10 +20,6 @@ class admin_controller implements admin_interface
 	protected $container;
 	/** @var \phpbb\boardrules\operators\rule */
 	protected $rule_operator;
-	/** @var string phpBB root path */
-	protected $root_path;
-	/** @var string phpEx */
-	protected $php_ext;
 	/** string Custom form action */
 	protected $u_action;
 
@@ -35,7 +31,7 @@ class admin_controller implements admin_interface
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, ContainerInterface $container, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, ContainerInterface $container)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -43,8 +39,6 @@ class admin_controller implements admin_interface
 		$this->template = $template;
 		$this->user = $user;
 		$this->container = $container;
-		$this->root_path = $root_path;
-		$this->php_ext = $php_ext;
 	}
 	
 	public function display_options()
@@ -212,6 +206,7 @@ class admin_controller implements admin_interface
 				'END_TIME' => $row['end_time'],
 				'INVITE_TIME' => $row['invite_time'],
 				'DAY' => date('l', $row['repeat_start']),
+				'REPEAT_START' => $this->user->format_date($row['repeat_start']),
 				'REPEAT' => $row['repeatable'],
 				'EXPIRE' => ($row['repeat_end']) ? $this->user->format_date($row['repeat_end']) : 'never',
 				'U_EDIT' => $this->u_action . '&amp;action=edit&amp;id='.$row['id'],

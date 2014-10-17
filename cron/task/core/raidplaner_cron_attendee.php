@@ -52,7 +52,7 @@ class raidplaner_cron_attendee extends \phpbb\cron\task\base
 	*/
 	public function should_run()
 	{
-		return $this->config['clausi_raidplaner_cron_attendee_lastrun'] < time() - $this->config['clausi_raidplaner_cron_attendee_interval'];
+		return $this->config['clausi_raidplaner_cron_attendee_lastrun'] < time() - $this->config['clausi_raidplaner_cron_interval'];
 	}
 	
 }

@@ -2,13 +2,16 @@ imports:
     - { resource: tables.yml }
 
 services:
-    clausi.raidplaner.controller:
-        class: clausi\raidplaner\controller\main
+    clausi.raidplaner.main.controller:
+        class: clausi\raidplaner\controller\main_controller
         arguments:
             - @config
             - @controller.helper
+            - @dbal.conn
             - @template
             - @user
+            - @request
+            - @service_container
     clausi.raidplaner.listener:
         class: clausi\raidplaner\event\main_listener
         arguments:

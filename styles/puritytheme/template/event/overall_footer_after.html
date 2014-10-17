@@ -1,0 +1,37 @@
+<!-- IF S_CLAUSI_RAIDPLANER_ACTIVE -->
+<script type="text/javascript">
+$(document).ready(function() {
+	function filterTable(table, filter) {
+		table.fnFilter("^"+filter+"$", 1, true);
+	}
+	
+	var raidplanerTable = $('#datatables-raidplaner').DataTable( {
+		"oLanguage": {
+			"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"
+		},
+		"order": [[ 0, "asc" ]],
+		"pageLength": 10,
+		"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "Alle"] ],
+		
+		"aoColumnDefs": [
+		  { "aTargets": [ 1 ], "bVisible": false },
+		],
+		
+		"fnInitComplete": function(oSettings, json) {
+			createSelectpicker();
+			filterTable(this, "show");
+		}
+	});
+	
+	$('select#raidplanerFilter').on('change',function(){
+        var selectedValue = $(this).val();
+		  filterTable(raidplanerTable, selectedValue);
+	});
+});
+$(document).ready(function() {
+	$(".clickableRow").click(function() {
+		window.document.location = $(this).data("url");
+	});
+});
+</script>
+<!-- ENDIF -->
