@@ -32,14 +32,10 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		echo "run";
+		echo "run".'<br />';
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
-				deleted = '0' AND repeatable != 'no_repeat' AND 
-				(
-					repeat_end = '0' OR
-					repeat_end > '".time()."'
-				) 
+				deleted = '0' AND repeatable != 'no_repeat'
 			ORDER BY id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
@@ -58,14 +54,15 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			$this->start_time = $row['start_time'];
 			$this->end_time = $row['end_time'];
 			$this->autoaccept = $row['autoaccept'];
-			
-			for($day = 0; $day <= 7*$row_event['precreate']; $day++)
+
+			for($time = $row['repeat_start']; $time <= time()+(86400*7*$row_event['precreate']); $time += 86400)
 			{
-				$time = time()+($day*86400);
 				$this->raid_time = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time));
 				$repeat_start = mktime ($raid_start[0], $raid_start[1], 0, date("n", $row['repeat_start']), date("j", $row['repeat_start']), date("Y", $row['repeat_start']));
+				if($row['repeat_end'] != 0) $repeat_end = mktime ($raid_start[0], $raid_start[1], 0, date("n", $row['repeat_end']), date("j", $row['repeat_end']), date("Y", $row['repeat_end']));
+				else $repeat_end = 0;
 				
-				if($repeat_start <= $this->raid_time)
+				if($repeat_start <= $this->raid_time && ($repeat_end == 0 || $repeat_end >= $this->raid_time))
 				{
 					$current_day = date('N', $this->raid_time);
 
@@ -93,11 +90,11 @@ class raidplaner_cron extends \phpbb\cron\task\base
 								}
 							}
 						break;
+						/*
 						case 'monthly':
 							if( $current_day == $raid_day && ! $this->getRaids() )
 							{
-								$previousMonth = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time)-1, date("j", $time), date("Y", $time));
-								$offsetMonth = $previousMonth - $this->raid_time;
+								$offsetMonth = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time)-1, date("j", $time), date("Y", $time)) - $this->raid_time;
 								if( $this->getRaids($offsetMonth) || $this->raid_time == $repeat_start )
 								{
 									$this->createRaid();
@@ -108,12 +105,13 @@ class raidplaner_cron extends \phpbb\cron\task\base
 							if( $current_day == $raid_day && ! $this->getRaids() )
 							{
 								$offsetYear = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time)-1) - $this->raid_time;
-								if( ! $this->getRaids($offsetYear) )
+								if( $this->getRaids($offsetYear) || $this->raid_time == $repeat_start )
 								{
 									$this->createRaid();
 								}
 							}
 						break;
+						*/
 					}
 				}
 			}
