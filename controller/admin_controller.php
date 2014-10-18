@@ -247,7 +247,7 @@ class admin_controller implements admin_interface
 								
 				$sql_ary = array(
 					'event_id' => $event,
-					'repeat_start' => strtotime($repeat_start),
+					'repeat_start' => strtotime($repeat_start . ' ' . $start_time),
 					'repeat_end' => strtotime($repeat_end),
 					'repeatable' => $repeatable,
 					'autoaccept' => $autoaccept,
