@@ -44,14 +44,15 @@ class main_controller implements main_interface
 		$message = '';
 		
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time >= 'NOW()+2419200*2' ORDER BY raid_time";
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' ORDER BY raid_time";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('n_raids', array(
 				'ID' => $row['id'],
 				'DATE' => $this->user->format_date($row['raid_time']),
-				'FLAG' => ($row['raid_time'] < time()) ? 'hide' : 'show',
+				'TIMESTAMP' => $row['raid_time'],
+				'FLAG' => ($row['raid_time'] < time()) ? 'past' : 'future',
 				'DAY' => date('l', $row['raid_time']),
 				'INVITE_TIME' => $row['invite_time'],
 				'START_TIME' => $row['start_time'],

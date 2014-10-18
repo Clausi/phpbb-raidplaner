@@ -2,10 +2,11 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	function filterTable(table, filter) {
-		table.fnFilter("^"+filter+"$", 1, true);
+		if(filter == 0) table.fnFilter( '' , 2, false);
+		else table.fnFilter("^"+filter+"$", 2, true);
 	}
 	
-	var raidplanerTable = $('#datatables-raidplaner').DataTable( {
+	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
 		"oLanguage": {
 			"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"
 		},
@@ -13,13 +14,15 @@ $(document).ready(function() {
 		"pageLength": 10,
 		"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "Alle"] ],
 		
-		"aoColumnDefs": [
-		  { "aTargets": [ 1 ], "bVisible": false },
+		"columnDefs": [
+		  { "targets": 1, "visible": false },
+		  { "orderData": [1,2], "targets": 2 },
+		  { "targets": 2, "visible": false },
 		],
 		
 		"fnInitComplete": function(oSettings, json) {
 			createSelectpicker();
-			filterTable(this, "show");
+			filterTable(this, "future");
 		}
 	});
 	
