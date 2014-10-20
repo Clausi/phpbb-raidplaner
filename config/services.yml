@@ -6,6 +6,7 @@ services:
         class: clausi\raidplaner\controller\main_controller
         arguments:
             - @config
+            - @auth
             - @controller.helper
             - @dbal.conn
             - @template
@@ -28,9 +29,8 @@ services:
             - @request
             - @template
             - @user
+            - @auth
             - @service_container
-            - %core.root_path%
-            - %core.php_ext%
     cron.task.core.raidplaner:
         class: clausi\raidplaner\cron\task\core\raidplaner_cron
         arguments:

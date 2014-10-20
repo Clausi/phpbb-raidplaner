@@ -27,7 +27,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				'ACP_RAIDPLANER_TITLE',
 				array(
 					'module_basename' => '\clausi\raidplaner\acp\main_module',
-					'modes' => array('settings', 'schedule', 'events'),
+					'modes' => array('settings', 'schedule', 'events', 'usermanage'),
 				),
 			)),
 			
@@ -38,6 +38,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 			// Set permissions
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'a_raidplaner')),
 			array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'a_raidplaner')),
+			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'm_raidplaner')),
+			array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'm_raidplaner')),
 			
 			array('custom', array(array($this, 'add_raidplaner_buff_data'))),
 			array('custom', array(array($this, 'add_raidplaner_comp_data'))),

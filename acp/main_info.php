@@ -26,6 +26,11 @@ class main_info
 					'auth' => 'ext_clausi/raidplaner && acl_a_raidplaner', 
 					'cat' => array('ACP_RAIDPLANER_TITLE')
 				),
+				'usermanage' => array(
+					'title' => 'ACP_RAIDPLANER_USERMANAGE', 
+					'auth' => 'ext_clausi/raidplaner && acl_a_raidplaner && acl_m_raidplaner', 
+					'cat' => array('ACP_RAIDPLANER_TITLE')
+				),
 			),
 		);
 	}

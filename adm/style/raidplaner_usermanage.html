@@ -1,0 +1,43 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_ACP_RAIDPLANER_EVENTS}</h1>
+
+<form id="raidplaner_usermanage" method="post" action="{U_ACTION}">
+	<fieldset>
+	<input type="hidden" name="action" value="edit" />
+
+	<table class="table1">
+			<col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" />
+		<thead>
+			<tr>
+				<th>{L_USERNAME}</th>
+				<th>{L_RAIDPLANER_CLASS}</th>
+				<th>{L_RAIDPLANER_ROLE}</th>
+			</tr>
+		</thead>
+		<tbody>
+		<!-- BEGIN n_users -->
+			<tr>
+				<td>
+					{n_users.NAME}
+				</td>
+				<td>
+					{n_users.CLASS}
+				</td>
+				<td>
+					{n_users.ROLE}
+				</td>
+			</tr>
+			<!-- END n_users -->
+		</tbody>
+	</table>
+
+	<p class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		</p>
+	{S_FORM_TOKEN}
+	</fieldset>
+</form>
+
+<!-- INCLUDE overall_footer.html -->

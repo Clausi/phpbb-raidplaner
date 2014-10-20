@@ -15,4 +15,5 @@ $lang = array_merge($lang, array(
 	'ACP_RAIDPLANER_SETTINGS' => 'Settings',
 	'ACP_RAIDPLANER_SCHEDULE' => 'Schedule',
 	'ACP_RAIDPLANER_EVENTS' => 'Events',
+	'ACP_RAIDPLANER_USERMANAGE' => 'Manage raidplaner users',
 ));

@@ -22,6 +22,7 @@ class admin_controller implements admin_interface
 	protected $rule_operator;
 	/** string Custom form action */
 	protected $u_action;
+	protected $auth;
 
 	/**
 	* Constructor
@@ -31,13 +32,14 @@ class admin_controller implements admin_interface
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, ContainerInterface $container)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $profilefields, \phpbb\auth\auth $auth, ContainerInterface $container)
 	{
 		$this->config = $config;
 		$this->db = $db;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->auth = $auth;
 		$this->container = $container;
 	}
 	
@@ -154,7 +156,7 @@ class admin_controller implements admin_interface
 		$this->db->sql_freeresult($result);
 		
 		$this->template->assign_vars(array(
-			'S_EDIT_RAIDPLANER_SCHEDULE' => true,
+			'S_EDIT_RAIDPLANER_EVENT' => true,
 			'U_BACK' => $this->u_action,
 			'U_ACTION'	=> $this->u_action,
 		));
@@ -373,6 +375,36 @@ class admin_controller implements admin_interface
 		
 		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $id;
 		$this->db->sql_query($sql);
+	}
+	
+	
+	public function display_users()
+	{
+		add_form_key('clausi/raidplaner');
+		if ($this->request->is_set_post('submit'))
+		{
+
+			if (!check_form_key('clausi/raidplaner'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+		}
+		
+		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
+		foreach($user_ary as $permission)
+		{
+			foreach($permission['u_raidplaner'] as $user_id)
+			{
+				$sql = "SELECT user_id, username FROM " . $this->container->getParameter('tables.users') . " WHERE user_id = '".$user_id."'";
+				$result = $this->db->sql_query($sql);
+				$row = $this->db->sql_fetchrow($result);
+				$this->template->assign_block_vars('n_users', array(
+					'NAME' => $row['username'],
+				));
+				$this->db->sql_freeresult($result);
+			}
+		}
+		
 	}
 	
 

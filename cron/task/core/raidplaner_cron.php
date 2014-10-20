@@ -32,7 +32,6 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		echo "run".'<br />';
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'
@@ -65,7 +64,6 @@ class raidplaner_cron extends \phpbb\cron\task\base
 				
 				if($repeat_start <= $this->raid_time && ($repeat_end == 0 || $repeat_end >= $this->raid_time))
 				{
-					
 					$current_day = date('N', $this->raid_time);
 
 					switch($row['repeatable'])

@@ -32,7 +32,7 @@ class profilefield_class extends \phpbb\db\migration\profilefield_base_migration
 		'field_length'			=> 0,
 		'field_minlen'			=> 0,
 		'field_maxlen'			=> 12,
-		'field_novalue'			=> '1',
+		'field_novalue'			=> '0',
 		'field_default_value'	=> '1',
 		'field_validation'		=> '',
 		'field_required'		=> 0,
@@ -48,62 +48,62 @@ class profilefield_class extends \phpbb\db\migration\profilefield_base_migration
 	
 	protected $profilefield_language_data = array(
 		array(
-			'option_id' => 0,
+			'option_id' => 1,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'none',
 		),
 		array(
-			'option_id' => 1,
+			'option_id' => 2,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'paladin',
 		),
 		array(
-			'option_id' => 2,
+			'option_id' => 3,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'hunter',
 		),
 		array(
-			'option_id' => 3,
+			'option_id' => 4,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'rogue',
 		),
 		array(
-			'option_id' => 4,
+			'option_id' => 5,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'priest',
 		),
 		array(
-			'option_id' => 5,
+			'option_id' => 6,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'deathknight',
 		),
 		array(
-			'option_id' => 6,
+			'option_id' => 7,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'shaman',
 		),
 		array(
-			'option_id' => 7,
+			'option_id' => 8,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'mage',
 		),
 		array(
-			'option_id' => 8,
+			'option_id' => 9,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'warlock',
 		),
 		array(
-			'option_id' => 9,
+			'option_id' => 10,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'monk',
 		),
 		array(
-			'option_id' => 10,
+			'option_id' => 11,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'druid',
 		),
 		array(
-			'option_id' => 11,
+			'option_id' => 12,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'warrior',
 		),

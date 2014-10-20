@@ -65,7 +65,13 @@ class main_module
 						$admin_controller->display_schedule();
 				}
 				
-				
+			break;
+			
+			case 'usermanage':
+				$this->tpl_name = 'raidplaner_usermanage';
+				$this->page_title = $user->lang('ACP_RAIDPLANER_USERMANAGE');
+				$admin_controller->set_page_url($this->u_action);
+				$admin_controller->display_users();
 			break;
 		}
 		

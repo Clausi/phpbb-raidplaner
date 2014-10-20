@@ -51,4 +51,7 @@ $lang = array_merge($lang, array(
 	'RAIDINVITE' => 'Raid invite time',
 	'RAIDEND' => 'Raid end time',
 	'AUTOACCEPT' => 'Set "sign on" status to members by default',
+	
+	// Userconfig
+	
 ));
