@@ -29,6 +29,7 @@ services:
             - @request
             - @template
             - @user
+            - @profilefields.manager
             - @auth
             - @service_container
     cron.task.core.raidplaner:

@@ -23,6 +23,7 @@ class admin_controller implements admin_interface
 	/** string Custom form action */
 	protected $u_action;
 	protected $auth;
+	protected $profilefields;
 
 	/**
 	* Constructor
@@ -32,13 +33,14 @@ class admin_controller implements admin_interface
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $profilefields, \phpbb\auth\auth $auth, ContainerInterface $container)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\profilefields\manager $profilefields, \phpbb\auth\auth $auth, ContainerInterface $container)
 	{
 		$this->config = $config;
 		$this->db = $db;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->profilefields = $profilefields;
 		$this->auth = $auth;
 		$this->container = $container;
 	}
@@ -390,6 +392,33 @@ class admin_controller implements admin_interface
 			}
 		}
 		
+		// $sql = "SELECT field_id FROM " . $this->container->getParameter('tables.profile_fields') . " WHERE field_name = 'raidplaner_class' OR field_name = 'raidplaner_role'";
+		// $result = $this->db->sql_query($sql);
+		// $row_profilefields = $this->db->sql_fetchrowset($result);
+		// $this->db->sql_freeresult($result);
+		// // echo "<pre>";
+		// // print_r($row_profilefields);
+		// // echo "</pre>";
+		// foreach($row_profilefields as $field)
+		// {
+			// $sql = "SELECT * FROM " . $this->container->getParameter('tables.profile_fields_options_language') . " WHERE field_id = '".$field['field_id']."'";
+			// $result = $this->db->sql_query($sql);
+			// while($row_profilefields_lang = $this->db->sql_fetchrow($result))
+			// {
+				// // if(
+				// // $this->template->assign_block_vars($type
+			// }
+			// $this->db->sql_freeresult($result);
+			// echo "<pre>";
+			// print_r($field);
+			// echo "</pre>";
+		// }
+		
+		// $cp = $this->container->get('profilefields.manager');
+		// $this->type_collection = $phpbb_container->get('profilefields.type_collection');
+		
+		
+		
 		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 		foreach($user_ary as $permission)
 		{
@@ -402,6 +431,9 @@ class admin_controller implements admin_interface
 					'NAME' => $row['username'],
 				));
 				$this->db->sql_freeresult($result);
+				echo "<pre>";
+				print_r($this->profilefields->grab_profile_fields_data($user_id));
+				echo "</pre>";
 			}
 		}
 		
