@@ -417,7 +417,7 @@ class admin_controller implements admin_interface
 		// $cp = $this->container->get('profilefields.manager');
 		// $this->type_collection = $phpbb_container->get('profilefields.type_collection');
 		
-		
+		$this->profilefields->generate_profile_fields('profile', $this->user->get_iso_lang_id());
 		
 		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 		foreach($user_ary as $permission)
@@ -431,9 +431,11 @@ class admin_controller implements admin_interface
 					'NAME' => $row['username'],
 				));
 				$this->db->sql_freeresult($result);
-				echo "<pre>";
-				print_r($this->profilefields->grab_profile_fields_data($user_id));
-				echo "</pre>";
+				// echo "<pre>";
+				// print_r($this->profilefields->grab_profile_fields_data($user_id));
+				// echo "</pre>";
+				
+				
 			}
 		}
 		

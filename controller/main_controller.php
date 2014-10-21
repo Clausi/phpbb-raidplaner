@@ -18,12 +18,13 @@ class main_controller implements main_interface
 	/* @var \phpbb\user */
 	protected $user;
 	protected $auth;
+	protected $profilefields;
 	
 	/* @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
 
-	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
+	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\profilefields\manager $profilefields, \phpbb\request\request $request, ContainerInterface $container)
 	{
 		$this->config = $config;
 		$this->auth = $auth;
@@ -31,6 +32,7 @@ class main_controller implements main_interface
 		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
+		$this->profilefields = $profilefields;
 		$this->request = $request;
 		$this->container = $container;
 	}

@@ -22,7 +22,11 @@
 					{n_users.NAME}
 				</td>
 				<td>
-					{n_users.CLASS}
+					<!-- IF .profile_fields -->test
+					<!-- BEGIN profile_fields -->
+					{profile_fields.LANG_NAME}
+					<!-- END profile_fields -->
+					<!-- ENDIF -->
 				</td>
 				<td>
 					{n_users.ROLE}

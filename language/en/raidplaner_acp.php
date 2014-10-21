@@ -53,5 +53,6 @@ $lang = array_merge($lang, array(
 	'AUTOACCEPT' => 'Set "sign on" status to members by default',
 	
 	// Userconfig
-	
+	'RAIDPLANER_CLASS' => 'Class',
+	'RAIDPLANER_ROLE' => 'Role',
 ));

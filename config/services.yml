@@ -11,6 +11,7 @@ services:
             - @dbal.conn
             - @template
             - @user
+            - @profilefields.manager
             - @request
             - @service_container
     clausi.raidplaner.listener:
