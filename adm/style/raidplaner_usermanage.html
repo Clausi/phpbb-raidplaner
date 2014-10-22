@@ -1,12 +1,12 @@
 <!-- INCLUDE overall_header.html -->
 
-<h1>{L_ACP_RAIDPLANER_EVENTS}</h1>
+<h1>{L_ACP_RAIDPLANER_USERMANAGE}</h1>
 
 <form id="raidplaner_usermanage" method="post" action="{U_ACTION}">
 	<fieldset>
 	<input type="hidden" name="action" value="edit" />
 
-	<table class="table1">
+	<table>
 			<col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" />
 		<thead>
 			<tr>
@@ -16,20 +16,32 @@
 			</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN n_users -->
+			<!-- BEGIN n_users -->
 			<tr>
 				<td>
 					{n_users.NAME}
 				</td>
 				<td>
-					<!-- IF .profile_fields -->test
 					<!-- BEGIN profile_fields -->
-					{profile_fields.LANG_NAME}
+						<!-- IF n_users.profile_fields.FIELD_ID == 'pf_raidplaner_class' -->
+							<select id="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]" name="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]">
+							<!-- BEGIN options -->
+								<option value="{n_users.profile_fields.options.OPTION_ID}"<!-- IF n_users.profile_fields.options.OPTION_ID == n_users.profile_fields.USER_DATA --> selected="selected"<!-- ENDIF -->>{n_users.profile_fields.options.LANG_VALUE}</option>
+							<!-- END options -->
+							</select>
+						<!-- ENDIF -->
 					<!-- END profile_fields -->
-					<!-- ENDIF -->
 				</td>
 				<td>
-					{n_users.ROLE}
+					<!-- BEGIN profile_fields -->
+						<!-- IF n_users.profile_fields.FIELD_ID == 'pf_raidplaner_role' -->
+							<select id="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]" name="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]">
+							<!-- BEGIN options -->
+								<option value="{n_users.profile_fields.options.OPTION_ID}"<!-- IF n_users.profile_fields.options.OPTION_ID == n_users.profile_fields.USER_DATA --> selected="selected"<!-- ENDIF -->>{n_users.profile_fields.options.LANG_VALUE}</option>
+							<!-- END options -->
+							</select>
+						<!-- ENDIF -->
+					<!-- END profile_fields -->
 				</td>
 			</tr>
 			<!-- END n_users -->

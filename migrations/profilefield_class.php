@@ -32,8 +32,8 @@ class profilefield_class extends \phpbb\db\migration\profilefield_base_migration
 		'field_length'			=> 0,
 		'field_minlen'			=> 0,
 		'field_maxlen'			=> 12,
-		'field_novalue'			=> '0',
-		'field_default_value'	=> '1',
+		'field_novalue'			=> 0,
+		'field_default_value'	=> 0,
 		'field_validation'		=> '',
 		'field_required'		=> 0,
 		'field_show_novalue'	=> 0,
@@ -48,9 +48,14 @@ class profilefield_class extends \phpbb\db\migration\profilefield_base_migration
 	
 	protected $profilefield_language_data = array(
 		array(
-			'option_id' => 1,
+			'option_id' => 0,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'none',
+		),
+		array(
+			'option_id' => 1,
+			'field_type' => 'profilefields.type.dropdown',
+			'lang_value' => 'warrior',
 		),
 		array(
 			'option_id' => 2,
@@ -101,11 +106,6 @@ class profilefield_class extends \phpbb\db\migration\profilefield_base_migration
 			'option_id' => 11,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'druid',
-		),
-		array(
-			'option_id' => 12,
-			'field_type' => 'profilefields.type.dropdown',
-			'lang_value' => 'warrior',
 		),
 	);
 	

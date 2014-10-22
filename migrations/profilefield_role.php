@@ -32,8 +32,8 @@ class profilefield_role extends \phpbb\db\migration\profilefield_base_migration
 		'field_length'			=> 0,
 		'field_minlen'			=> 0,
 		'field_maxlen'			=> 5,
-		'field_novalue'			=> '1',
-		'field_default_value'	=> '1',
+		'field_novalue'			=> 0,
+		'field_default_value'	=> 0,
 		'field_validation'		=> '',
 		'field_required'		=> 0,
 		'field_show_novalue'	=> 0,
@@ -48,27 +48,27 @@ class profilefield_role extends \phpbb\db\migration\profilefield_base_migration
 	
 	protected $profilefield_language_data = array(
 		array(
-			'option_id' => 1,
+			'option_id' => 0,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'none',
 		),
 		array(
-			'option_id' => 2,
+			'option_id' => 1,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'tank',
 		),
 		array(
-			'option_id' => 3,
+			'option_id' => 2,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'heal',
 		),
 		array(
-			'option_id' => 4,
+			'option_id' => 3,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'melee',
 		),
 		array(
-			'option_id' => 5,
+			'option_id' => 4,
 			'field_type' => 'profilefields.type.dropdown',
 			'lang_value' => 'range',
 		),

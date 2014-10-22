@@ -11,7 +11,6 @@ services:
             - @dbal.conn
             - @template
             - @user
-            - @profilefields.manager
             - @request
             - @service_container
     clausi.raidplaner.listener:
@@ -30,9 +29,9 @@ services:
             - @request
             - @template
             - @user
-            - @profilefields.manager
             - @auth
             - @service_container
+            - @profilefields.type_collection
     cron.task.core.raidplaner:
         class: clausi\raidplaner\cron\task\core\raidplaner_cron
         arguments:

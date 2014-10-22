@@ -23,7 +23,7 @@ class admin_controller implements admin_interface
 	/** string Custom form action */
 	protected $u_action;
 	protected $auth;
-	protected $profilefields;
+	protected $type_collection;
 
 	/**
 	* Constructor
@@ -33,16 +33,16 @@ class admin_controller implements admin_interface
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\profilefields\manager $profilefields, \phpbb\auth\auth $auth, ContainerInterface $container)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\auth\auth $auth, ContainerInterface $container, \phpbb\di\service_collection $type_collection)
 	{
 		$this->config = $config;
 		$this->db = $db;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		$this->profilefields = $profilefields;
 		$this->auth = $auth;
 		$this->container = $container;
+		$this->type_collection = $type_collection;
 	}
 	
 	public function display_options()
@@ -390,34 +390,21 @@ class admin_controller implements admin_interface
 			{
 				trigger_error('FORM_INVALID');
 			}
+			$this->cp = $this->container->get('profilefields.manager');
+			$users = $this->request->variable('users', array(0 => array('' => 0)));
+			// $this->var_display($users);
+			foreach( $users as $user_id => $user_data )
+			{
+				foreach( $user_data as $key => $value )
+				{
+					$user_data[$key] = $value+1;
+				}
+				$this->cp->update_profile_field_data($user_id, $user_data);
+				$this->var_display($user_data);
+			}
+			
+			trigger_error($this->user->lang('ACP_RAIDPLANER_USERS_SAVED') . adm_back_link($this->u_action));
 		}
-		
-		// $sql = "SELECT field_id FROM " . $this->container->getParameter('tables.profile_fields') . " WHERE field_name = 'raidplaner_class' OR field_name = 'raidplaner_role'";
-		// $result = $this->db->sql_query($sql);
-		// $row_profilefields = $this->db->sql_fetchrowset($result);
-		// $this->db->sql_freeresult($result);
-		// // echo "<pre>";
-		// // print_r($row_profilefields);
-		// // echo "</pre>";
-		// foreach($row_profilefields as $field)
-		// {
-			// $sql = "SELECT * FROM " . $this->container->getParameter('tables.profile_fields_options_language') . " WHERE field_id = '".$field['field_id']."'";
-			// $result = $this->db->sql_query($sql);
-			// while($row_profilefields_lang = $this->db->sql_fetchrow($result))
-			// {
-				// // if(
-				// // $this->template->assign_block_vars($type
-			// }
-			// $this->db->sql_freeresult($result);
-			// echo "<pre>";
-			// print_r($field);
-			// echo "</pre>";
-		// }
-		
-		// $cp = $this->container->get('profilefields.manager');
-		// $this->type_collection = $phpbb_container->get('profilefields.type_collection');
-		
-		$this->profilefields->generate_profile_fields('profile', $this->user->get_iso_lang_id());
 		
 		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 		foreach($user_ary as $permission)
@@ -429,13 +416,53 @@ class admin_controller implements admin_interface
 				$row = $this->db->sql_fetchrow($result);
 				$this->template->assign_block_vars('n_users', array(
 					'NAME' => $row['username'],
+					'ID' => $user_id,
 				));
 				$this->db->sql_freeresult($result);
-				// echo "<pre>";
-				// print_r($this->profilefields->grab_profile_fields_data($user_id));
-				// echo "</pre>";
 				
-				
+				$sql = 'SELECT l.*, f.*
+					FROM ' . $this->container->getParameter('tables.profile_fields_language') . ' l, 
+						' . $this->container->getParameter('tables.profile_fields') . " f
+					WHERE f.field_active = 1
+					AND l.lang_id = " . (int) $this->user->get_iso_lang_id() . '
+					AND l.field_id = f.field_id
+					ORDER BY f.field_order';
+				$result = $this->db->sql_query($sql);
+				while ($row = $this->db->sql_fetchrow($result))
+				{
+					$profile_field = $this->type_collection[$row['field_type']];
+					
+					$sql = "SELECT ".$profile_field->get_field_ident($row)." FROM " . $this->container->getParameter('tables.profile_fields_data') . " WHERE user_id = '".$user_id."'";
+					$result_data = $this->db->sql_query($sql);
+					$row_user_data = $this->db->sql_fetchrow($result_data);
+					$this->db->sql_freeresult($result_data);
+					
+					$user_data = $row_user_data[$profile_field->get_field_ident($row)];
+					
+					$this->template->assign_block_vars('n_users.profile_fields', array(
+						'LANG_NAME'	=> $this->user->lang($row['lang_name']),
+						'LANG_EXPLAIN'	=> $this->user->lang($row['lang_explain']),
+						'FIELD_ID'	=> $profile_field->get_field_ident($row),
+						'S_REQUIRED'	=> ($row['field_required']) ? true : false,
+						'USER_DATA' => $user_data-1,
+					));
+
+					$sql = 'SELECT *
+						FROM ' . $this->container->getParameter('tables.profile_fields_options_language') . '
+						WHERE field_id = '. $row['field_id'] .'
+						AND lang_id = ' . (int) $this->user->get_iso_lang_id() . '
+						ORDER BY option_id';
+					$result_options = $this->db->sql_query($sql);
+					while($row_options = $this->db->sql_fetchrow($result_options))
+					{
+						$this->template->assign_block_vars('n_users.profile_fields.options', array(
+							'OPTION_ID' => $row_options['option_id'],
+							'LANG_VALUE' => $row_options['lang_value'],
+						));
+					}
+					$this->db->sql_freeresult($result_options);
+				}
+				$this->db->sql_freeresult($result);
 			}
 		}
 		
@@ -445,6 +472,13 @@ class admin_controller implements admin_interface
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
+	}
+	
+	private function var_display($var)
+	{
+		echo "<pre>";
+		print_r($var);
+		echo "</pre>";
 	}
 	
 }
