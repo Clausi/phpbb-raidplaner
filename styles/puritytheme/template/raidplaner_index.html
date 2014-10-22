@@ -24,12 +24,13 @@
 			</div>
 		</div>
 		<div class="table-responsive">
-			<table class="table table-hover table-striped" id="datatables-raidplaner">
+			<table class="table table-hover table-striped clickable_row" id="datatables-raidplaner">
 				<thead>
 					<tr>
+						<th>Flag</th>
+						<th>Event</th>
 						<th>Date</th>
 						<th>Timestamp</th>
-						<th>Flag</th>
 						<th>Day</th>
 						<th>Note</th>
 						<th>Members</th>
@@ -39,10 +40,11 @@
 				
 				<tbody>
 					<!-- BEGIN n_raids -->
-					<tr class="clickableRow<!-- IF n_raids.FIRSTFUTURE == 1 --> active<!-- ENDIF -->" data-url="{n_raids.U_RAID}">
+					<tr class="<!-- IF n_raids.FIRSTFUTURE == 1 -->active<!-- ENDIF -->" data-url="{n_raids.U_RAID}">
+						<td>{n_raids.FLAG}</td>
+						<td>{n_raids.EVENTNAME}</td>
 						<td>{n_raids.DATE}</td>
 						<td>{n_raids.TIMESTAMP}</td>
-						<td>{n_raids.FLAG}</td>
 						<td>{n_raids.DAY}</td>
 						<td>{n_raids.NOTE}</td>
 						<td>{n_raids.MEMBERS}</td>
@@ -55,6 +57,5 @@
 
 	</div>
 </div>
-
 
 <!-- INCLUDE overall_footer.html -->

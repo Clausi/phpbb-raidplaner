@@ -2,22 +2,23 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	function filterTable(table, filter) {
-		if(filter == 0) table.fnFilter( '' , 2, false);
-		else table.fnFilter("^"+filter+"$", 2, true);
+		if(filter == 0) table.fnFilter( '' , 0, false);
+		else table.fnFilter("^"+filter+"$", 0, true);
 	}
 	
 	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
 		"oLanguage": {
 			"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"
 		},
-		"order": [[ 1, "asc" ]],
+		"order": [[ 2, "asc" ]],
 		"pageLength": 10,
 		"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "Alle"] ],
 		
 		"columnDefs": [
-		  { "targets": 1, "visible": false },
-		  { "orderData": [1,2], "targets": 2 },
-		  { "targets": 2, "visible": false },
+		  { "targets": 0, "visible": false },
+		  { "orderData": [3,2], "targets": 2 },
+		  { "targets": 3, "visible": false },
+		  { "targets": 7, "orderable": false },
 		],
 		
 		"fnInitComplete": function(oSettings, json) {
@@ -32,9 +33,18 @@ $(document).ready(function() {
 	});
 });
 $(document).ready(function() {
-	$(".clickableRow").click(function() {
-		window.document.location = $(this).data("url");
+	$(".clickable_row tr").click(function() {
+		location.href = $(this).data("url");
 	});
+});
+
+$(document).ready(function() {
+	$('.raid-popover').popover({
+		html: true,
+		delay: 200
+	}).click(function(e) {
+        e.preventDefault();
+    });
 });
 </script>
 <!-- ENDIF -->

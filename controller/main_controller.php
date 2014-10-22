@@ -51,12 +51,26 @@ class main_controller implements main_interface
 		$firstfuture = 0;
 		while($row = $this->db->sql_fetchrow($result))
 		{
-			if($row['raid_time'] >= time() && $firstfuture == 0) $firstfuture = 1;
+			$raid_end = explode(':', $row['end_time']);
+			$raid_endtime = mktime($raid_end[0], $raid_end[1], 0, date("n", $row['raid_time']), date("j", $row['raid_time']), date("Y", $row['raid_time']));
+			if($raid_endtime >= time() && $firstfuture == 0) $firstfuture = 1;
+			
+			$sql = "SELECT e.name FROM 
+				" . $this->container->getParameter('tables.clausi.raidplaner_events') . " e, 
+				" . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " s 
+				WHERE s.id = '".$row['schedule_id']."' 
+					AND e.id = s.event_id
+				";
+			$result_event = $this->db->sql_query($sql);
+			$row_event = $this->db->sql_fetchrow($result_event);
+			$this->db->sql_freeresult($result_event);
+			
 			$this->template->assign_block_vars('n_raids', array(
+				'EVENTNAME' => $row_event['name'],
 				'ID' => $row['id'],
 				'DATE' => $this->user->format_date($row['raid_time']),
 				'TIMESTAMP' => $row['raid_time'],
-				'FLAG' => ($row['raid_time'] < time()) ? 'past' : 'future',
+				'FLAG' => ($raid_endtime < time()) ? 'past' : 'future',
 				'FIRSTFUTURE' => $firstfuture,
 				'DAY' => date('l', $row['raid_time']),
 				'INVITE_TIME' => $row['invite_time'],
@@ -66,8 +80,9 @@ class main_controller implements main_interface
 				'MEMBERS' => '',
 				'U_RAID' => $this->helper->route('clausi_raidplaner_controller_view', array('id' => $row['id'])),
 			));
-			if($row['raid_time'] >= time()) $firstfuture = 2;
+			if($raid_endtime >= time()) $firstfuture = 2;
 		}
+		$this->db->sql_freeresult($result);
 		
 		$this->template->assign_vars(array(
 			'RAIDPLANER_MESSAGE' => $message,

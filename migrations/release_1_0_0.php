@@ -187,7 +187,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_events' ."` (`id`, `name`, `raidsize`) VALUES
 			(1, 'Mythic', 20),
 			(2, 'Heroic', 30),
-			(3, 'Normal', 30);";
+			(3, 'Normal', 30),
+			(4, 'WoD', 20);";
 		$result = $this->db->sql_query($sql);
 	}
 	

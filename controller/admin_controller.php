@@ -400,7 +400,7 @@ class admin_controller implements admin_interface
 					$user_data[$key] = $value+1;
 				}
 				$this->cp->update_profile_field_data($user_id, $user_data);
-				$this->var_display($user_data);
+				// $this->var_display($user_data);
 			}
 			
 			trigger_error($this->user->lang('ACP_RAIDPLANER_USERS_SAVED') . adm_back_link($this->u_action));
