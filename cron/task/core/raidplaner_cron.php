@@ -34,7 +34,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-	echo "run";
+	// echo "run";
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'
@@ -149,16 +149,11 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			'end_time' => $this->end_time,
 			'autoaccept' => $this->autoaccept,
 		);
-		
 		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
 		// Add attendees if autoaccept
 		if($this->autoaccept == 1) $this->raidplaner->addAttendees($this->db->sql_nextid());
-		
-		//  truncate for tests
-		$sql = "TRUNCATE ". $this->container->getParameter('tables.clausi.raidplaner_raids');
-		$this->db->sql_query($sql);
 	}
 	
 	/**

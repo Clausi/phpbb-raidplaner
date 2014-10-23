@@ -119,7 +119,7 @@ class main_controller implements main_interface
 	{
 		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 		$this->cp = $this->container->get('profilefields.manager');
-		echo "add";
+
 		foreach($user_ary as $permission)
 		{
 			$user_data = $this->cp->grab_profile_fields_data($permission['u_raidplaner']);
@@ -127,17 +127,42 @@ class main_controller implements main_interface
 			{
 				if($user_data[$user_id]['raidplaner_role']['value']-1 > 0 && $user_data[$user_id]['raidplaner_class']['value']-1 > 0)
 				{
-					$sql_ary = array(
+					$sql_ary_index = array(
 						'user_id' => $user_id,
 						'raid_id' => $raid_id,
+					);
+					$sql_ary = array(
 						'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
 						'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
 						'status' => 1,
 						'signup_time' => time(),
 					);
-					
-					$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+					$sql = "INSERT INTO " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+						" . $this->db->sql_build_array('INSERT_SELECT', array_merge($sql_ary_index, $sql_ary)) . "
+						FROM dual
+							WHERE NOT EXISTS
+							( SELECT *
+								FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
+								WHERE " . $this->db->sql_build_array('SELECT', $sql_ary_index) . " 
+							);";
 					$this->db->sql_query($sql);
+					
+					// $sql = "INSERT INTO " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+							// (user_id, raid_id, role, class, status, signup_time) 
+							// SELECT 
+								// '".$user_id."', 
+								// '".$raid_id."', 
+								// '".($user_data[$user_id]['raidplaner_role']['value']-1)."',
+								// '".($user_data[$user_id]['raidplaner_class']['value']-1)."',
+								// '1',
+								// '".time()."' 
+							// FROM dual
+							// WHERE NOT EXISTS
+							// ( SELECT *
+								// FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
+								// WHERE user_id = '".$user_id."' AND raid_id = '".$raid_id."'
+							// );";
+					// $this->db->sql_query($sql);
 				}
 			}
 		}
