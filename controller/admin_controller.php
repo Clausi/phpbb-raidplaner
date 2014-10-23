@@ -24,6 +24,7 @@ class admin_controller implements admin_interface
 	protected $u_action;
 	protected $auth;
 	protected $type_collection;
+	protected $raidplaner;
 
 	/**
 	* Constructor
@@ -33,7 +34,7 @@ class admin_controller implements admin_interface
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\auth\auth $auth, ContainerInterface $container, \phpbb\di\service_collection $type_collection)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\auth\auth $auth, ContainerInterface $container, \phpbb\di\service_collection $type_collection, \clausi\raidplaner\controller\main_controller $raidplaner)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -43,6 +44,7 @@ class admin_controller implements admin_interface
 		$this->auth = $auth;
 		$this->container = $container;
 		$this->type_collection = $type_collection;
+		$this->raidplaner = $raidplaner;
 	}
 	
 	public function display_options()
@@ -308,19 +310,34 @@ class admin_controller implements admin_interface
 			$autoaccept = $this->request->variable('autoaccept', 1);
 			
 			if(!$event = $this->request->variable('event', 0)) trigger_error($this->user->lang('ACP_RAIDPLANER_ERROR') . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
-							
+			
 			$sql_ary = array(
 				'event_id' => $event,
-				'repeat_start' => strtotime($repeat_start),
-				'repeat_end' => strtotime($repeat_end),
+				'repeat_start' => strtotime($repeat_start . ' ' . $start_time),
+				'repeat_end' => strtotime($repeat_end . ' ' . $end_time),
 				'repeatable' => $repeatable,
+			);
+			$sql_ary_both = array(
 				'autoaccept' => $autoaccept,
 				'invite_time' => $invite_time,
 				'start_time' => $start_time,
 				'end_time' => $end_time,
 			);
-			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE id = '.$id;
+			
+			// $time = strtotime($repeat_start . ' ' . $start_time);
+			// $raid_start = explode(':', $start_time);
+			// $raid_time = mktime ($raid_start[0], $raid_start[1], 0, date("n", $time), date("j", $time), date("Y", $time));
+			// $sql_ary_raids = array(
+				// 'raid_time' => $raid_time,
+			// );
+			
+			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', array_merge($sql_ary, $sql_ary_both)) . ' WHERE id = ' . $id;
 			$this->db->sql_query($sql);
+			
+			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary_both) . ' WHERE schedule_id = ' . $id . ' AND raid_time > ' . time();
+			$this->db->sql_query($sql);
+			
+			if($autoaccept == 1) $this->raidplaner->addAttendees($id);
 			
 			trigger_error($this->user->lang('ACP_RAIDPLANER_SCHEDULE_SAVED') . adm_back_link($this->u_action));
 		}
@@ -359,7 +376,6 @@ class admin_controller implements admin_interface
 		$this->template->assign_vars(array(
 			'EVENT_NAME' => $event_name,
 			'S_EDIT_RAIDPLANER_SCHEDULE' => true,
-			'AUTOACCEPT' => true,
 			'U_BACK'	=> $this->u_action,
 			'U_ACTION'	=> $this->u_action . '&amp;action=edit',
 		));
@@ -375,7 +391,7 @@ class admin_controller implements admin_interface
 		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE id = ' . $id;
 		$this->db->sql_query($sql);
 		
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $id;
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $id . ' AND raid_time > ' . time();
 		$this->db->sql_query($sql);
 	}
 	

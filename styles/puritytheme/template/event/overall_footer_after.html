@@ -16,6 +16,7 @@ $(document).ready(function() {
 		
 		"columnDefs": [
 		  { "targets": 0, "visible": false },
+		  { "targets": 1, "visible": false },
 		  { "orderData": [3,2], "targets": 2 },
 		  { "targets": 3, "visible": false },
 		  { "targets": 7, "orderable": false },
@@ -32,6 +33,7 @@ $(document).ready(function() {
 		  filterTable(raidplanerTable, selectedValue);
 	});
 });
+
 $(document).ready(function() {
 	$(".clickable_row tbody > tr").click(function() {
 		location.href = $(this).data("url");

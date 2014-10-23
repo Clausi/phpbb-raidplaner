@@ -46,8 +46,9 @@ class main_controller implements main_interface
 		}
 		$message = '';
 		
-		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' ORDER BY raid_time";
+		// get all raids up to one year ago
+		// TODO Archive
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time > '".(time()-525600)."' ORDER BY raid_time";
 		$result = $this->db->sql_query($sql);
 		$firstfuture = 0;
 		while($row = $this->db->sql_fetchrow($result))

@@ -32,6 +32,7 @@ services:
             - @auth
             - @service_container
             - @profilefields.type_collection
+            - @clausi.raidplaner.main.controller
     cron.task.core.raidplaner:
         class: clausi\raidplaner\cron\task\core\raidplaner_cron
         arguments:
