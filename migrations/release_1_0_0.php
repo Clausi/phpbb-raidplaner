@@ -15,7 +15,6 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 			array('config.add', array('clausi_raidplaner_active', 0)),
 			array('config.add', array('clausi_raidplaner_cron_lastrun', 0)),
 			array('config.add', array('clausi_raidplaner_cron_interval', 60)),
-			array('config.add', array('clausi_raidplaner_cron_attendee_lastrun', 0)),
 
 			array('module.add', array(
 				'acp',
@@ -52,20 +51,17 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
-				$this->table_prefix . 'raidplaner_buffs' => array(
+				$this->table_prefix . 'rp_buffs' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'active' => array('TINT:1', 1),
 						'name' => array('VCHAR', ''),
 						'image' => array('VCHAR', ''),
 					),
-					'PRIMARY_KEY'	=> array('id'),
-					'KEYS'		=> array(
-						'id' => array('PRIMARY', array('id'))
-					)
+					'PRIMARY_KEY'	=> 'id',
 				),
 				
-				$this->table_prefix . 'raidplaner_comp' => array(
+				$this->table_prefix . 'rp_comp' => array(
 					'COLUMNS' => array(
 						'class' => array('VCHAR', NULL),
 						'role' => array('VCHAR', NULL),
@@ -74,7 +70,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 					)
 				),
 				
-				$this->table_prefix . 'raidplaner_events' => array(
+				$this->table_prefix . 'rp_events' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'name' => array('VCHAR', ''),
@@ -82,13 +78,10 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'precreate' => array('TINT:4', 4),
 						'deleted' => array('TIMESTAMP', 0),
 					),
-					'PRIMARY_KEY'	=> array('id'),
-					'KEYS'		=> array(
-						'id' => array('PRIMARY', array('id'))
-					)
+					'PRIMARY_KEY'	=> 'id',
 				),
 				
-				$this->table_prefix . 'raidplaner_logs' => array(
+				$this->table_prefix . 'rp_logs' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'user_id' => array('UINT', 0),
@@ -99,30 +92,28 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'log_ip' => array('VCHAR:40', '0'),
 						'log_time' => array('TIMESTAMP', 0),
 					),
-					'PRIMARY_KEY'	=> array('id'),
-					'KEYS'		=> array(
-						'id' => array('PRIMARY', array('id'))
-					)
+					'PRIMARY_KEY'	=> 'id',
 				),
 				
-				$this->table_prefix . 'raidplaner_attendees' => array(
+				$this->table_prefix . 'rp_attendees' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'user_id' => array('UINT', 0),
 						'raid_id' => array('UINT', 0),
+						'role' => array('TINT:4', '0'),
+						'class' => array('TINT:4', '0'),
 						'status' => array('TINT:1', 1),
-						'comment' => array('TEXT', ''),
-						'role' => array('VCHAR:20', '0'),
+						'comment' => array('TEXT', NULL),
 						'signup_time' => array('TIMESTAMP', '0'),
 						'adminchange_time' => array('TIMESTAMP', 0),
 					),
-					'PRIMARY_KEY'	=> array('id'),
+					'PRIMARY_KEY'	=> 'id',
 					'KEYS'		=> array(
-						'id' => array('PRIMARY', array('id'))
+						'u_index' => array('UNIQUE', array('user_id', 'raid_id'))
 					)
 				),
 				
-				$this->table_prefix . 'raidplaner_raids' => array(
+				$this->table_prefix . 'rp_raids' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'schedule_id' =>array('UINT', NULL),
@@ -136,13 +127,10 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', NULL),
 					),
-					'PRIMARY_KEY'	=> array('id'),
-					'KEYS'		=> array(
-						'id' => array('PRIMARY', array('id'))
-					)
+					'PRIMARY_KEY'	=> 'id',
 				),
 				
-				$this->table_prefix . 'raidplaner_schedule' => array(
+				$this->table_prefix . 'rp_schedule' => array(
 					'COLUMNS' => array(
 						'id' => array('UINT', NULL, 'auto_increment'),
 						'event_id' => array('UINT', 0),
@@ -156,10 +144,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', NULL),
 					),
-					'PRIMARY_KEY'	=> array('id'),
-					'KEYS'		=> array(
-						'id' => array('PRIMARY', array('id'))
-					)
+					'PRIMARY_KEY'	=> 'id',
 				),
 			),
 
@@ -171,20 +156,20 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'drop_tables'    => array(
-				$this->table_prefix . 'raidplaner_raids',
-				$this->table_prefix . 'raidplaner_schedule',
-				$this->table_prefix . 'raidplaner_attendees',
-				$this->table_prefix . 'raidplaner_logs',
-				$this->table_prefix . 'raidplaner_events',
-				$this->table_prefix . 'raidplaner_comp',
-				$this->table_prefix . 'raidplaner_buffs',
+				$this->table_prefix . 'rp_raids',
+				$this->table_prefix . 'rp_schedule',
+				$this->table_prefix . 'rp_attendees',
+				$this->table_prefix . 'rp_logs',
+				$this->table_prefix . 'rp_events',
+				$this->table_prefix . 'rp_comp',
+				$this->table_prefix . 'rp_buffs',
 			),
 		);
 	}
 	
 	public function add_raidplaner_event_data()
 	{
-		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_events' ."` (`id`, `name`, `raidsize`) VALUES
+		$sql = "INSERT INTO `". $this->table_prefix . 'rp_events' ."` (`id`, `name`, `raidsize`) VALUES
 			(1, 'Mythic', 20),
 			(2, 'Heroic', 30),
 			(3, 'Normal', 30),
@@ -194,7 +179,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	
 	public function add_raidplaner_buff_data()
 	{
-		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_buffs' ."` (`id`, `active`, `name`, `image`) VALUES
+		$sql = "INSERT INTO `". $this->table_prefix . 'rp_buffs' ."` (`id`, `active`, `name`, `image`) VALUES
 			(1, 1, 'Bloodlust', 'bloodlust.jpg'),
 			(2, 1, 'Attack Power', 'attackpower.jpg'),
 			(3, 1, 'Attack Speed', 'attackspeed.jpg'),
@@ -215,7 +200,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	
 	public function add_raidplaner_comp_data()
 	{
-		$sql = "INSERT INTO `". $this->table_prefix . 'raidplaner_comp' ."` (`class`, `role`, `buff`, `maybe`) VALUES
+		$sql = "INSERT INTO `". $this->table_prefix . 'rp_comp' ."` (`class`, `role`, `buff`, `maybe`) VALUES
 			('warrior', 'tank', 2, 1),
 			('warrior', 'tank', 15, 1),
 			('warrior', 'tank', 4, 0),

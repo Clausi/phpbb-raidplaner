@@ -18,6 +18,7 @@ class main_controller implements main_interface
 	/* @var \phpbb\user */
 	protected $user;
 	protected $auth;
+	protected $cp;
 	
 	/* @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -111,6 +112,42 @@ class main_controller implements main_interface
 			'S_RAIDPLANER_PAGE' => 'index',
 		));
 		return $this->helper->render('raidplaner_view.html', $this->user->lang['RAIDPLANER_RAID'] . ': ' . $id);
+	}
+	
+	
+	public function addAttendees($raid_id)
+	{
+		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
+		$this->cp = $this->container->get('profilefields.manager');
+		echo "add";
+		foreach($user_ary as $permission)
+		{
+			$user_data = $this->cp->grab_profile_fields_data($permission['u_raidplaner']);
+			foreach($permission['u_raidplaner'] as $user_id)
+			{
+				if($user_data[$user_id]['raidplaner_role']['value']-1 > 0 && $user_data[$user_id]['raidplaner_class']['value']-1 > 0)
+				{
+					$sql_ary = array(
+						'user_id' => $user_id,
+						'raid_id' => $raid_id,
+						'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
+						'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
+						'status' => 1,
+						'signup_time' => time(),
+					);
+					
+					$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+					$this->db->sql_query($sql);
+				}
+			}
+		}
+	}
+	
+	private function var_display($var)
+	{
+		echo "<pre>";
+		print_r($var);
+		echo "</pre>";
 	}
 	
 }

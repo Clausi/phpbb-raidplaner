@@ -9,6 +9,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	protected $config;
 	protected $db;
 	protected $container;
+	protected $raidplaner;
 	
 	protected $schedule_id;
 	protected $raid_time;
@@ -18,11 +19,12 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	protected $autoaccept;
 
 	
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, ContainerInterface $container)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, ContainerInterface $container, \clausi\raidplaner\controller\main_controller $raidplaner)
 	{
 		$this->config = $config;
 		$this->db = $db;
 		$this->container = $container;
+		$this->raidplaner = $raidplaner;
 	}
 	
 	/**
@@ -32,6 +34,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
+	echo "run";
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'
@@ -148,6 +151,13 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		);
 		
 		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+		
+		// Add attendees if autoaccept
+		if($this->autoaccept == 1) $this->raidplaner->addAttendees($this->db->sql_nextid());
+		
+		//  truncate for tests
+		$sql = "TRUNCATE ". $this->container->getParameter('tables.clausi.raidplaner_raids');
 		$this->db->sql_query($sql);
 	}
 	
