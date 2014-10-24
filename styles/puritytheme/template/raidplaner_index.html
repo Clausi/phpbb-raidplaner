@@ -16,9 +16,9 @@
 				<div class="form-group pull-right">
 					<label for="raidplanerFilter">Filter:</label> 
 					<select id="raidplanerFilter">
-						<option value="0">all</option>
-						<option value="past">past raids</option>
-						<option value="future" selected="selected">future raids</option>
+						<option value="0">{L_ALL}</option>
+						<option value="past">{L_PAST_RAIDS}</option>
+						<option value="future" selected="selected">{L_FUTURE_RAIDS}</option>
 					</select>
 				</div>
 			</div>
@@ -28,12 +28,12 @@
 				<thead>
 					<tr>
 						<th>Flag</th>
-						<th>Event</th>
-						<th>Date</th>
+						<th>{L_EVENT}</th>
+						<th>{L_DATE}</th>
 						<th>Timestamp</th>
-						<th>Day</th>
-						<th>Note</th>
-						<th>Members</th>
+						<th>{L_DAY}</th>
+						<th style="min-width: 300px;">{L_NOTE}</th>
+						<th>{L_MEMBERS}</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
@@ -47,7 +47,12 @@
 						<td>{n_raids.TIMESTAMP}</td>
 						<td>{n_raids.DAY}</td>
 						<td>{n_raids.NOTE}</td>
-						<td>{n_raids.MEMBERS}</td>
+						<td>
+							<strong><abbr title="{L_ACCEPT}" class="text-success">{n_raids.MEMBERS_ACCEPT} / {n_raids.RAIDSIZE}</abbr></strong><br />
+							<small>
+								<abbr title="{L_ATTENDING}">{n_raids.MEMBERS_ATTENDING}</abbr> / <abbr title="{L_SUBSTITUTE}" class="text-warning">{n_raids.MEMBERS_SUBSTITUTE}</abbr> / <abbr title="{L_DECLINE}" class="text-danger">{n_raids.MEMBERS_DECLINE}</abbr>
+							</small>
+						</td>
 						<td>&nbsp;</td>
 					</tr>
 					<!-- END n_raids -->

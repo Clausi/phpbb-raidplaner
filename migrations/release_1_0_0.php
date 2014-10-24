@@ -53,12 +53,12 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 			'add_tables' => array(
 				$this->table_prefix . 'rp_buffs' => array(
 					'COLUMNS' => array(
-						'id' => array('UINT', NULL, 'auto_increment'),
+						'buff_id' => array('UINT', NULL, 'auto_increment'),
 						'active' => array('TINT:1', 1),
 						'name' => array('VCHAR', ''),
 						'image' => array('VCHAR', ''),
 					),
-					'PRIMARY_KEY'	=> 'id',
+					'PRIMARY_KEY'	=> 'buff_id',
 				),
 				
 				$this->table_prefix . 'rp_comp' => array(
@@ -72,18 +72,18 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				
 				$this->table_prefix . 'rp_events' => array(
 					'COLUMNS' => array(
-						'id' => array('UINT', NULL, 'auto_increment'),
+						'event_id' => array('UINT', NULL, 'auto_increment'),
 						'name' => array('VCHAR', ''),
 						'raidsize' => array('USINT', 20),
 						'precreate' => array('TINT:4', 4),
 						'deleted' => array('TIMESTAMP', 0),
 					),
-					'PRIMARY_KEY'	=> 'id',
+					'PRIMARY_KEY'	=> 'event_id',
 				),
 				
 				$this->table_prefix . 'rp_logs' => array(
 					'COLUMNS' => array(
-						'id' => array('UINT', NULL, 'auto_increment'),
+						'log_id' => array('UINT', NULL, 'auto_increment'),
 						'user_id' => array('UINT', 0),
 						'raid_id' => array('UINT', 0),
 						'changed_user' => array('STEXT', ''),
@@ -92,12 +92,12 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'log_ip' => array('VCHAR:40', '0'),
 						'log_time' => array('TIMESTAMP', 0),
 					),
-					'PRIMARY_KEY'	=> 'id',
+					'PRIMARY_KEY'	=> 'log_id',
 				),
 				
 				$this->table_prefix . 'rp_attendees' => array(
 					'COLUMNS' => array(
-						'id' => array('UINT', NULL, 'auto_increment'),
+						'attendee_id' => array('UINT', NULL, 'auto_increment'),
 						'user_id' => array('UINT', 0),
 						'raid_id' => array('UINT', 0),
 						'role' => array('TINT:4', '0'),
@@ -107,7 +107,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'signup_time' => array('TIMESTAMP', '0'),
 						'adminchange_time' => array('TIMESTAMP', 0),
 					),
-					'PRIMARY_KEY'	=> 'id',
+					'PRIMARY_KEY'	=> 'attendee_id',
 					'KEYS'		=> array(
 						'u_index' => array('UNIQUE', array('user_id', 'raid_id'))
 					)
@@ -115,7 +115,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 				
 				$this->table_prefix . 'rp_raids' => array(
 					'COLUMNS' => array(
-						'id' => array('UINT', NULL, 'auto_increment'),
+						'raid_id' => array('UINT', NULL, 'auto_increment'),
 						'schedule_id' =>array('UINT', NULL),
 						'raid_time' => array('TIMESTAMP', 0),
 						'invite_time' => array('VCHAR:20', NULL),
@@ -127,12 +127,12 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', NULL),
 					),
-					'PRIMARY_KEY'	=> 'id',
+					'PRIMARY_KEY'	=> 'raid_id',
 				),
 				
 				$this->table_prefix . 'rp_schedule' => array(
 					'COLUMNS' => array(
-						'id' => array('UINT', NULL, 'auto_increment'),
+						'schedule_id' => array('UINT', NULL, 'auto_increment'),
 						'event_id' => array('UINT', 0),
 						'invite_time' => array('VCHAR:20', NULL),
 						'start_time' => array('VCHAR:20', NULL),
@@ -144,7 +144,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', NULL),
 					),
-					'PRIMARY_KEY'	=> 'id',
+					'PRIMARY_KEY'	=> 'schedule_id',
 				),
 			),
 
@@ -169,7 +169,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	
 	public function add_raidplaner_event_data()
 	{
-		$sql = "INSERT INTO `". $this->table_prefix . 'rp_events' ."` (`id`, `name`, `raidsize`) VALUES
+		$sql = "INSERT INTO `". $this->table_prefix . 'rp_events' ."` (`event_id`, `name`, `raidsize`) VALUES
 			(1, 'Mythic', 20),
 			(2, 'Heroic', 30),
 			(3, 'Normal', 30),
@@ -179,7 +179,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	
 	public function add_raidplaner_buff_data()
 	{
-		$sql = "INSERT INTO `". $this->table_prefix . 'rp_buffs' ."` (`id`, `active`, `name`, `image`) VALUES
+		$sql = "INSERT INTO `". $this->table_prefix . 'rp_buffs' ."` (`buff_id`, `active`, `name`, `image`) VALUES
 			(1, 1, 'Bloodlust', 'bloodlust.jpg'),
 			(2, 1, 'Attack Power', 'attackpower.jpg'),
 			(3, 1, 'Attack Speed', 'attackspeed.jpg'),

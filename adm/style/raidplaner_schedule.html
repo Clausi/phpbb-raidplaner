@@ -9,7 +9,7 @@
 
 <fieldset>
 
-	<input type="hidden" name="id" value="{ID}" />
+	<input type="hidden" name="id" value="{SCHEDULE_ID}" />
 	<input type="hidden" name="show" value="add" />
 	
 	<dl>
@@ -21,7 +21,7 @@
 		<dd>
 			<select name="event" id="event">
 				<!-- BEGIN n_events -->
-					<option value="{n_events.ID}"<!-- IF n_events.ID == EVENT_ID --> selected="selected"<!-- ENDIF -->>{n_events.NAME} ({n_events.RAIDSIZE})</option>
+					<option value="{n_events.EVENT_ID}"<!-- IF n_events.EVENT_ID == EVENT_ID --> selected="selected"<!-- ENDIF -->>{n_events.NAME} ({n_events.RAIDSIZE})</option>
 				<!-- END n_events -->
 			</select>
 		</dd>

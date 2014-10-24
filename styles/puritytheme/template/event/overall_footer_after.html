@@ -4,15 +4,22 @@ $(document).ready(function() {
 	function filterTable(table, filter) {
 		if(filter == 0) table.fnFilter( '' , 0, false);
 		else table.fnFilter("^"+filter+"$", 0, true);
+		clickableRow();
+	}
+	
+	function clickableRow() {
+		$(".clickable_row tbody > tr").click(function() {
+			location.href = $(this).data("url");
+		});
 	}
 	
 	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
 		"oLanguage": {
-			"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"
+			<!-- IF S_USER_LANG == 'de-de' -->"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"<!-- ENDIF -->
 		},
 		"order": [[ 2, "asc" ]],
 		"pageLength": 10,
-		"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "Alle"] ],
+		"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "{L_ALL}"] ],
 		
 		"columnDefs": [
 		  { "targets": 0, "visible": false },
@@ -31,12 +38,6 @@ $(document).ready(function() {
 	$('select#raidplanerFilter').on('change',function(){
         var selectedValue = $(this).val();
 		  filterTable(raidplanerTable, selectedValue);
-	});
-});
-
-$(document).ready(function() {
-	$(".clickable_row tbody > tr").click(function() {
-		location.href = $(this).data("url");
 	});
 });
 

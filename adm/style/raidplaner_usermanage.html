@@ -24,7 +24,7 @@
 				<td>
 					<!-- BEGIN profile_fields -->
 						<!-- IF n_users.profile_fields.FIELD_ID == 'pf_raidplaner_class' -->
-							<select id="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]" name="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]">
+							<select id="users[{n_users.USER_ID}][{n_users.profile_fields.FIELD_ID}]" name="users[{n_users.USER_ID}][{n_users.profile_fields.FIELD_ID}]">
 							<!-- BEGIN options -->
 								<option value="{n_users.profile_fields.options.OPTION_ID}"<!-- IF n_users.profile_fields.options.OPTION_ID == n_users.profile_fields.USER_DATA --> selected="selected"<!-- ENDIF -->>{n_users.profile_fields.options.LANG_VALUE}</option>
 							<!-- END options -->
@@ -35,7 +35,7 @@
 				<td>
 					<!-- BEGIN profile_fields -->
 						<!-- IF n_users.profile_fields.FIELD_ID == 'pf_raidplaner_role' -->
-							<select id="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]" name="users[{n_users.ID}][{n_users.profile_fields.FIELD_ID}]">
+							<select id="users[{n_users.USER_ID}][{n_users.profile_fields.FIELD_ID}]" name="users[{n_users.USER_ID}][{n_users.profile_fields.FIELD_ID}]">
 							<!-- BEGIN options -->
 								<option value="{n_users.profile_fields.options.OPTION_ID}"<!-- IF n_users.profile_fields.options.OPTION_ID == n_users.profile_fields.USER_DATA --> selected="selected"<!-- ENDIF -->>{n_users.profile_fields.options.LANG_VALUE}</option>
 							<!-- END options -->
