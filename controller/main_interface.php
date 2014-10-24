@@ -11,5 +11,6 @@ interface main_interface
 	public function addAttendees($raid_id);
 	public function handle();
 	public function view($id);
+	public function setUserstatus($raid_id, $status_id);
 	
 }

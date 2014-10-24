@@ -1,0 +1,11 @@
+
+#datatables-raidplaner  a {
+	text-decoration: none;
+}
+
+.table-striped.dataTable tbody tr.active td {
+	background-color: #424242 !important;
+}
+.table.dataTable tbody tr.active:hover td {
+	background-color: #282828 !important;
+}

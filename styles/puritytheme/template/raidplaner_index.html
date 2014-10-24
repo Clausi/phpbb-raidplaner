@@ -43,7 +43,7 @@
 					<tr class="<!-- IF n_raids.FIRSTFUTURE == 1 -->active<!-- ENDIF -->" data-url="{n_raids.U_RAID}">
 						<td>{n_raids.FLAG}</td>
 						<td>{n_raids.EVENTNAME}</td>
-						<td>{n_raids.DATE}</td>
+						<td><a href="{n_raids.U_RAID}">{n_raids.DATE}</a></td>
 						<td>{n_raids.TIMESTAMP}</td>
 						<td>{n_raids.DAY}</td>
 						<td>{n_raids.NOTE}</td>
@@ -53,7 +53,20 @@
 								<abbr title="{L_ATTENDING}">{n_raids.MEMBERS_ATTENDING}</abbr> / <abbr title="{L_SUBSTITUTE}" class="text-warning">{n_raids.MEMBERS_SUBSTITUTE}</abbr> / <abbr title="{L_DECLINE}" class="text-danger">{n_raids.MEMBERS_DECLINE}</abbr>
 							</small>
 						</td>
-						<td>&nbsp;</td>
+						<td class="no_click">
+						<!-- IF U_RAIDPLANER -->
+							<div class="btn-group">
+								<button type="button" id="btn_{n_raids.ID}" class="btn <!-- IF n_raids.USERSTATUS == 2 -->btn-danger<!-- ELSEIF n_raids.USERSTATUS == 3 -->btn-warning<!-- ELSEIF n_raids.USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle" data-toggle="dropdown">
+									<!-- IF n_raids.USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF n_raids.USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF n_raids.USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF n_raids.USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li class="bg-primary"><a href="{n_raids.U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+									<li class="bg-warning"><a href="{n_raids.U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
+									<li class="bg-danger"><a href="{n_raids.U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
+								</ul>
+							</div>
+						<!-- ENDIF --> 
+						</td>
 					</tr>
 					<!-- END n_raids -->
 				</tbody>

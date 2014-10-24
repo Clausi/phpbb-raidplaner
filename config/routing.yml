@@ -5,3 +5,7 @@ clausi_raidplaner_controller:
 clausi_raidplaner_controller_view:
     pattern: /raidplaner/view/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:view, view: "0" }
+
+clausi_raidplaner_controller_status:
+    pattern: /raidplaner/status/{raid_id}/{status_id}
+    defaults: { _controller: clausi.raidplaner.main.controller:setUserstatus, raid_id: "0", status_id: "0" }

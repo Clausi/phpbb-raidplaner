@@ -15,6 +15,8 @@ $lang = array_merge($lang, array(
 	'RAIDPLANER_RAID' => 'Raid',
 	'RAIDPLANER_INACTIVE' => 'Raidplaner currently deactivated.',
 	'RAIDPLANER_INVALID_ID' => 'No valid raid id.',
+	'RAIDPLANER_INVALID_STATUS' => 'No valid status.',
+	'RAIDPLANER_INVALID_USER' => 'No permission.',
 	'RAIDPLANER_CLASS' => 'Class',
 	'RAIDPLANER_ROLE' => 'Role',
 	'ALL' => 'All',
@@ -28,4 +30,5 @@ $lang = array_merge($lang, array(
 	'ACCEPT' => 'Accept',
 	'DECLINE' => 'Decline',
 	'SUBSTITUTE' => 'Substitute',
+	'NOT_SIGNUP' => 'Not signed up',
 ));

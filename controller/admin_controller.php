@@ -399,14 +399,37 @@ class admin_controller implements admin_interface
 			}
 			$this->cp = $this->container->get('profilefields.manager');
 			$users = $this->request->variable('users', array(0 => array('' => 0)));
+			
+			$key_raid = '';
 
 			foreach( $users as $user_id => $user_data )
 			{
 				foreach( $user_data as $key => $value )
 				{
 					$user_data[$key] = $value+1;
+					
+					$key_raid = '';
+					switch($key)
+					{
+						case 'pf_raidplaner_class':
+							$key_raid = 'class';
+						break;
+						case 'pf_raidplaner_role':
+							$key_raid = 'role';
+						break;
+					}
+					$raid_data[$key_raid] = $user_data[$key];
 				}
 				$this->cp->update_profile_field_data($user_id, $user_data);
+
+				// Update attendees of future raids to reflect new role and class
+				$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+					SET " . $this->db->sql_build_array('UPDATE', $raid_data) . " 
+					WHERE 
+						user_id = '".$user_id."' 
+						AND raid_id IN ( SELECT raid_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time > '".time()."' )
+					";
+				$result = $this->db->sql_query($sql);
 			}
 			
 			trigger_error($this->user->lang('ACP_RAIDPLANER_USERS_SAVED') . adm_back_link($this->u_action));

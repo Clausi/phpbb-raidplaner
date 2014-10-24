@@ -105,6 +105,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'status' => array('TINT:1', 1),
 						'comment' => array('TEXT', NULL),
 						'signup_time' => array('TIMESTAMP', '0'),
+						'change_time' => array('TIMESTAMP', '0'),
 						'adminchange_time' => array('TIMESTAMP', 0),
 					),
 					'PRIMARY_KEY'	=> 'attendee_id',
