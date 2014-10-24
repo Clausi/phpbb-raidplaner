@@ -48,9 +48,9 @@
 						<td>{n_raids.DAY}</td>
 						<td>{n_raids.NOTE}</td>
 						<td>
-							<strong><abbr title="{L_ACCEPT}" class="text-success">{n_raids.MEMBERS_ACCEPT} / {n_raids.RAIDSIZE}</abbr></strong><br />
+							<strong><abbr title="{L_ACCEPT}" class="text-success" id="accept_{n_raids.ID}">{n_raids.MEMBERS_ACCEPT} / {n_raids.RAIDSIZE}</abbr></strong><br />
 							<small>
-								<abbr title="{L_ATTENDING}">{n_raids.MEMBERS_ATTENDING}</abbr> / <abbr title="{L_SUBSTITUTE}" class="text-warning">{n_raids.MEMBERS_SUBSTITUTE}</abbr> / <abbr title="{L_DECLINE}" class="text-danger">{n_raids.MEMBERS_DECLINE}</abbr>
+								<abbr title="{L_ATTENDING}" id="attending_{n_raids.ID}">{n_raids.MEMBERS_ATTENDING}</abbr> / <abbr title="{L_SUBSTITUTE}" class="text-warning" id="substitute_{n_raids.ID}">{n_raids.MEMBERS_SUBSTITUTE}</abbr> / <abbr title="{L_DECLINE}" class="text-danger" id="decline_{n_raids.ID}">{n_raids.MEMBERS_DECLINE}</abbr>
 							</small>
 						</td>
 						<td class="no_click">

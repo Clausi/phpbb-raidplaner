@@ -17,6 +17,7 @@ $lang = array_merge($lang, array(
 	'RAIDPLANER_INVALID_ID' => 'No valid raid id.',
 	'RAIDPLANER_INVALID_STATUS' => 'No valid status.',
 	'RAIDPLANER_INVALID_USER' => 'No permission.',
+	'RAIDPLANER_INVALID_RAID' => 'Invalid raid.',
 	'RAIDPLANER_CLASS' => 'Class',
 	'RAIDPLANER_ROLE' => 'Role',
 	'ALL' => 'All',

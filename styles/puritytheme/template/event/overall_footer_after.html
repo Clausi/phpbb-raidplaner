@@ -85,8 +85,11 @@ phpbb.addAjaxCallback('raidplaner_status', function(res) {
         newClass = 'btn-default';
 	}
 	
-	
 	$('#btn_' + res.RAID_ID).addClass(newClass).html('<i class="fa fa-'+ icon[res.STATUS_ID] +'"></i> ' + lang_status[res.STATUS_ID] + ' <span class="caret"></span>');
+	//$('#accept_' + res.RAID_ID).text(res.ACCEPT + ' / ' + res.RAIDSIZE);
+	$('#decline_' + res.RAID_ID).text(res.DECLINE);
+	$('#substitute_' + res.RAID_ID).text(res.SUBSTITUTE);
+	$('#attending_' + res.RAID_ID).text(res.ATTENDING);
 
 	phpbb.closeDarkenWrapper(3000);
 });

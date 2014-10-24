@@ -73,18 +73,19 @@ class main_controller implements main_interface
 		$result_attendee = $this->db->sql_query($sql);
 		$row_attendees = $this->db->sql_fetchrowset($result_attendee);
 
-		$sql = "SELECT 
-			raid_id,
-			SUM(IF(status = 1, 1, 0)) AS attending,
-			SUM(IF(status = 2, 1, 0)) AS decline,
-			SUM(IF(status = 3, 1, 0)) AS substitute,
-			SUM(IF(status = 4, 1, 0)) AS accept
-			FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') ."
-			GROUP BY raid_id
-			";
-		$result_count = $this->db->sql_query($sql);
-		$row_count = $this->db->sql_fetchrowset($result_count);
-		$this->db->sql_freeresult($result_count);
+		// $sql = "SELECT 
+			// raid_id,
+			// SUM(IF(status = 1, 1, 0)) AS attending,
+			// SUM(IF(status = 2, 1, 0)) AS decline,
+			// SUM(IF(status = 3, 1, 0)) AS substitute,
+			// SUM(IF(status = 4, 1, 0)) AS accept
+			// FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') ."
+			// GROUP BY raid_id
+			// ";
+		// $result_count = $this->db->sql_query($sql);
+		// $row_count = $this->db->sql_fetchrowset($result_count);
+		// $this->db->sql_freeresult($result_count);
+		$row_count = $this->getRaidmemberCount();
 		
 		$firstfuture = 0;
 		$memberCount = ['attending' => 0, 'decline' => 0, 'substitute' => 0, 'accept' => 0];
@@ -159,20 +160,20 @@ class main_controller implements main_interface
 		}
 		$message = false;
 		
-		$sql = "SELECT r.*, e.name, e.raidsize FROM 
-			" . $this->container->getParameter('tables.clausi.raidplaner_raids') . " r,
-			" . $this->container->getParameter('tables.clausi.raidplaner_events') . " e, 
-			" . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " s 
-			WHERE 
-				r.raid_id = '". $raid_id ."'
-				AND r.deleted = '0' 
-				AND s.schedule_id = r.schedule_id  
-				AND e.event_id = s.event_id				
-			ORDER BY r.raid_time";
-		$result = $this->db->sql_query($sql);
-		
-		$row_raid = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
+		// $sql = "SELECT r.*, e.name, e.raidsize FROM 
+			// " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " r,
+			// " . $this->container->getParameter('tables.clausi.raidplaner_events') . " e, 
+			// " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " s 
+			// WHERE 
+				// r.raid_id = '". $raid_id ."'
+				// AND r.deleted = '0' 
+				// AND s.schedule_id = r.schedule_id  
+				// AND e.event_id = s.event_id				
+			// ORDER BY r.raid_time";
+		// $result = $this->db->sql_query($sql);
+		// $row_raid = $this->db->sql_fetchrow($result);
+		// $this->db->sql_freeresult($result);
+		$row_raid = $this->getRaidData($raid_id);
 		
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."'";
 		$result = $this->db->sql_query($sql);
@@ -249,7 +250,7 @@ class main_controller implements main_interface
 		if( ! $this->auth->acl_get('u_raidplaner'))
 		{
 			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
-			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
 		}
 		
 		if( ! is_numeric($raid_id))
@@ -262,6 +263,13 @@ class main_controller implements main_interface
 		{
 			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_STATUS']);
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+		}
+		
+		$raid_data = $this->getRaidData($raid_id);
+		if( $raid_data['raid_time'] < time())
+		{
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_RAID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
 		}
 		
 		$user_id = $this->user->data['user_id'];
@@ -279,6 +287,11 @@ class main_controller implements main_interface
 		{
 			$this->cp = $this->container->get('profilefields.manager');
 			$user_data = $this->cp->grab_profile_fields_data($user_id);
+			if( empty($user_data[$user_id]['raidplaner_role']['value']) || empty($user_data[$user_id]['raidplaner_class']['value']))
+			{
+				$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
+				return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+			}
 
 			$sql_ary = array(
 				'user_id' => $user_id,
@@ -292,9 +305,20 @@ class main_controller implements main_interface
 			$this->db->sql_query($sql);
 		}
 		
+		$row_count = $this->getRaidmemberCount($raid_id);
+		foreach($row_count as $raid)
+		{
+			if($raid['raid_id'] == $raid_id) $row_count = $raid;
+		}
+		
 		$response = array(
 			'RAID_ID' => $raid_id,
 			'STATUS_ID' => $status_id,
+			'ATTENDING' => $row_count['attending'],
+			'DECLINE' => $row_count['decline'],
+			'SUBSTITUTE' => $row_count['substitute'],
+			// 'ACCEPT' => $row_count['accept'],
+			// 'RAIDSIZE' => $raid_data['raidsize'],
 		);
 
 		if ($this->request->is_ajax())
@@ -304,6 +328,49 @@ class main_controller implements main_interface
 
 		$this->template->assign_vars($response);
 		return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
+	}
+	
+	
+	private function getRaidmemberCount($raid_id = 0)
+	{
+		if($raid_id == 0) $where = 'GROUP BY raid_id';
+		else $where = "WHERE raid_id = '".$raid_id."'";
+		
+		$sql = "SELECT 
+			raid_id,
+			SUM(IF(status = 1, 1, 0)) AS attending,
+			SUM(IF(status = 2, 1, 0)) AS decline,
+			SUM(IF(status = 3, 1, 0)) AS substitute,
+			SUM(IF(status = 4, 1, 0)) AS accept
+			FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') ."
+			".$where."
+			";
+		$result_count = $this->db->sql_query($sql);
+		$row_count = $this->db->sql_fetchrowset($result_count);
+		$this->db->sql_freeresult($result_count);
+		
+		return $row_count;
+	}
+	
+	
+	private function getRaidData($raid_id)
+	{
+		$sql = "SELECT r.*, e.name, e.raidsize FROM 
+			" . $this->container->getParameter('tables.clausi.raidplaner_raids') . " r,
+			" . $this->container->getParameter('tables.clausi.raidplaner_events') . " e, 
+			" . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " s 
+			WHERE 
+				r.raid_id = '". $raid_id ."'
+				AND r.deleted = '0' 
+				AND s.schedule_id = r.schedule_id  
+				AND e.event_id = s.event_id				
+			ORDER BY r.raid_time";
+		$result = $this->db->sql_query($sql);
+		
+		$row_raid = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row_raid;
 	}
 	
 	
