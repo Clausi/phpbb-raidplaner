@@ -1,6 +1,7 @@
 <!-- IF S_CLAUSI_RAIDPLANER_ACTIVE -->
 <script type="text/javascript">
 $(document).ready(function() {
+	
 	function filterTable(table, filter) {
 		if(filter == 0) table.fnFilter( '' , 0, false);
 		else table.fnFilter("^"+filter+"$", 0, true);
@@ -12,6 +13,14 @@ $(document).ready(function() {
 			if($(this).attr('class') != 'no_click') location.href = $(this).parent('tr').data('url');
 		});
 	}
+	
+	<!-- IF U_RAIDPLANER -->
+	function initCheckbox() {
+		$("input[id^=checkbox_]").change(function(e){
+			$("#label_"+this.id.split('_')[1]).toggleClass("fa-square-o fa-check-square-o");
+		});
+	}
+	<!-- ENDIF -->
 	
 	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
 		"oLanguage": {
@@ -32,6 +41,9 @@ $(document).ready(function() {
 		
 		"fnInitComplete": function(oSettings, json) {
 			createSelectpicker();
+			
+			<!-- IF U_RAIDPLANER -->initCheckbox();<!-- ENDIF -->
+			
 			filterTable(this, "future");
 		}
 	});
@@ -40,60 +52,50 @@ $(document).ready(function() {
         var selectedValue = $(this).val();
 		  filterTable(raidplanerTable, selectedValue);
 	});
-});
 
-$(document).ready(function() {
-	$('.raid-popover').popover({
-		html: true,
-		delay: 200
-	}).click(function(e) {
-        e.preventDefault();
-    });
-});
+	<!-- IF U_RAIDPLANER -->
+	var lang_status = {
+		0: '{L_NOT_SIGNUP}',
+		1: '{L_ATTENDING}',
+		2: '{L_DECLINE}',
+		3: '{L_SUBSTITUTE}',
+		4: '{L_ACCEPT}'
+	};
+	var icon = {
+		0: 'minus',
+		1: 'circle',
+		2: 'times',
+		3: 'minus',
+		4: 'check'
+	};
+	phpbb.addAjaxCallback('raidplaner_status', function(res) {
+		$(this).parent('div.btn-group');
+		$('#btn_' + res.RAID_ID).removeClass('btn-danger btn-warning btn-success btn-default');
+		var newClass = '';
+		switch(res.STATUS_ID) {
+		 case '1':
+			  newClass = 'btn-default';
+		 break;
+		 case '2':
+			  newClass = 'btn-danger';
+		 break;
+		case '3':
+			  newClass = 'btn-warning';
+		 break;
+		 default:
+			  newClass = 'btn-default';
+		}
+		
+		$('#btn_' + res.RAID_ID).addClass(newClass).html('<i class="fa fa-'+ icon[res.STATUS_ID] +'"></i> ' + lang_status[res.STATUS_ID] + ' <span class="caret"></span>');
+		$('#decline_' + res.RAID_ID).text(res.DECLINE);
+		$('#substitute_' + res.RAID_ID).text(res.SUBSTITUTE);
+		$('#attending_' + res.RAID_ID).text(res.ATTENDING);
 
-
-<!-- IF U_RAIDPLANER -->
-var lang_status = {
-	0: '{L_NOT_SIGNUP}',
-	1: '{L_ATTENDING}',
-	2: '{L_DECLINE}',
-	3: '{L_SUBSTITUTE}',
-	4: '{L_ACCEPT}'
-};
-var icon = {
-	0: 'minus',
-	1: 'circle',
-	2: 'times',
-	3: 'minus',
-	4: 'check'
-};
-phpbb.addAjaxCallback('raidplaner_status', function(res) {
-	$(this).parent('div.btn-group');
-	$('#btn_' + res.RAID_ID).removeClass('btn-danger btn-warning btn-success btn-default');
-	var newClass = '';
-	switch(res.STATUS_ID) {
-    case '1':
-        newClass = 'btn-default';
-    break;
-    case '2':
-        newClass = 'btn-danger';
-    break;
-	case '3':
-        newClass = 'btn-warning';
-    break;
-    default:
-        newClass = 'btn-default';
-	}
+	});
 	
-	$('#btn_' + res.RAID_ID).addClass(newClass).html('<i class="fa fa-'+ icon[res.STATUS_ID] +'"></i> ' + lang_status[res.STATUS_ID] + ' <span class="caret"></span>');
-	//$('#accept_' + res.RAID_ID).text(res.ACCEPT + ' / ' + res.RAIDSIZE);
-	$('#decline_' + res.RAID_ID).text(res.DECLINE);
-	$('#substitute_' + res.RAID_ID).text(res.SUBSTITUTE);
-	$('#attending_' + res.RAID_ID).text(res.ATTENDING);
-
-	phpbb.closeDarkenWrapper(3000);
+	<!-- ENDIF -->
 });
-<!-- ENDIF -->
+
 
 </script>
 <!-- ENDIF -->

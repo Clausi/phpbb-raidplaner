@@ -32,4 +32,8 @@ $lang = array_merge($lang, array(
 	'DECLINE' => 'Decline',
 	'SUBSTITUTE' => 'Substitute',
 	'NOT_SIGNUP' => 'Not signed up',
+	'CHANGE_ALL_SELECTED' => 'Change all selected raids',
+	'STATUS' => 'Status',
+	'RAIDPLANER_STATUS_UPDATE' => 'Status updated.',
+	'COMMENT' => 'Comment',
 ));

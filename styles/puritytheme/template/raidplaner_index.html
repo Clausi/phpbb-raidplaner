@@ -24,6 +24,7 @@
 			</div>
 		</div>
 		<div class="table-responsive">
+			<!-- IF U_RAIDPLANER --><form id="raidplaner_index" role="form" method="post" action="{U_ACTION}"><!-- ENDIF -->
 			<table class="table table-hover table-striped clickable_row" id="datatables-raidplaner">
 				<thead>
 					<tr>
@@ -55,8 +56,9 @@
 						</td>
 						<td class="no_click">
 						<!-- IF U_RAIDPLANER -->
-							<div class="btn-group">
-								<button type="button" id="btn_{n_raids.ID}" class="btn <!-- IF n_raids.USERSTATUS == 2 -->btn-danger<!-- ELSEIF n_raids.USERSTATUS == 3 -->btn-warning<!-- ELSEIF n_raids.USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle" data-toggle="dropdown">
+						<div class="form-group">
+							<div class="btn-group" data-toggle="buttons">
+								<button type="button" id="btn_{n_raids.ID}" class="btn <!-- IF n_raids.USERSTATUS == 2 -->btn-danger<!-- ELSEIF n_raids.USERSTATUS == 3 -->btn-warning<!-- ELSEIF n_raids.USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
 									<!-- IF n_raids.USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF n_raids.USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF n_raids.USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF n_raids.USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
 								</button>
 								<ul class="dropdown-menu" role="menu">
@@ -64,13 +66,34 @@
 									<li class="bg-warning"><a href="{n_raids.U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
 									<li class="bg-danger"><a href="{n_raids.U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
 								</ul>
+								<label class="btn btn-default checkbox">
+									<input type="checkbox" name="status[{n_raids.ID}]" id="checkbox_{n_raids.ID}" value="1"> <i class="fa fa-square-o" id="label_{n_raids.ID}"></i>
+								</label>
 							</div>
+						</div>
 						<!-- ENDIF --> 
 						</td>
 					</tr>
 					<!-- END n_raids -->
 				</tbody>
 			</table>
+			<!-- IF U_RAIDPLANER -->
+			{S_FORM_TOKEN}
+			<div class="form-inline">
+				<div class="form-group pull-right">
+					<label for="comment" class="sr-only">{L_COMMENT}:</label> 
+					<input type="text" class="form-control input-sm" id="comment" name="comment" placeholder="{L_COMMENT}">
+					<label for="change_all_status" class="sr-only">{L_STATUS}:</label> 
+					<select id="change_all_status" name="change_all_status">
+						<option value="1" class="bg-primary" selected="selected">{L_ATTENDING}</option>
+						<option value="3" class="bg-warning">{L_SUBSTITUTE}</option>
+						<option value="2" class="bg-danger">{L_DECLINE}</option>
+					</select>
+					<input class="btn btn-default btn-sm" type="submit" id="submit" name="submit" value="{L_CHANGE_ALL_SELECTED}" />
+				</div>
+			</div>
+			</form>
+			<!-- ENDIF --> 
 		</div>
 
 	</div>

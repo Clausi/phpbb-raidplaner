@@ -9,3 +9,15 @@
 .table.dataTable tbody tr.active:hover td {
 	background-color: #282828 !important;
 }
+
+.checkbox {
+	background-color: #6c6c6c;
+}
+
+.checkbox:hover {
+	background-color: #636363;
+}
+
+.button-width {
+	min-width: 115px;
+}
