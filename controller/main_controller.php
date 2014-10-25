@@ -40,11 +40,8 @@ class main_controller implements main_interface
 		
 		$this->json_response = new \phpbb\json_response;
 	}
-	
-	
-	
 
-
+	
 	public function handle()
 	{
 		if($this->config['clausi_raidplaner_active'] == 0) 
@@ -53,6 +50,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
 		}
 		$message = false;
+		$this->u_action = $this->helper->route('clausi_raidplaner_controller');
 		
 		add_form_key('clausi/raidplaner');
 		if ($this->request->is_set_post('submit'))
@@ -64,8 +62,7 @@ class main_controller implements main_interface
 
 			$this->updateAllStatus();
 
-			$this->u_action = $this->helper->route('clausi_raidplaner_controller');
-			//meta_refresh(3, $this->u_action);
+			meta_refresh(3, $this->u_action);
 			trigger_error($this->user->lang('RAIDPLANER_STATUS_UPDATE') . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . str_replace('&', '&amp;', $this->u_action) . '">', '</a>'));
 		}
 		
@@ -147,6 +144,7 @@ class main_controller implements main_interface
 			'S_ALERTTYPE' => false,
 			'RAIDPLANER_MESSAGE' => $message,
 			'S_RAIDPLANER_PAGE' => 'index',
+			'U_ACTION' => $this->u_action,
 		));
 		return $this->helper->render('raidplaner_index.html', $this->user->lang['RAIDPLANER_PAGE']);
 	}

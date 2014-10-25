@@ -5,21 +5,16 @@ $(document).ready(function() {
 	function filterTable(table, filter) {
 		if(filter == 0) table.fnFilter( '' , 0, false);
 		else table.fnFilter("^"+filter+"$", 0, true);
-		clickableRow();
 	}
 	
-	function clickableRow() {
-		$('.clickable_row tbody > tr > td').click(function() {
-			if($(this).attr('class') != 'no_click') location.href = $(this).parent('tr').data('url');
-		});
-	}
+	$('table.clickable_row').on('click', 'tbody > tr > td', function() {
+		if($(this).attr('class') != 'no_click') location.href = $(this).parent('tr').data('url');
+	});
 	
 	<!-- IF U_RAIDPLANER -->
-	function initCheckbox() {
-		$("input[id^=checkbox_]").change(function(e){
-			$("#label_"+this.id.split('_')[1]).toggleClass("fa-square-o fa-check-square-o");
-		});
-	}
+	$("table.checkboxes").on('change', "input[id^=status_]", function(e){
+		$("#statuslabel_"+this.id.split('_')[1]).toggleClass("fa-square-o fa-check-square-o");
+	});
 	<!-- ENDIF -->
 	
 	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
@@ -40,11 +35,8 @@ $(document).ready(function() {
 		],
 		
 		"fnInitComplete": function(oSettings, json) {
-			createSelectpicker();
-			
-			<!-- IF U_RAIDPLANER -->initCheckbox();<!-- ENDIF -->
-			
 			filterTable(this, "future");
+			createSelectpicker();
 		}
 	});
 	
@@ -52,6 +44,7 @@ $(document).ready(function() {
         var selectedValue = $(this).val();
 		  filterTable(raidplanerTable, selectedValue);
 	});
+
 
 	<!-- IF U_RAIDPLANER -->
 	var lang_status = {
@@ -95,7 +88,6 @@ $(document).ready(function() {
 	
 	<!-- ENDIF -->
 });
-
 
 </script>
 <!-- ENDIF -->

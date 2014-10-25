@@ -25,7 +25,7 @@
 		</div>
 		<div class="table-responsive">
 			<!-- IF U_RAIDPLANER --><form id="raidplaner_index" role="form" method="post" action="{U_ACTION}"><!-- ENDIF -->
-			<table class="table table-hover table-striped clickable_row" id="datatables-raidplaner">
+			<table class="table table-hover table-striped clickable_row checkboxes" id="datatables-raidplaner">
 				<thead>
 					<tr>
 						<th>Flag</th>
@@ -59,16 +59,18 @@
 						<div class="form-group">
 							<div class="btn-group" data-toggle="buttons">
 								<button type="button" id="btn_{n_raids.ID}" class="btn <!-- IF n_raids.USERSTATUS == 2 -->btn-danger<!-- ELSEIF n_raids.USERSTATUS == 3 -->btn-warning<!-- ELSEIF n_raids.USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
-									<!-- IF n_raids.USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF n_raids.USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF n_raids.USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF n_raids.USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
+									<!-- IF n_raids.USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF n_raids.USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF n_raids.USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF n_raids.USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <!-- IF n_raids.FLAG == 'future' --><span class="caret"></span><!-- ENDIF -->
 								</button>
+								<!-- IF n_raids.FLAG == 'future' -->
 								<ul class="dropdown-menu" role="menu">
 									<li class="bg-primary"><a href="{n_raids.U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
 									<li class="bg-warning"><a href="{n_raids.U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
 									<li class="bg-danger"><a href="{n_raids.U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
 								</ul>
 								<label class="btn btn-default checkbox">
-									<input type="checkbox" name="status[{n_raids.ID}]" id="checkbox_{n_raids.ID}" value="1"> <i class="fa fa-square-o" id="label_{n_raids.ID}"></i>
+									<input type="checkbox" name="status[{n_raids.ID}]" id="status_{n_raids.ID}" value="1"> <i class="fa fa-square-o" id="statuslabel_{n_raids.ID}"></i>
 								</label>
+								<!-- ENDIF -->
 							</div>
 						</div>
 						<!-- ENDIF --> 
