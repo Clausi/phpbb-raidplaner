@@ -36,4 +36,6 @@ $lang = array_merge($lang, array(
 	'STATUS' => 'Status',
 	'RAIDPLANER_STATUS_UPDATE' => 'Status updated.',
 	'COMMENT' => 'Comment',
+	'STATUS_CHANGE_TITLE' => 'Changed status',
+	'STATUS_CHANGE_TEXT' => 'Changed status to "%s" for raid #%s on %s',
 ));

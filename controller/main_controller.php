@@ -25,6 +25,13 @@ class main_controller implements main_interface
 	protected $db;
 	protected $u_action;
 	protected $json_response;
+	
+	protected $status = [
+		1 => 'ATTENDING',
+		2 => 'DECLINE',
+		3 => 'SUBSTITUTE',
+		4 => 'ACCEPT',
+	];
 
 
 	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
@@ -274,6 +281,8 @@ class main_controller implements main_interface
 		}
 		
 		$response = array(
+			'MESSAGE_TITLE' => $this->user->lang['STATUS_CHANGE_TITLE'],
+			'MESSAGE_TEXT' => sprintf($this->user->lang['STATUS_CHANGE_TEXT'], $this->user->lang[$this->status[$status_id]], $raid_id, $this->user->format_date($raid_data['raid_time'])),
 			'RAID_ID' => $raid_id,
 			'STATUS_ID' => $status_id,
 			'ATTENDING' => $row_count['attending'],
