@@ -63,7 +63,7 @@
 								</button>
 								<!-- IF n_raids.FLAG == 'future' -->
 								<ul class="dropdown-menu" role="menu">
-									<li class="bg-primary"><a href="{n_raids.U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+									<li class="bg-primary<!-- IF n_raids.USERSTATUS == 4 --> confirmbox<!--ENDIF-->"><a href="{n_raids.U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
 									<li class="bg-warning"><a href="{n_raids.U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
 									<li class="bg-danger"><a href="{n_raids.U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
 								</ul>
