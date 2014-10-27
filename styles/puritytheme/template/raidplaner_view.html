@@ -2,55 +2,44 @@
 
 <h2>{L_RAIDPLANER_PAGE}</h2>
 
-<!-- IF RAIDPLANER_MESSAGE -->
-<div class="alert <!-- IF S_ALERTTYPE == 'success' -->alert-success<!-- ELSEIF S_ALERTTYPE == 'warning' -->alert-warning<!-- ELSEIF S_ALERTTYPE == 'danger' -->alert-danger<!-- ELSE -->alert-info<!-- ENDIF --> alert-dismissible" role="alert">
-	<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-	{RAIDPLANER_MESSAGE}
-</div>
-<!-- ENDIF -->
-
 <div class="panel panel-default">
 	<div class="panel-body">
-		<div class="row bottom5">
-			<div class="col-xs-12">
-				<div class="pull-right">
-					
-				</div>
-			</div>
-		</div>
-		<div class="table-responsive">
-			<table class="table">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Timestamp</th>
-						<th>Flag</th>
-						<th>Day</th>
-						<th>Note</th>
-						<th>Members</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				
-				<tbody>
-					<!-- BEGIN n_raids -->
-					<tr class="clickableRow<!-- IF n_raids.FIRSTFUTURE == 1 --> active<!-- ENDIF -->" data-url="{n_raids.U_RAID}">
-						<td>{n_raids.DATE}</td>
-						<td>{n_raids.TIMESTAMP}</td>
-						<td>{n_raids.FLAG}</td>
-						<td>{n_raids.DAY}</td>
-						<td>{n_raids.NOTE}</td>
-						<td>{n_raids.MEMBERS}</td>
-						<td>&nbsp;</td>
-					</tr>
-					<!-- END n_raids -->
-				</tbody>
-			</table>
-		</div>
-
+		Raiddata
 	</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<!-- BEGIN n_roleNames -->
+					<th>{n_roleNames.ROLELANG}</th>
+					<!-- END n_roleNames -->
+				</tr>
+			</thead>
+			<tbody>
+			
+				<!-- BEGIN n_status -->
+				<tr class="<!-- IF n_status.STATUS == 4 -->success<!-- ELSEIF n_status.STATUS == 3 -->warning<!-- ELSEIF n_status.STATUS == 2 -->danger<!-- ELSEIF n_status.STATUS == 1 -->active<!-- ELSE -->info<!-- ENDIF -->">
+					<th colspan="4">{n_status.STATUSLANG}</th>
+				</tr>
+				
+				<tr>
+					<!-- BEGIN n_roles -->
+					<td>
+						<ul class="list-group connectedSortable" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
+						  <li class="list-group-item">Cras justo odio</li>
+						  <li class="list-group-item">Dapibus ac facilisis in</li>
+						  <li class="list-group-item">Morbi leo risus</li>
+						  <li class="list-group-item">Porta ac consectetur ac</li>
+						  <li class="list-group-item">Vestibulum at eros</li>
+						</ul>
+					</td>
+					<!-- END n_roles -->
+				</tr>
+				<!-- END n_status -->
+				
+			</tbody>
+		</table>
+		
 </div>
-
 
 
 <!-- INCLUDE overall_footer.html -->

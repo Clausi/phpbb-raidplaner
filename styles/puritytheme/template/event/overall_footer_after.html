@@ -1,4 +1,8 @@
 <!-- IF S_CLAUSI_RAIDPLANER_ACTIVE -->
+
+<!-- INCLUDEJS jquery-ui/jquery-ui.min.js -->
+<!-- INCLUDEJS raidplaner.js -->
+
 <script type="text/javascript">
 $(document).ready(function() {
 	
@@ -10,12 +14,6 @@ $(document).ready(function() {
 	$('table.clickable_row').on('click', 'tbody > tr > td', function() {
 		if($(this).attr('class') != 'no_click') location.href = $(this).parent('tr').data('url');
 	});
-	
-	<!-- IF U_RAIDPLANER -->
-	$("table.checkboxes").on('change', "input[id^=status_]", function(e){
-		$("#statuslabel_"+this.id.split('_')[1]).toggleClass("fa-square-o fa-check-square-o");
-	});
-	<!-- ENDIF -->
 	
 	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
 		"oLanguage": {
@@ -47,6 +45,11 @@ $(document).ready(function() {
 
 
 	<!-- IF U_RAIDPLANER -->
+
+	$("table.checkboxes").on('change', "input[id^=status_]", function(e){
+		$("#statuslabel_"+this.id.split('_')[1]).toggleClass("fa-square-o fa-check-square-o");
+	});
+
 	var lang_status = {
 		0: '{L_NOT_SIGNUP}',
 		1: '{L_ATTENDING}',
@@ -87,6 +90,14 @@ $(document).ready(function() {
 	});
 	
 	<!-- ENDIF -->
+	
+	<!-- IF M_RAIDPLANER -->
+	$( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" ).sortable({
+		connectWith: ".connectedSortable",
+		placeholder: "list-group-item list-group-item-warning placeholder",
+	}).disableSelection();
+	<!-- ENDIF -->
+
 });
 
 </script>

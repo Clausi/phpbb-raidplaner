@@ -28,10 +28,18 @@ class main_controller implements main_interface
 	protected $json_response;
 	
 	protected $status = [
-		1 => 'ATTENDING',
-		2 => 'DECLINE',
-		3 => 'SUBSTITUTE',
 		4 => 'ACCEPT',
+		1 => 'ATTENDING',
+		3 => 'SUBSTITUTE',
+		2 => 'DECLINE',
+		0 => 'NOT_SIGNUP',
+	];
+	
+	protected $roles = [
+		1 => 'TANK',
+		2 => 'HEAL',
+		3 => 'MELEE',
+		4 => 'RANGE',
 	];
 
 
@@ -151,8 +159,6 @@ class main_controller implements main_interface
 			'U_RAIDPLANER' => $this->auth->acl_get('u_raidplaner'),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
-			'S_ALERTTYPE' => false,
-			'RAIDPLANER_MESSAGE' => $message,
 			'S_RAIDPLANER_PAGE' => 'index',
 			'U_ACTION' => $this->u_action,
 		));
@@ -179,12 +185,45 @@ class main_controller implements main_interface
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."'";
 		$result = $this->db->sql_query($sql);
 		$row_attendees = $this->db->sql_fetchrowset($result);
-		$this->var_display($row_attendees);
+
 		$this->db->sql_freeresult($result);
 		
+		foreach($this->roles as $role_id => $role_name)
+			{
+				$this->template->assign_block_vars('n_roleNames', array(
+					'ROLE' => $role_id,
+					'ROLELANG' => $this->user->lang[$this->roles[$role_id]],
+				));
+			}
+		
+		$i_status = 0;
+		$len_status = count($this->status);
+		$len_roles = count($this->roles);
+		foreach($this->status as $status_id => $status_name)
+		{
+			$this->template->assign_block_vars('n_status', array(
+				'STATUS' => $status_id,
+				'STATUSNAME' => strtolower($status_name),
+				'STATUSLANG' => $this->user->lang[$this->status[$status_id]],
+			));
+			$i_roles = 0;
+			foreach($this->roles as $role_id => $role_name)
+			{
+				$this->template->assign_block_vars('n_status.n_roles', array(
+					'ROLE' => $role_id,
+					'ROLENAME' => strtolower($role_name),
+					'ROLELANG' => $this->user->lang[$this->roles[$role_id]],
+					'LASTELEMENT' => ($i_status == ($len_status-1) && $i_roles == ($len_roles-1)) ? true : false,
+				));
+				$i_roles++;
+			}
+			$i_status++;
+		}
+		
 		$this->template->assign_vars(array(
-			'S_ALERTTYPE' => false,
-			'RAIDPLANER_MESSAGE' => $message,
+			'U_RAIDPLANER' => $this->auth->acl_get('u_raidplaner'),
+			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
+			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
 			'S_RAIDPLANER_PAGE' => 'index',
 		));
 		return $this->helper->render('raidplaner_view.html', $this->user->lang['RAIDPLANER_RAID'] . ': ' . $raid_id);

@@ -42,4 +42,8 @@ $lang = array_merge($lang, array(
 	'ACCEPTED_TITLE_CONFIRM' => 'You have already been accepted for this raid, do you really want to change your status?',
 	'STATUSCHANGE_TITLE' => 'Change status?',
 	'STATUSCHANGE_TITLE_CONFIRM' => 'Do you really want to change your status? Please enter a comment.',
+	'TANK' => 'Tank',
+	'HEAL' => 'Heal',
+	'MELEE' => 'Melee',
+	'RANGE' => 'Range',
 ));
