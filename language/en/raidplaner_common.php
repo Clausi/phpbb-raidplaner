@@ -37,5 +37,9 @@ $lang = array_merge($lang, array(
 	'RAIDPLANER_STATUS_UPDATE' => 'Status updated.',
 	'COMMENT' => 'Comment',
 	'STATUS_CHANGE_TITLE' => 'Changed status',
-	'STATUS_CHANGE_TEXT' => 'Changed status to "%s" for raid #%s on %s',
+	'STATUS_CHANGE_TEXT' => 'Changed status to "%s" for raid #%s, %s',
+	'ACCEPTED_TITLE' => 'Change status?',
+	'ACCEPTED_TITLE_CONFIRM' => 'You have already been accepted for this raid, do you really want to change your status?',
+	'STATUSCHANGE_TITLE' => 'Change status?',
+	'STATUSCHANGE_TITLE_CONFIRM' => 'Do you really want to change your status? Please enter a comment.',
 ));
