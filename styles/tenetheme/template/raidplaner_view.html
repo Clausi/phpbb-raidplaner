@@ -3,13 +3,14 @@
 <h2>{L_RAIDPLANER_PAGE}</h2>
 
 <div class="panel panel-default">
-	<div class="panel-body row">
+	<div class="panel-body">
+	
 		<div class="col-sm-9">
 			
 		</div>
 		<div class="col-sm-3">
 			<button type="button" id="btn_{RAID_ID}" class="pull-right btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
-				<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <!-- IF FLAG == 'future' --><span class="caret"></span><!-- ENDIF -->
+				<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu" role="menu">
 				<li class="bg-primary"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
