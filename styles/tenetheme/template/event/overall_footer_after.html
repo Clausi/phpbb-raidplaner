@@ -86,15 +86,39 @@ $(document).ready(function() {
 		$('#decline_' + res.RAID_ID).text(res.DECLINE);
 		$('#substitute_' + res.RAID_ID).text(res.SUBSTITUTE);
 		$('#attending_' + res.RAID_ID).text(res.ATTENDING);
+		
+		$('ul#' + res.STATUSNAME + res.ROLENAME + 'View').append($('li#user_' + res.USER_ID));
+		$('ul#' + res.STATUSNAME + res.ROLENAME + 'View').removeClass('emptyList');
+		if($('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').children('li').length === 0) $('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').addClass('emptyList');
+		
+		raidplanerView.sortable( 'refresh' );
 
 	});
 	
 	<!-- ENDIF -->
 	
 	<!-- IF M_RAIDPLANER -->
-	$( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" ).sortable({
+	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
+	raidplanerView.sortable({
 		connectWith: ".connectedSortable",
 		placeholder: "list-group-item list-group-item-warning placeholder",
+		receive: function (e, ui) {
+			if($(e.target).children('li').length > 0) $(e.target).removeClass('emptyList');
+		},
+		remove: function(e, ui) {
+			if($(e.target).children('li').length === 0)$(e.target).addClass('emptyList');
+		},
+		update: function (e, ui) {
+			if (this === ui.item.parent()[0]) {
+				var data = $(this).sortable('serialize', { key: "user_id" }) + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
+				console.log(data);
+				$.ajax({
+					data: data,
+					type: 'POST',
+					url: '{U_MODSTATUSCHANGE}'
+				});
+			}
+		}
 	}).disableSelection();
 	<!-- ENDIF -->
 
