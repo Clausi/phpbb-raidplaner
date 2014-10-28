@@ -9,7 +9,7 @@
 		<div class="modal-body">
 			<p>{MESSAGE_TEXT}</p>
 			<label for="comment" class="sr-only">{L_COMMENT}:</label> 
-			<input type="text" class="form-control input-sm" id="comment" name="comment" placeholder="{L_COMMENT}">
+			<input type="text" class="form-control input-sm" id="comment" name="comment" value="{COMMENT}" placeholder="{L_COMMENT}">
 		</div>
 		<div class="modal-footer">
 			{S_HIDDEN_FIELDS}
@@ -23,14 +23,14 @@
 
 <!-- INCLUDE overall_header.html -->
 
-<form id="confirm" action="{S_CONFIRM_ACTION}" method="post">
+<form id="confirm" action="/{S_CONFIRM_ACTION}" method="post">
 <div class="panel">
 	<div class="inner">
 
 	<h2 class="message-title">{MESSAGE_TITLE}</h2>
 	<p>{MESSAGE_TEXT}</p>
 	<label for="comment" class="sr-only">{L_COMMENT}:</label> 
-	<input type="text" class="form-control input-sm" id="comment" name="comment" placeholder="{L_COMMENT}">
+	<input type="text" class="form-control input-sm" id="comment" name="comment" value="{COMMENT}" placeholder="{L_COMMENT}">
 
 	<fieldset class="submit-buttons">
 		{S_HIDDEN_FIELDS}

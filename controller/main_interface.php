@@ -12,5 +12,6 @@ interface main_interface
 	public function handle();
 	public function view($id);
 	public function setUserstatus($raid_id, $status_id);
+	public function setModstatus($raid_id);
 	
 }

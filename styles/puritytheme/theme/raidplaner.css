@@ -30,3 +30,11 @@
 	height: 24px;
 	background-color: #999;
 }
+
+.emptyList {
+	height: 24px;
+}
+
+.attendee_view td {
+	width: 25%;
+}

@@ -3,10 +3,22 @@
 <h2>{L_RAIDPLANER_PAGE}</h2>
 
 <div class="panel panel-default">
-	<div class="panel-body">
-		Raiddata
+	<div class="panel-body row">
+		<div class="col-sm-9">
+			
+		</div>
+		<div class="col-sm-3">
+			<button type="button" id="btn_{RAID_ID}" class="pull-right btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
+				<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <!-- IF FLAG == 'future' --><span class="caret"></span><!-- ENDIF -->
+			</button>
+			<ul class="dropdown-menu" role="menu">
+				<li class="bg-primary"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+				<li class="bg-warning"><a href="{U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
+				<li class="bg-danger"><a href="{U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
+			</ul>
+		</div>
 	</div>
-		<table class="table">
+		<table class="table attendee_view">
 			<thead>
 				<tr>
 					<!-- BEGIN n_roleNames -->
@@ -24,12 +36,10 @@
 				<tr>
 					<!-- BEGIN n_roles -->
 					<td>
-						<ul class="list-group connectedSortable" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
-						  <li class="list-group-item">Cras justo odio</li>
-						  <li class="list-group-item">Dapibus ac facilisis in</li>
-						  <li class="list-group-item">Morbi leo risus</li>
-						  <li class="list-group-item">Porta ac consectetur ac</li>
-						  <li class="list-group-item">Vestibulum at eros</li>
+						<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group connectedSortable<!-- IF .n_status.n_roles.n_users == 0 --> emptyList<!-- ENDIF -->" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
+							<!-- BEGIN n_users -->
+								<li class="list-group-item" id="user_{n_status.n_roles.n_users.USER_ID}">{n_status.n_roles.n_users.USERNAME}</li>
+							<!-- END n_users -->
 						</ul>
 					</td>
 					<!-- END n_roles -->
@@ -40,6 +50,5 @@
 		</table>
 		
 </div>
-
 
 <!-- INCLUDE overall_footer.html -->

@@ -20,7 +20,6 @@ class main_controller implements main_interface
 	protected $user;
 	protected $auth;
 	protected $cp;
-	protected $root_path;
 	
 	/* @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -43,7 +42,7 @@ class main_controller implements main_interface
 	];
 
 
-	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container ,$root_path)
+	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
 	{
 		$this->config = $config;
 		$this->auth = $auth;
@@ -53,9 +52,7 @@ class main_controller implements main_interface
 		$this->user = $user;
 		$this->request = $request;
 		$this->container = $container;
-		
-		$this->root_path = $root_path;
-		
+				
 		$this->json_response = new \phpbb\json_response;
 	}
 
@@ -159,7 +156,6 @@ class main_controller implements main_interface
 			'U_RAIDPLANER' => $this->auth->acl_get('u_raidplaner'),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
-			'S_RAIDPLANER_PAGE' => 'index',
 			'U_ACTION' => $this->u_action,
 		));
 		return $this->helper->render('raidplaner_index.html', $this->user->lang['RAIDPLANER_PAGE']);
@@ -181,11 +177,24 @@ class main_controller implements main_interface
 		$message = false;
 
 		$row_raid = $this->getRaidData($raid_id);
+		$user_id = $this->user->data['user_id'];
+		
+		$this->template->assign_vars(array(
+			'RAID_ID' => $raid_id,
+			'RAIDSIZE' => $row_raid['raidsize'],
+			'EVENTNAME' => $row_raid['name'],
+			'USERSTATUS' => $this->getStatus($raid_id, $user_id),
+			'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => 0)),
+		));
 		
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."'";
 		$result = $this->db->sql_query($sql);
 		$row_attendees = $this->db->sql_fetchrowset($result);
-
+		$this->db->sql_freeresult($result);
+		
+		$sql = "SELECT user_id, username FROM " . $this->container->getParameter('tables.users') . "";
+		$result = $this->db->sql_query($sql);
+		$row_user = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
 		
 		foreach($this->roles as $role_id => $role_name)
@@ -196,6 +205,8 @@ class main_controller implements main_interface
 				));
 			}
 		
+		$currentUsername = '';
+		$currentUserId = '';
 		$i_status = 0;
 		$len_status = count($this->status);
 		$len_roles = count($this->roles);
@@ -216,6 +227,26 @@ class main_controller implements main_interface
 					'LASTELEMENT' => ($i_status == ($len_status-1) && $i_roles == ($len_roles-1)) ? true : false,
 				));
 				$i_roles++;
+				
+				foreach($row_attendees as $attendee)
+				{
+					if($attendee['role'] == $role_id && $attendee['status'] == $status_id)
+					{
+						foreach($row_user as $user)
+						{
+							if($user['user_id'] == $attendee['user_id'])
+							{
+								$currentUserId = $user['user_id'];
+								$currentUsername = $user['username'];
+								break;
+							}
+						}
+						$this->template->assign_block_vars('n_status.n_roles.n_users', array(
+							'USER_ID' => $currentUserId,
+							'USERNAME' => $currentUsername,
+						));
+					}
+				}
 			}
 			$i_status++;
 		}
@@ -224,7 +255,7 @@ class main_controller implements main_interface
 			'U_RAIDPLANER' => $this->auth->acl_get('u_raidplaner'),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
-			'S_RAIDPLANER_PAGE' => 'index',
+			'U_MODSTATUSCHANGE' => ($this->auth->acl_get('m_raidplaner')) ? $this->helper->route('clausi_raidplaner_controller_modstatus', array('raid_id' => $raid_id)) : '',
 		));
 		return $this->helper->render('raidplaner_view.html', $this->user->lang['RAIDPLANER_RAID'] . ': ' . $raid_id);
 	}
@@ -345,8 +376,10 @@ class main_controller implements main_interface
 		$this->u_action = $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => $status_id));
 		
 		// Get current status
-		$currentStatus = $this->getStatus($raid_id, $user_id);
-		if($currentStatus == 4 && confirm_box(false, 'ACCEPTED_TITLE', '', 'raidplaner_confirm.html', $this->root_path.ltrim($this->u_action, '/')))
+		$currentAttendee = $this->getAttendee($raid_id, $user_id);
+		$this->template->assign_var('COMMENT', $this->getComment($raid_id, $user_id));
+		// TODO: Check back if last value of confirm_box() can be done better
+		if($currentAttendee['status'] == 4 && confirm_box(false, 'ACCEPTED_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/')))
 		{
 			
 		}
@@ -355,7 +388,7 @@ class main_controller implements main_interface
 			if (confirm_box(true))
 			{
 				$this->setStatus($raid_id, $user_id, $status_id);
-				$comment = $this->request->variable('comment', '');
+				$comment = $this->request->variable('comment', '', true);
 				$this->setComment($raid_id, $user_id, $comment);
 				
 				$row_count = $this->getRaidmemberCount($raid_id);
@@ -367,13 +400,16 @@ class main_controller implements main_interface
 				$response = array(
 					'MESSAGE_TITLE' => $this->user->lang['STATUS_CHANGE_TITLE'],
 					'MESSAGE_TEXT' => sprintf($this->user->lang['STATUS_CHANGE_TEXT'], $this->user->lang[$this->status[$status_id]], $raid_id, $this->user->format_date($raid_data['raid_time'])),
+					'USER_ID' => $user_id,
 					'RAID_ID' => $raid_id,
 					'STATUS_ID' => $status_id,
+					'OLD_STATUSNAME' => strtolower($this->status[$currentAttendee['status']]),
+					'OLD_ROLENAME' => strtolower($this->roles[$currentAttendee['role']]),
+					'STATUSNAME' => strtolower($this->status[$status_id]),
+					'ROLENAME' => strtolower($this->roles[$this->getRole($raid_id, $user_id)]),
 					'ATTENDING' => $row_count['attending'],
 					'DECLINE' => $row_count['decline'],
 					'SUBSTITUTE' => $row_count['substitute'],
-					// 'ACCEPT' => $row_count['accept'],
-					// 'RAIDSIZE' => $raid_data['raidsize'],
 				);
 
 				if ($this->request->is_ajax())
@@ -386,10 +422,104 @@ class main_controller implements main_interface
 			}
 			else
 			{
-				//display mode
-				confirm_box(false, 'STATUSCHANGE_TITLE', '', 'raidplaner_confirm.html', $this->root_path.ltrim($this->u_action, '/'));
+				$this->template->assign_var('U_ACTION', $this->u_action);
+				confirm_box(false, 'STATUSCHANGE_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
 			}
 		}
+	}
+	
+	
+	public function setModstatus($raid_id)
+	{
+		if( ! $this->auth->acl_get('m_raidplaner'))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_USER'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+
+		if( ! is_numeric($raid_id))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_ID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		
+		$status_id = $this->request->variable('status_id', 0);
+		if( ! is_numeric($status_id) || $status_id < 1 || $status_id > 4)
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_STATUS'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_STATUS']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+		}
+		
+		$role_id = $this->request->variable('role_id', 0);
+		if( ! is_numeric($role_id) || $role_id < 1 || $role_id > 4)
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_ROLE'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ROLE']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+		}
+		
+		$user_id = $this->request->variable('user_id', 0);
+		if( ! is_numeric($role_id) || $user_id == 0)
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_USERID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USERID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+		}
+		
+		$raid_data = $this->getRaidData($raid_id);
+		if( $raid_data['raid_time'] < time())
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_RAID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_RAID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+		
+		$this->setStatus($raid_id, $user_id, $status_id, $role_id);
+		
+		$this->json_response->send(array(
+			'statusupdate' => true,
+		));
+		
+		return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
 	}
 	
 	
@@ -429,7 +559,7 @@ class main_controller implements main_interface
 				
 				$this->setStatus($raid_id, $user_id, $status_id);
 				
-				$comment = $this->request->variable('comment', '');
+				echo $comment = $this->request->variable('comment', '', true);
 				$this->setComment($raid_id, $user_id, $comment);
 			}
 		}
@@ -471,6 +601,21 @@ class main_controller implements main_interface
 	}
 	
 	
+	private function getComment($raid_id, $user_id)
+	{
+		$sql_ary = array(
+			'raid_id' => $raid_id,
+			'user_id' => $user_id,
+		);
+		$sql = "SELECT comment FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row['comment'];
+	}
+	
+	
 	private function getStatus($raid_id, $user_id)
 	{
 		$sql_ary = array(
@@ -486,10 +631,61 @@ class main_controller implements main_interface
 	}
 	
 	
-	private function setStatus($raid_id, $user_id, $status_id)
+	private function getRole($raid_id, $user_id)
 	{
 		$sql_ary = array(
+			'raid_id' => $raid_id,
+			'user_id' => $user_id,
+		);
+		$sql = "SELECT role FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row['role'];
+	}
+	
+	
+	private function getClass($raid_id, $user_id)
+	{
+		$sql_ary = array(
+			'raid_id' => $raid_id,
+			'user_id' => $user_id,
+		);
+		$sql = "SELECT class FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row['class'];
+	}
+	
+	
+	private function getAttendee($raid_id, $user_id)
+	{
+		$sql_ary = array(
+			'raid_id' => $raid_id,
+			'user_id' => $user_id,
+		);
+		$sql = "SELECT * FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row;
+	}
+	
+	
+	private function setStatus($raid_id, $user_id, $status_id, $role_id = 0)
+	{
+		if( $role_id == 0)
+		{
+			$role_id = $this->getRole($raid_id, $user_id);
+		}
+		
+		$sql_ary = array(
 			'status' => $status_id,
+			'role' => $role_id,
 			'change_time' => time(),
 		);
 		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 

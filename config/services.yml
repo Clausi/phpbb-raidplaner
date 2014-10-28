@@ -13,7 +13,6 @@ services:
             - @user
             - @request
             - @service_container
-            - %core.root_path%
     clausi.raidplaner.listener:
         class: clausi\raidplaner\event\main_listener
         arguments:
