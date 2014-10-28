@@ -1,0 +1,45 @@
+<!-- INCLUDE overall_header.html -->
+
+<h2>{L_RAIDPLANER_PAGE}</h2>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		Raiddata
+	</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<!-- BEGIN n_roleNames -->
+					<th>{n_roleNames.ROLELANG}</th>
+					<!-- END n_roleNames -->
+				</tr>
+			</thead>
+			<tbody>
+			
+				<!-- BEGIN n_status -->
+				<tr class="<!-- IF n_status.STATUS == 4 -->success<!-- ELSEIF n_status.STATUS == 3 -->warning<!-- ELSEIF n_status.STATUS == 2 -->danger<!-- ELSEIF n_status.STATUS == 1 -->active<!-- ELSE -->info<!-- ENDIF -->">
+					<th colspan="4">{n_status.STATUSLANG}</th>
+				</tr>
+				
+				<tr>
+					<!-- BEGIN n_roles -->
+					<td>
+						<ul class="list-group connectedSortable" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
+						  <li class="list-group-item">Cras justo odio</li>
+						  <li class="list-group-item">Dapibus ac facilisis in</li>
+						  <li class="list-group-item">Morbi leo risus</li>
+						  <li class="list-group-item">Porta ac consectetur ac</li>
+						  <li class="list-group-item">Vestibulum at eros</li>
+						</ul>
+					</td>
+					<!-- END n_roles -->
+				</tr>
+				<!-- END n_status -->
+				
+			</tbody>
+		</table>
+		
+</div>
+
+
+<!-- INCLUDE overall_footer.html -->
