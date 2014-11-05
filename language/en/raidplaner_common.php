@@ -48,4 +48,8 @@ $lang = array_merge($lang, array(
 	'HEAL' => 'Heal',
 	'MELEE' => 'Melee',
 	'RANGE' => 'Range',
+	
+	'RAIDINVITE' => 'Invite time',
+	'RAIDSTART' => 'Start time',
+	'RAIDEND' => 'End time',
 ));

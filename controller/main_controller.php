@@ -107,7 +107,7 @@ class main_controller implements main_interface
 		
 		$firstfuture = 0;
 		$memberCount = ['attending' => 0, 'decline' => 0, 'substitute' => 0, 'accept' => 0];
-		
+
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$user_status = 0;
@@ -148,6 +148,7 @@ class main_controller implements main_interface
 				
 				'U_RAID' => $this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $row['raid_id'])),
 			));
+			$memberCount = ['attending' => 0, 'decline' => 0, 'substitute' => 0, 'accept' => 0];
 			if($raid_endtime >= time()) $firstfuture = 2;
 		}
 		$this->db->sql_freeresult($result);
@@ -179,10 +180,19 @@ class main_controller implements main_interface
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
 		
+		// TODO: only try to add attendees if there are new ones
+		if($row_raid['raid_time'] >= time() && $row_raid['autoaccept'] == 1) $this->addAttendees($raid_id);
+		
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
 			'EVENTNAME' => $row_raid['name'],
+			'DATE' => $this->user->format_date($row_raid['raid_time']),
+			'DAY' => strftime ('%A', $row_raid['raid_time']),
+			'INVITE_TIME' => $row_raid['invite_time'],
+			'START_TIME' => $row_raid['start_time'],
+			'END_TIME' => $row_raid['end_time'],
+			'RAID_NOTE' => $row_raid['note'],
 			'USERSTATUS' => $this->getStatus($raid_id, $user_id),
 			'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => 0)),
 		));
@@ -513,7 +523,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
 		}
 		
-		$this->setStatus($raid_id, $user_id, $status_id, $role_id);
+		$this->setStatus($raid_id, $user_id, $status_id, $role_id, true);
 		
 		$this->json_response->send(array(
 			'statusupdate' => true,
@@ -676,18 +686,22 @@ class main_controller implements main_interface
 	}
 	
 	
-	private function setStatus($raid_id, $user_id, $status_id, $role_id = 0)
+	private function setStatus($raid_id, $user_id, $status_id, $role_id = 0, $mod = false)
 	{
 		if( $role_id == 0)
 		{
 			$role_id = $this->getRole($raid_id, $user_id);
 		}
 		
+		if($mod && $this->auth->acl_get('m_raidplaner')) $sql_mod = array('adminchange_time' => time());
+		else $sql_mod = array('change_time' => time());
+		
 		$sql_ary = array(
 			'status' => $status_id,
 			'role' => $role_id,
-			'change_time' => time(),
 		);
+		$sql_ary = array_merge($sql_mod, $sql_ary);
+		
 		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";

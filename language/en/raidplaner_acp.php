@@ -45,11 +45,10 @@ $lang = array_merge($lang, array(
 	'TWOWEEKLY' => 'two weeks',
 	'MONTHLY' => 'monthly',
 	'YEARLY' => 'yearly',
-	'RAIDSTART' => 'Raid start time',
+	
 	'RAIDDATE_EXPLAIN' => 'Dateformat: Y-m-d',
 	'RAIDTIME_EXPLAIN' => 'Timeformat: H:i',
-	'RAIDINVITE' => 'Raid invite time',
-	'RAIDEND' => 'Raid end time',
+
 	'AUTOACCEPT' => 'Set "sign on" status to members by default',
 	
 	// Userconfig

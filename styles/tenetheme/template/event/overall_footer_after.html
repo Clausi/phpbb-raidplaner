@@ -106,12 +106,16 @@ $(document).ready(function() {
 			if($(e.target).children('li').length > 0) $(e.target).removeClass('emptyList');
 		},
 		remove: function(e, ui) {
-			if($(e.target).children('li').length === 0)$(e.target).addClass('emptyList');
+			if($(e.target).children('li').length === 0) $(e.target).addClass('emptyList');
+		},
+		out: function(e, ui) {
+			if (this === ui.item.parent()[0]) {
+				if($(e.target).children('li').length === 2) $(e.target).addClass('emptyList');
+			}
 		},
 		update: function (e, ui) {
 			if (this === ui.item.parent()[0]) {
 				var data = $(this).sortable('serialize', { key: "user_id" }) + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
-				console.log(data);
 				$.ajax({
 					data: data,
 					type: 'POST',
