@@ -423,6 +423,10 @@ class admin_controller implements admin_interface
 				$this->cp->update_profile_field_data($user_id, $user_data);
 
 				// Update attendees of future raids to reflect new role and class
+				foreach($raid_data as $key => $value)
+				{
+					if($key == 'class' || $key == 'role') $raid_data[$key] = $raid_data[$key]-1;
+				}
 				$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
 					SET " . $this->db->sql_build_array('UPDATE', $raid_data) . " 
 					WHERE 

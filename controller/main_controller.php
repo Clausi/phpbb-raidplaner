@@ -206,7 +206,7 @@ class main_controller implements main_interface
 		$result = $this->db->sql_query($sql);
 		$row_user = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
-		
+
 		foreach($this->roles as $role_id => $role_name)
 			{
 				$this->template->assign_block_vars('n_roleNames', array(
@@ -305,6 +305,7 @@ class main_controller implements main_interface
 						'user_id' => $user_id,
 						'raid_id' => $raid_id,
 					);
+
 					$sql_ary = array(
 						'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
 						'class' => $user_data[$user_id]['raidplaner_class']['value']-1,

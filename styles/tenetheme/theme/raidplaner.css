@@ -38,3 +38,7 @@
 .attendee_view td {
 	width: 25%;
 }
+
+.ui-sortable-handle:hover {
+	cursor: move;
+}

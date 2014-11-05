@@ -17,7 +17,7 @@ $(document).ready(function() {
 	
 	var raidplanerTable = $('#datatables-raidplaner').dataTable( {
 		"oLanguage": {
-			<!-- IF S_USER_LANG == 'de-de' -->"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"<!-- ENDIF -->
+			<!-- IF S_USER_LANG == 'de' -->"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"<!-- ENDIF -->
 		},
 		"order": [[ 2, "asc" ]],
 		"pageLength": 10,
@@ -114,6 +114,7 @@ $(document).ready(function() {
 			}
 		},
 		update: function (e, ui) {
+			console.log('shit');
 			if (this === ui.item.parent()[0]) {
 				var data = $(this).sortable('serialize', { key: "user_id" }) + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
 				$.ajax({
