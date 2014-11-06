@@ -57,7 +57,7 @@ class main_controller implements main_interface
 	}
 
 	
-	public function handle()
+	public function index()
 	{
 		if($this->config['clausi_raidplaner_active'] == 0) 
 		{
@@ -126,7 +126,7 @@ class main_controller implements main_interface
 			$raid_end = explode(':', $row['end_time']);
 			$raid_endtime = mktime($raid_end[0], $raid_end[1], 0, date("n", $row['raid_time']), date("j", $row['raid_time']), date("Y", $row['raid_time']));
 			if($raid_endtime >= time() && $firstfuture == 0) $firstfuture = 1;
-			
+
 			$this->template->assign_block_vars('n_raids', array(
 				'EVENTNAME' => $row['name'],
 				'RAIDSIZE' => $row['raidsize'],
@@ -135,7 +135,7 @@ class main_controller implements main_interface
 				'TIMESTAMP' => $row['raid_time'],
 				'FLAG' => ($raid_endtime < time()) ? 'past' : 'future',
 				'FIRSTFUTURE' => $firstfuture,
-				'DAY' => strftime ('%A', $row['raid_time']),
+				'DAY' => $this->user->lang(array('datetime', strftime ('%A', $row['raid_time']))),
 				'INVITE_TIME' => $row['invite_time'],
 				'START_TIME' => $row['start_time'],
 				'END_TIME' => $row['end_time'],
@@ -184,16 +184,13 @@ class main_controller implements main_interface
 
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
-		
-		// TODO: only try to add attendees if there are new ones
-		if($row_raid['raid_time'] >= time() && $row_raid['autoaccept'] == 1) $this->addAttendees($raid_id);
-				
+	
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
 			'EVENTNAME' => $row_raid['name'],
 			'DATE' => $this->user->format_date($row_raid['raid_time']),
-			'DAY' => strftime ('%A', $row_raid['raid_time']),
+			'DAY' => $this->user->lang(array('datetime', strftime ('%A', $row_raid['raid_time']))),
 			'INVITE_TIME' => $row_raid['invite_time'],
 			'START_TIME' => $row_raid['start_time'],
 			'END_TIME' => $row_raid['end_time'],
@@ -203,10 +200,31 @@ class main_controller implements main_interface
 			'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => 0)),
 		));
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."'";
-		$result = $this->db->sql_query($sql);
-		$row_attendees = $this->db->sql_fetchrowset($result);
-		$this->db->sql_freeresult($result);
+		$row_attendees = $this->getAttendees($raid_id);
+		
+		if($row_raid['raid_time'] >= time() && $row_raid['autoaccept'] == 1)
+		{
+			// Get all users with U_RAIDPLANER
+			$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
+			$user_ary = $user_ary[0]['u_raidplaner'];
+			
+			// Create a similar $attendee_ary as $user_ary
+			$attendee_ary = array();
+			$i = 0;
+			foreach($row_attendees as $attendee)
+			{
+				$attendee_ary[$i] = $attendee['user_id'];
+				$i++;
+			}
+
+			$diff = array_diff($user_ary, $attendee_ary);
+
+			if(is_array($diff) && count($diff) > 0)
+			{
+				$this->addAttendees($raid_id);
+				$row_attendees = $this->getAttendees($raid_id);
+			}
+		}
 		
 		$sql = "SELECT user_id, username FROM " . $this->container->getParameter('tables.users') . "";
 		$result = $this->db->sql_query($sql);
@@ -395,7 +413,9 @@ class main_controller implements main_interface
 		
 		// Get current status
 		$currentAttendee = $this->getAttendee($raid_id, $user_id);
-		$this->template->assign_var('COMMENT', $this->getComment($raid_id, $user_id));
+		$this->template->assign_vars(array(
+			'COMMENT' => $this->getComment($raid_id, $user_id),
+		));
 		// TODO: Check back if last value of confirm_box() can be done better
 		if($currentAttendee['status'] == 4 && confirm_box(false, 'ACCEPTED_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/')))
 		{
@@ -678,6 +698,19 @@ class main_controller implements main_interface
 	}
 	
 	
+	// Get all attendees of raid
+	private function getAttendees($raid_id)
+	{
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."'";
+		$result = $this->db->sql_query($sql);
+		$row_attendees = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row_attendees;
+	}
+	
+	
+	// Get specific attendee of raid
 	private function getAttendee($raid_id, $user_id)
 	{
 		$sql_ary = array(

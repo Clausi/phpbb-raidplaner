@@ -1,6 +1,6 @@
 clausi_raidplaner_controller:
     pattern: /raidplaner/index
-    defaults: { _controller: clausi.raidplaner.main.controller:handle }
+    defaults: { _controller: clausi.raidplaner.main.controller:index }
 
 clausi_raidplaner_controller_view:
     pattern: /raidplaner/view/{raid_id}
