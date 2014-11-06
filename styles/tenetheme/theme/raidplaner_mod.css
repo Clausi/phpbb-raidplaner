@@ -1,0 +1,12 @@
+.ui-sortable-handle:hover {
+	cursor: move;
+}
+
+.connectedSortable > .list-group-item {
+	padding: 3px 15px;
+}
+
+.placeholder {
+	height: 24px;
+	background-color: #999;
+}

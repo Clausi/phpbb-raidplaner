@@ -6,6 +6,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	
+	<!-- IF RAIDPLANER_INDEX -->
 	function filterTable(table, filter) {
 		if(filter == 0) table.fnFilter( '' , 0, false);
 		else table.fnFilter("^"+filter+"$", 0, true);
@@ -28,6 +29,7 @@ $(document).ready(function() {
 		  { "targets": 1, "visible": false },
 		  { "orderData": [3,2], "targets": 2 },
 		  { "targets": 3, "visible": false },
+		  { "targets": 5, "orderable": false },
 		  { "targets": 6, "orderable": false },
 		  { "targets": 7, "orderable": false },
 		],
@@ -42,7 +44,7 @@ $(document).ready(function() {
         var selectedValue = $(this).val();
 		  filterTable(raidplanerTable, selectedValue);
 	});
-
+	<!-- ENDIF -->
 
 	<!-- IF U_RAIDPLANER -->
 

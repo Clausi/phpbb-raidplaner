@@ -41,7 +41,7 @@ class profilefield_class extends \phpbb\db\migration\profilefield_base_migration
 		'field_show_on_pm'		=> 0,
 		'field_show_on_vt'		=> 0,
 		'field_show_profile'	=> 0,
-		'field_hide'			=> 1,
+		'field_hide'			=> 0,
 		'field_no_view'			=> 0,
 		'field_active'			=> 1,
 	);

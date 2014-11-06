@@ -81,6 +81,8 @@ class main_controller implements main_interface
 			trigger_error($this->user->lang('RAIDPLANER_STATUS_UPDATE') . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . str_replace('&', '&amp;', $this->u_action) . '">', '</a>'));
 		}
 		
+		$user_id = $this->user->data['user_id'];
+		
 		// get all raids up to one year ago
 		// TODO Archive
 		$sql = "SELECT r.*, e.name, e.raidsize FROM 
@@ -98,7 +100,7 @@ class main_controller implements main_interface
 		$sql = "SELECT status, raid_id FROM 
 			" . $this->container->getParameter('tables.clausi.raidplaner_attendees') ." 
 			WHERE
-				user_id = '" .$this->user->data['user_id']. "' 
+				user_id = '" . $user_id . "' 
 			";
 		$result_attendee = $this->db->sql_query($sql);
 		$row_attendees = $this->db->sql_fetchrowset($result_attendee);
@@ -152,11 +154,14 @@ class main_controller implements main_interface
 			if($raid_endtime >= time()) $firstfuture = 2;
 		}
 		$this->db->sql_freeresult($result);
+		
+		$user_profile = $this->getUserProfileFields($user_id);
 				
 		$this->template->assign_vars(array(
-			'U_RAIDPLANER' => $this->auth->acl_get('u_raidplaner'),
+			'U_RAIDPLANER' => ($this->auth->acl_get('u_raidplaner') && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
+			'RAIDPLANER_INDEX' => true,
 			'U_ACTION' => $this->u_action,
 		));
 		return $this->helper->render('raidplaner_index.html', $this->user->lang['RAIDPLANER_PAGE']);
@@ -182,7 +187,7 @@ class main_controller implements main_interface
 		
 		// TODO: only try to add attendees if there are new ones
 		if($row_raid['raid_time'] >= time() && $row_raid['autoaccept'] == 1) $this->addAttendees($raid_id);
-		
+				
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
@@ -192,6 +197,7 @@ class main_controller implements main_interface
 			'INVITE_TIME' => $row_raid['invite_time'],
 			'START_TIME' => $row_raid['start_time'],
 			'END_TIME' => $row_raid['end_time'],
+			'FLAG' => ($row_raid['raid_time'] < time()) ? 'past' : 'future',
 			'RAID_NOTE' => $row_raid['note'],
 			'USERSTATUS' => $this->getStatus($raid_id, $user_id),
 			'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => 0)),
@@ -261,8 +267,10 @@ class main_controller implements main_interface
 			$i_status++;
 		}
 		
+		$user_profile = $this->getUserProfileFields($user_id);
+
 		$this->template->assign_vars(array(
-			'U_RAIDPLANER' => $this->auth->acl_get('u_raidplaner'),
+			'U_RAIDPLANER' => ($this->auth->acl_get('u_raidplaner') && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
 			'U_MODSTATUSCHANGE' => ($this->auth->acl_get('m_raidplaner')) ? $this->helper->route('clausi_raidplaner_controller_modstatus', array('raid_id' => $raid_id)) : '',
@@ -293,7 +301,6 @@ class main_controller implements main_interface
 	{
 		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 		$this->cp = $this->container->get('profilefields.manager');
-
 		foreach($user_ary as $permission)
 		{
 			$user_data = $this->cp->grab_profile_fields_data($permission['u_raidplaner']);
@@ -589,9 +596,8 @@ class main_controller implements main_interface
 		
 		if($this->db->sql_affectedrows() == 0)
 		{
-			$this->cp = $this->container->get('profilefields.manager');
-			$user_data = $this->cp->grab_profile_fields_data($user_id);
-			if( empty($user_data[$user_id]['raidplaner_role']['value']) || empty($user_data[$user_id]['raidplaner_class']['value']))
+			$user_profile = $this->getUserProfileFields($user_id);
+			if( empty($user_profile['role']) || empty($user_profile['class']))
 			{
 				$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
 				return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
@@ -600,8 +606,8 @@ class main_controller implements main_interface
 			$sql_ary = array(
 				'user_id' => $user_id,
 				'raid_id' => $raid_id,
-				'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
-				'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
+				'role' => $user_profile['role'],
+				'class' => $user_profile['class'],
 				'status' => $status_id,
 				'comment' => $comment,
 				'signup_time' => time(),
@@ -710,9 +716,8 @@ class main_controller implements main_interface
 		
 		if($this->db->sql_affectedrows() == 0)
 		{
-			$this->cp = $this->container->get('profilefields.manager');
-			$user_data = $this->cp->grab_profile_fields_data($user_id);
-			if( empty($user_data[$user_id]['raidplaner_role']['value']) || empty($user_data[$user_id]['raidplaner_class']['value']))
+			$user_profile = $this->getUserProfileFields($user_id);
+			if( empty($user_profile['role']) || empty($user_profile['class']))
 			{
 				$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
 				return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
@@ -721,14 +726,29 @@ class main_controller implements main_interface
 			$sql_ary = array(
 				'user_id' => $user_id,
 				'raid_id' => $raid_id,
-				'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
-				'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
+				'role' => $user_profile['role'],
+				'class' => $user_profile['class'],
 				'status' => $status_id,
 				'signup_time' => time(),
 			);
 			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			$this->db->sql_query($sql);
 		}
+	}
+	
+	
+	private function getUserProfileFields($user_id)
+	{
+		$this->cp = $this->container->get('profilefields.manager');
+		$user_data = $this->cp->grab_profile_fields_data($user_id);
+		
+		$user_profile = array(
+			'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
+			'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
+			'charname' => $user_data[$user_id]['raidplaner_charname']['value'],
+		);
+		
+		return $user_profile;
 	}
 	
 	

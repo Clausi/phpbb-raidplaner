@@ -17,7 +17,7 @@
 			<p>{RAID_NOTE}</p>
 		</div>
 		<div class="col-sm-3">
-			<!-- IF U_RAIDPLANER -->
+			<!-- IF U_RAIDPLANER and FLAG == 'future' -->
 			<button type="button" id="btn_{RAID_ID}" class="pull-right btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
 				<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
 			</button>
