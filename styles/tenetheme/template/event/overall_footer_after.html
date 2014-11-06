@@ -114,9 +114,8 @@ $(document).ready(function() {
 			}
 		},
 		update: function (e, ui) {
-			console.log('shit');
 			if (this === ui.item.parent()[0]) {
-				var data = $(this).sortable('serialize', { key: "user_id" }) + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
+				var data = "user_id=" + ui.item.context.id.replace("user_", "") + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
 				$.ajax({
 					data: data,
 					type: 'POST',

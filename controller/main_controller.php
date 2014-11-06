@@ -497,7 +497,7 @@ class main_controller implements main_interface
 		}
 		
 		$user_id = $this->request->variable('user_id', 0);
-		if( ! is_numeric($role_id) || $user_id == 0)
+		if( ! is_numeric($user_id) || $user_id == 0)
 		{
 			if ($this->request->is_ajax())
 			{
