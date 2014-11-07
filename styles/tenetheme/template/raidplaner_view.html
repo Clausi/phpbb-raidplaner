@@ -44,7 +44,7 @@
 			<thead>
 				<tr>
 					<!-- BEGIN n_roleNames -->
-					<th>{n_roleNames.ROLELANG}</th>
+					<th>{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i></th>
 					<!-- END n_roleNames -->
 				</tr>
 			</thead>
@@ -60,7 +60,10 @@
 					<td>
 						<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group connectedSortable<!-- IF .n_status.n_roles.n_users == 0 --> emptyList<!-- ENDIF -->" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
 							<!-- BEGIN n_users -->
-								<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" data-content="{n_status.n_roles.n_users.COMMENT}"><!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>{n_status.n_roles.n_users.USERNAME}</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF --></li>
+							<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" data-content="{n_status.n_roles.n_users.COMMENT}">
+								<!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>({n_status.n_roles.n_users.USERNAME})</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF -->
+								<i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF--> pull-right"></i>
+							</li>
 							<!-- END n_users -->
 						</ul>
 					</td>

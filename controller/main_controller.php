@@ -274,6 +274,7 @@ class main_controller implements main_interface
 			{
 				$this->template->assign_block_vars('n_roleNames', array(
 					'ROLE' => $role_id,
+					'ROLENAME' => strtolower($role_name),
 					'ROLELANG' => $this->user->lang[$this->roles[$role_id]],
 				));
 			}
@@ -323,6 +324,7 @@ class main_controller implements main_interface
 							'USER_ID' => $currentUserId,
 							'USERNAME' => $currentUsername,
 							'CHARNAME' => $currentCharname,
+							'ROLENAME' => strtolower($role_name),
 							'CLASSNAME' => $this->classes[$attendee['class']],
 							'COMMENT' => $attendee['comment'],
 						));
