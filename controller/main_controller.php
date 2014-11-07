@@ -288,7 +288,7 @@ class main_controller implements main_interface
 		$i_status = 0;
 		$len_status = count($this->status);
 		$len_roles = count($this->roles);
-		$this->var_display($row_count);
+
 		foreach($this->status as $status_id => $status_name)
 		{
 			$this->template->assign_block_vars('n_status', array(
