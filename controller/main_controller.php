@@ -207,6 +207,8 @@ class main_controller implements main_interface
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
 		
+		$row_count = $this->getRaidmemberCount($raid_id);
+		
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
@@ -217,7 +219,9 @@ class main_controller implements main_interface
 			'START_TIME' => $row_raid['start_time'],
 			'END_TIME' => $row_raid['end_time'],
 			'FLAG' => ($row_raid['raid_time'] < time()) ? 'past' : 'future',
+			
 			'USERSTATUS' => $this->getStatus($raid_id, $user_id),
+			
 			'U_COMMENT' => $this->helper->route('clausi_raidplaner_controller_comment', array('raid_id' => $raid_id)),
 			'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => 0)),
 		));
@@ -284,12 +288,15 @@ class main_controller implements main_interface
 		$i_status = 0;
 		$len_status = count($this->status);
 		$len_roles = count($this->roles);
+		$this->var_display($row_count);
 		foreach($this->status as $status_id => $status_name)
 		{
 			$this->template->assign_block_vars('n_status', array(
 				'STATUS' => $status_id,
 				'STATUSNAME' => strtolower($status_name),
 				'STATUSLANG' => $this->user->lang[$this->status[$status_id]],
+							
+				'MEMBERS_COUNT' => (!empty($row_count[0][strtolower($status_name)])) ? $row_count[0][strtolower($status_name)] : 0,
 			));
 			$i_roles = 0;
 			foreach($this->roles as $role_id => $role_name)

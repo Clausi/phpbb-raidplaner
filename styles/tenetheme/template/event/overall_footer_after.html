@@ -64,6 +64,13 @@ $(document).ready(function() {
 		3: '{L_SUBSTITUTE}',
 		4: '{L_ACCEPT}'
 	};
+	var status_name = {
+		0: 'not_signup',
+		1: 'attending',
+		2: 'decline',
+		3: 'substitute',
+		4: 'accept'
+	};
 	var icon = {
 		0: 'minus',
 		1: 'circle',
@@ -71,6 +78,13 @@ $(document).ready(function() {
 		3: 'minus',
 		4: 'check'
 	};
+	
+	function updateCount(status)
+	{
+		var count = $('tr#' + status + ' > td > ul').children('li').length;
+		$('#' + status + '_count').text('( ' + count + ' )');
+	}
+	
 	phpbb.addAjaxCallback('raidplaner_status', function(res) {
 		$(this).parent('div.btn-group');
 		$('#btn_' + res.RAID_ID).removeClass('btn-danger btn-warning btn-success btn-default');
@@ -99,7 +113,9 @@ $(document).ready(function() {
 		if($('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').children('li').length === 0) $('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').addClass('emptyList');
 		
 		raidplanerView.sortable( 'refresh' );
-
+		
+		updateCount(res.STATUSNAME);
+		updateCount(res.OLD_STATUSNAME);
 	});
 	
 	<!-- ENDIF -->
@@ -128,7 +144,11 @@ $(document).ready(function() {
 					type: 'POST',
 					url: '{U_MODSTATUSCHANGE}'
 				});
+				
+				
 			}
+			
+			updateCount(status_name[e.target.dataset.status]);
 		}
 	}).disableSelection();
 	<!-- ENDIF -->
