@@ -14,7 +14,17 @@
 			</dl>
 		</div>
 		<div class="col-sm-6">
+			<!-- IF M_RAIDPLANER and FLAG == 'future' -->
+			<form method="post" action="{M_NOTE_ACTION}" class="form-inline" id="note_form" role="form" data-ajax="true">
+				<div class="form-group">
+					<textarea name="note" id="note" rows="2" cols="40" tabindex="1" class="form-control">{RAID_NOTE}</textarea>
+				</div>
+				{S_FORM_TOKEN}
+				<input type="submit" accesskey="s" tabindex="2" name="post" value="{L_SUBMIT}" class="btn btn-success" />
+			</form>
+			<!-- ELSE -->
 			<p>{RAID_NOTE}</p>
+			<!-- ENDIF -->
 		</div>
 		<div class="col-sm-3">
 			<!-- IF U_RAIDPLANER and FLAG == 'future' -->
@@ -22,7 +32,8 @@
 				<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu" role="menu">
-				<li class="bg-primary"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+				<li class="bg-primary"><a href="{U_COMMENT}" data-ajax="raidplaner_comment"><i class="fa fa-comment"></i> {L_COMMENT}</a></li>
+				<li class="bg-success"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
 				<li class="bg-warning"><a href="{U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
 				<li class="bg-danger"><a href="{U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
 			</ul>
@@ -49,7 +60,7 @@
 					<td>
 						<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group connectedSortable<!-- IF .n_status.n_roles.n_users == 0 --> emptyList<!-- ENDIF -->" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
 							<!-- BEGIN n_users -->
-								<li class="list-group-item" id="user_{n_status.n_roles.n_users.USER_ID}">{n_status.n_roles.n_users.USERNAME}</li>
+								<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" data-content="{n_status.n_roles.n_users.COMMENT}"><!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>{n_status.n_roles.n_users.USERNAME}</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF --></li>
 							<!-- END n_users -->
 						</ul>
 					</td>

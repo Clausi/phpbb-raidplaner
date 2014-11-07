@@ -13,3 +13,11 @@ clausi_raidplaner_controller_status:
 clausi_raidplaner_controller_modstatus:
     pattern: /raidplaner/modstatus/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setModstatus, raid_id: "0" }
+
+clausi_raidplaner_controller_comment:
+    pattern: /raidplaner/comment/{raid_id}
+    defaults: { _controller: clausi.raidplaner.main.controller:setUsercomment, raid_id: "0" }
+
+clausi_raidplaner_controller_note:
+    pattern: /raidplaner/note/{raid_id}
+    defaults: { _controller: clausi.raidplaner.main.controller:setModRaidnote, raid_id: "0" }

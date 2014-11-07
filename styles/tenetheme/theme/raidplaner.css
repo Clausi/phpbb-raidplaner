@@ -1,4 +1,3 @@
-
 #datatables-raidplaner  a {
 	text-decoration: none;
 }
@@ -28,4 +27,43 @@
 
 .attendee_view td {
 	width: 25%;
+}
+
+.raidplaner-comment:before {
+	font-family: FontAwesome;
+	content: " ";
+}
+
+.cc_deathknight , .cc_deathknight  a{
+	color: #C41F3B;
+}
+.cc_druid, .cc_druid a {
+	color: #FF7D0A;
+}
+.cc_hunter, .cc_hunter a{
+	color: #ABD473;
+}
+.cc_mage, .cc_mage a{
+	color: #69CCF0;
+}
+.cc_monk, .cc_monk a{
+	color: #00FF96;
+}
+.cc_paladin, .cc_paladin a{
+	color: #F58CBA;
+}
+.cc_priest, .cc_priest a{
+	color: #FFFFFF;
+}
+.cc_rogue, .cc_rogue a{
+	color: #FFF569;
+}
+.cc_shaman, .cc_shaman a{
+	color: #0070DE;
+}
+.cc_warlock, .cc_warlock a{
+	color: #9482C9;
+}
+.cc_warrior, .cc_warrior a{
+	color: #C79C6E;
 }

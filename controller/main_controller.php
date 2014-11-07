@@ -40,6 +40,20 @@ class main_controller implements main_interface
 		3 => 'MELEE',
 		4 => 'RANGE',
 	];
+	
+	protected $classes = [
+		1 => "warrior",
+		2 => "paladin",
+		3 => "hunter",
+		4 => "rogue",
+		5 => "priest",
+		6 => "deathknight",
+		7 => "shaman",
+		8 => "mage",
+		9 => "warlock",
+		10 => "monk",
+		11 => "druid",
+	];
 
 
 	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
@@ -126,6 +140,9 @@ class main_controller implements main_interface
 			$raid_end = explode(':', $row['end_time']);
 			$raid_endtime = mktime($raid_end[0], $raid_end[1], 0, date("n", $row['raid_time']), date("j", $row['raid_time']), date("Y", $row['raid_time']));
 			if($raid_endtime >= time() && $firstfuture == 0) $firstfuture = 1;
+			
+			$flags = OPTION_FLAG_BBCODE + OPTION_FLAG_SMILIES + OPTION_FLAG_LINKS;
+			$row['note'] = generate_text_for_display($row['note'], $row['bbcode_uid'], $row['bbcode_bitfield'], $flags);
 
 			$this->template->assign_block_vars('n_raids', array(
 				'EVENTNAME' => $row['name'],
@@ -147,7 +164,7 @@ class main_controller implements main_interface
 				
 				'USERSTATUS' => $user_status,
 				'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $row['raid_id'], 'status_id' => 0)),
-				
+				'U_COMMENT' => $this->helper->route('clausi_raidplaner_controller_comment', array('raid_id' => $row['raid_id'])),
 				'U_RAID' => $this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $row['raid_id'])),
 			));
 			$memberCount = ['attending' => 0, 'decline' => 0, 'substitute' => 0, 'accept' => 0];
@@ -155,10 +172,15 @@ class main_controller implements main_interface
 		}
 		$this->db->sql_freeresult($result);
 		
-		$user_profile = $this->getUserProfileFields($user_id);
+		if($this->auth->acl_get('u_raidplaner'))
+		{
+			$u_raidplaner = true;
+			$user_profile = $this->getUserProfileFields($user_id);
+		}
+		else $u_raidplaner = false;
 				
 		$this->template->assign_vars(array(
-			'U_RAIDPLANER' => ($this->auth->acl_get('u_raidplaner') && !empty($user_profile['role']) && !empty($user_profile['class'])),
+			'U_RAIDPLANER' => ($u_raidplaner && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
 			'RAIDPLANER_INDEX' => true,
@@ -184,7 +206,7 @@ class main_controller implements main_interface
 
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
-	
+		
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
@@ -195,10 +217,27 @@ class main_controller implements main_interface
 			'START_TIME' => $row_raid['start_time'],
 			'END_TIME' => $row_raid['end_time'],
 			'FLAG' => ($row_raid['raid_time'] < time()) ? 'past' : 'future',
-			'RAID_NOTE' => $row_raid['note'],
 			'USERSTATUS' => $this->getStatus($raid_id, $user_id),
+			'U_COMMENT' => $this->helper->route('clausi_raidplaner_controller_comment', array('raid_id' => $raid_id)),
 			'U_STATUS' => $this->helper->route('clausi_raidplaner_controller_status', array('raid_id' => $raid_id, 'status_id' => 0)),
 		));
+		
+		$flags = OPTION_FLAG_BBCODE + OPTION_FLAG_SMILIES + OPTION_FLAG_LINKS;
+		
+		if( $this->auth->acl_get('m_raidplaner'))
+		{
+			add_form_key('clausi/raidplaner');
+			$row_raid['note'] = generate_text_for_edit($row_raid['note'], $row_raid['bbcode_uid'], $row_raid['bbcode_bitfield'], $flags);
+			$this->template->assign_vars(array(
+				'M_NOTE_ACTION' => $this->helper->route('clausi_raidplaner_controller_note', array('raid_id' => $raid_id)),
+				'RAID_NOTE' => $row_raid['note']['text'],
+			));
+		}
+		else
+		{
+			$row_raid['note'] = generate_text_for_display($row_raid['note'], $row_raid['bbcode_uid'], $row_raid['bbcode_bitfield'], $flags);
+			$this->template->assign_var('RAID_NOTE', $row_raid['note']);
+		}
 		
 		$row_attendees = $this->getAttendees($raid_id);
 		
@@ -275,9 +314,17 @@ class main_controller implements main_interface
 								break;
 							}
 						}
+						
+						$user_profile = $this->getUserProfileFields($currentUserId);
+						if(!empty($user_profile['charname'])) $currentCharname = $user_profile['charname'];
+						else $currentCharname = '';
+						
 						$this->template->assign_block_vars('n_status.n_roles.n_users', array(
 							'USER_ID' => $currentUserId,
 							'USERNAME' => $currentUsername,
+							'CHARNAME' => $currentCharname,
+							'CLASSNAME' => $this->classes[$attendee['class']],
+							'COMMENT' => $attendee['comment'],
 						));
 					}
 				}
@@ -285,70 +332,20 @@ class main_controller implements main_interface
 			$i_status++;
 		}
 		
-		$user_profile = $this->getUserProfileFields($user_id);
+		if($this->auth->acl_get('u_raidplaner'))
+		{
+			$u_raidplaner = true;
+			$user_profile = $this->getUserProfileFields($user_id);
+		}
+		else $u_raidplaner = false;
 
 		$this->template->assign_vars(array(
-			'U_RAIDPLANER' => ($this->auth->acl_get('u_raidplaner') && !empty($user_profile['role']) && !empty($user_profile['class'])),
+			'U_RAIDPLANER' => ($u_raidplaner && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
 			'U_MODSTATUSCHANGE' => ($this->auth->acl_get('m_raidplaner')) ? $this->helper->route('clausi_raidplaner_controller_modstatus', array('raid_id' => $raid_id)) : '',
 		));
 		return $this->helper->render('raidplaner_view.html', $this->user->lang['RAIDPLANER_RAID'] . ': ' . $raid_id);
-	}
-	
-	
-	public function createRaid($schedule_id, $raid_time, $invite_time, $start_time, $end_time, $autoaccept)
-	{
-		$sql_ary = array(
-			'schedule_id' => $schedule_id,
-			'raid_time' => $raid_time,
-			'invite_time' => $invite_time,
-			'start_time' => $start_time,
-			'end_time' => $end_time,
-			'autoaccept' => $autoaccept,
-		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
-		$this->db->sql_query($sql);
-		
-		// Add attendees if autoaccept and raid in future
-		if($autoaccept == 1 && $raid_time > time()) $this->addAttendees($this->db->sql_nextid());
-	}
-	
-	
-	public function addAttendees($raid_id)
-	{
-		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
-		$this->cp = $this->container->get('profilefields.manager');
-		foreach($user_ary as $permission)
-		{
-			$user_data = $this->cp->grab_profile_fields_data($permission['u_raidplaner']);
-			foreach($permission['u_raidplaner'] as $user_id)
-			{
-				if($user_data[$user_id]['raidplaner_role']['value']-1 > 0 && $user_data[$user_id]['raidplaner_class']['value']-1 > 0)
-				{
-					$sql_ary_index = array(
-						'user_id' => $user_id,
-						'raid_id' => $raid_id,
-					);
-
-					$sql_ary = array(
-						'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
-						'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
-						'status' => 1,
-						'signup_time' => time(),
-					);
-					$sql = "INSERT INTO " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
-						" . $this->db->sql_build_array('INSERT_SELECT', array_merge($sql_ary_index, $sql_ary)) . "
-						FROM dual
-							WHERE NOT EXISTS
-							( SELECT *
-								FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
-								WHERE " . $this->db->sql_build_array('SELECT', $sql_ary_index) . " 
-							);";
-					$this->db->sql_query($sql);
-				}
-			}
-		}
 	}
 	
 	
@@ -414,8 +411,9 @@ class main_controller implements main_interface
 		// Get current status
 		$currentAttendee = $this->getAttendee($raid_id, $user_id);
 		$this->template->assign_vars(array(
-			'COMMENT' => $this->getComment($raid_id, $user_id),
+			'COMMENT' => $currentAttendee['comment'],
 		));
+		
 		// TODO: Check back if last value of confirm_box() can be done better
 		if($currentAttendee['status'] == 4 && confirm_box(false, 'ACCEPTED_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/')))
 		{
@@ -464,6 +462,151 @@ class main_controller implements main_interface
 				confirm_box(false, 'STATUSCHANGE_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
 			}
 		}
+	}
+	
+	
+	public function setUsercomment($raid_id)
+	{
+		if( ! $this->auth->acl_get('u_raidplaner'))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_USER'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+		
+		if( ! is_numeric($raid_id))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_ID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		
+		$raid_data = $this->getRaidData($raid_id);
+		if( $raid_data['raid_time'] < time())
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_RAID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_RAID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+		
+		$user_id = $this->user->data['user_id'];
+		
+		$this->u_action = $this->helper->route('clausi_raidplaner_controller_comment', array('raid_id' => $raid_id));
+
+		// TODO: Check back if last value of confirm_box() can be done better
+		if(confirm_box(true))
+		{
+			$comment = $this->request->variable('comment', '', true);
+			$this->setComment($raid_id, $user_id, $comment);
+			
+			$response = array(
+				'MESSAGE_TITLE' => $this->user->lang['COMMENT_CHANGE_TITLE'],
+				'MESSAGE_TEXT' => sprintf($this->user->lang['COMMENT_CHANGE_TEXT'], $raid_id, $this->user->format_date($raid_data['raid_time'])),
+			);
+
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send($response);
+			}
+
+			$this->template->assign_vars($response);
+			return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
+		}
+		else 
+		{
+			$this->template->assign_vars(array(
+				'COMMENT' => $this->getComment($raid_id, $user_id),
+				'U_ACTION' => $this->u_action,
+			));
+			confirm_box(false, 'COMMENT_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
+		}
+	}
+	
+	
+	public function setModRaidnote($raid_id)
+	{
+		if( ! $this->auth->acl_get('m_raidplaner'))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_USER'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+		
+		if( ! is_numeric($raid_id))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_ID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		
+		add_form_key('clausi/raidplaner');
+		if (!check_form_key('clausi/raidplaner'))
+		{
+			trigger_error('FORM_INVALID');
+		}
+		
+		$note = $this->request->variable('note', '');
+		$errors = generate_text_for_storage($note, $uid, $bitfield, $flags, true, true, true);
+		
+		if(sizeof($errors))
+		{
+			$response = array(
+				'MESSAGE_TITLE' => $this->user->lang['RAIDPLANER_ERROR'],
+				'MESSAGE_TEXT' => implode('<br />', $errors),
+			);
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send($response);
+			}
+		}
+		else
+		{
+			$this->setRaidnote($raid_id, $note, $uid, $bitfield);
+			
+			$raid_data = $this->getRaidData($raid_id);
+			
+			$response = array(
+				'MESSAGE_TITLE' => $this->user->lang['NOTE_CHANGE_TITLE'],
+				'MESSAGE_TEXT' => sprintf($this->user->lang['NOTE_CHANGE_TEXT'], $raid_id, $this->user->format_date($raid_data['raid_time'])),
+			);
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send($response);
+			}
+		}
+		
+		$this->template->assign_vars($response);
+		return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
 	}
 	
 	
@@ -561,6 +704,24 @@ class main_controller implements main_interface
 	}
 	
 	
+	/**
+	* Private functions
+	**/
+	
+	private function setRaidnote($raid_id, $note, $uid, $bitfield)
+	{
+		$sql_ary = array(
+			'note' => $note,
+			'bbcode_bitfield' => $bitfield,
+			'bbcode_uid' => $uid,
+		);
+		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
+			WHERE raid_id = " . $raid_id ."";
+		$this->db->sql_query($sql);
+	}
+	
+	
 	private function updateAllStatus()
 	{
 		if( ! $this->auth->acl_get('u_raidplaner'))
@@ -602,6 +763,7 @@ class main_controller implements main_interface
 			}
 		}
 	}
+	
 	
 	private function setComment($raid_id, $user_id, $comment)
 	{
@@ -653,21 +815,6 @@ class main_controller implements main_interface
 	}
 	
 	
-	private function getStatus($raid_id, $user_id)
-	{
-		$sql_ary = array(
-			'raid_id' => $raid_id,
-			'user_id' => $user_id,
-		);
-		$sql = "SELECT status FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-		
-		return $row['status'];
-	}
-	
-	
 	private function getRole($raid_id, $user_id)
 	{
 		$sql_ary = array(
@@ -701,7 +848,7 @@ class main_controller implements main_interface
 	// Get all attendees of raid
 	private function getAttendees($raid_id)
 	{
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."'";
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."' ORDER BY class, user_id";
 		$result = $this->db->sql_query($sql);
 		$row_attendees = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
@@ -723,6 +870,21 @@ class main_controller implements main_interface
 		$this->db->sql_freeresult($result);
 		
 		return $row;
+	}
+	
+	
+	private function getStatus($raid_id, $user_id)
+	{
+		$sql_ary = array(
+			'raid_id' => $raid_id,
+			'user_id' => $user_id,
+		);
+		$sql = "SELECT status FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row['status'];
 	}
 	
 	
@@ -825,6 +987,61 @@ class main_controller implements main_interface
 		$this->db->sql_freeresult($result);
 		
 		return $row_raid;
+	}
+	
+	
+	public function createRaid($schedule_id, $raid_time, $invite_time, $start_time, $end_time, $autoaccept)
+	{
+		$sql_ary = array(
+			'schedule_id' => $schedule_id,
+			'raid_time' => $raid_time,
+			'invite_time' => $invite_time,
+			'start_time' => $start_time,
+			'end_time' => $end_time,
+			'autoaccept' => $autoaccept,
+		);
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+		
+		// Add attendees if autoaccept and raid in future
+		if($autoaccept == 1 && $raid_time > time()) $this->addAttendees($this->db->sql_nextid());
+	}
+	
+	
+	public function addAttendees($raid_id)
+	{
+		$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
+		$this->cp = $this->container->get('profilefields.manager');
+		foreach($user_ary as $permission)
+		{
+			$user_data = $this->cp->grab_profile_fields_data($permission['u_raidplaner']);
+			foreach($permission['u_raidplaner'] as $user_id)
+			{
+				if($user_data[$user_id]['raidplaner_role']['value']-1 > 0 && $user_data[$user_id]['raidplaner_class']['value']-1 > 0)
+				{
+					$sql_ary_index = array(
+						'user_id' => $user_id,
+						'raid_id' => $raid_id,
+					);
+
+					$sql_ary = array(
+						'role' => $user_data[$user_id]['raidplaner_role']['value']-1,
+						'class' => $user_data[$user_id]['raidplaner_class']['value']-1,
+						'status' => 1,
+						'signup_time' => time(),
+					);
+					$sql = "INSERT INTO " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+						" . $this->db->sql_build_array('INSERT_SELECT', array_merge($sql_ary_index, $sql_ary)) . "
+						FROM dual
+							WHERE NOT EXISTS
+							( SELECT *
+								FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
+								WHERE " . $this->db->sql_build_array('SELECT', $sql_ary_index) . " 
+							);";
+					$this->db->sql_query($sql);
+				}
+			}
+		}
 	}
 	
 	

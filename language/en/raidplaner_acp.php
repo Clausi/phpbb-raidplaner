@@ -54,5 +54,6 @@ $lang = array_merge($lang, array(
 	// Userconfig
 	'RAIDPLANER_CLASS' => 'Class',
 	'RAIDPLANER_ROLE' => 'Role',
+	'RAIDPLANER_CHARNAME' => 'Charactername',
 	'ACP_RAIDPLANER_USERS_SAVED' => 'User profiles saved.',
 ));

@@ -6,11 +6,11 @@
 	<fieldset>
 	<input type="hidden" name="action" value="edit" />
 
-	<table>
-			<col class="row1" /><col class="row1" /><col class="row1" /><col class="row1" />
+	<table class="table1 zebra-table fixed-width-table responsive">
 		<thead>
 			<tr>
 				<th>{L_USERNAME}</th>
+				<th>{L_RAIDPLANER_CHARNAME}</th>
 				<th>{L_RAIDPLANER_CLASS}</th>
 				<th>{L_RAIDPLANER_ROLE}</th>
 			</tr>
@@ -20,6 +20,13 @@
 			<tr>
 				<td>
 					{n_users.NAME}
+				</td>
+				<td>
+					<!-- BEGIN profile_fields -->
+						<!-- IF n_users.profile_fields.FIELD_ID == 'pf_raidplaner_charname' -->
+							<input type="text" id="charnames[{n_users.USER_ID}]" name="charnames[{n_users.USER_ID}]" value="{n_users.profile_fields.FIELD_VALUE}" />
+						<!-- ENDIF -->
+					<!-- END profile_fields -->
 				</td>
 				<td>
 					<!-- BEGIN profile_fields -->

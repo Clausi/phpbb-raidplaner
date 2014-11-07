@@ -110,6 +110,8 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 						'active' => array('TINT:1', 1),
 						'deleted' => array('TIMESTAMP', 0),
 						'note' => array('TEXT', NULL),
+						'bbcode_bitfield' => array('VCHAR:255', ''),
+						'bbcode_uid' => array('VCHAR:8', ''),
 					),
 					'PRIMARY_KEY'	=> 'raid_id',
 				),

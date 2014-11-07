@@ -398,12 +398,18 @@ class admin_controller implements admin_interface
 				trigger_error('FORM_INVALID');
 			}
 			$this->cp = $this->container->get('profilefields.manager');
+			
 			$users = $this->request->variable('users', array(0 => array('' => 0)));
+			$charnames = $this->request->variable('charnames', array(0 => ''));
 			
 			$key_raid = '';
-
+			
 			foreach( $users as $user_id => $user_data )
 			{
+				if($charnames[$user_id] != '') $char_data = array('pf_raidplaner_charname' => $charnames[$user_id]);
+				else $char_data = array('pf_raidplaner_charname' => '');
+				$this->cp->update_profile_field_data($user_id, $char_data);
+				
 				foreach( $user_data as $key => $value )
 				{
 					$user_data[$key] = $value+1;
@@ -418,7 +424,7 @@ class admin_controller implements admin_interface
 							$key_raid = 'role';
 						break;
 					}
-					$raid_data[$key_raid] = $user_data[$key];
+					if($key_raid != '') $raid_data[$key_raid] = $user_data[$key];
 				}
 				$this->cp->update_profile_field_data($user_id, $user_data);
 
@@ -476,6 +482,7 @@ class admin_controller implements admin_interface
 						'LANG_NAME'	=> $this->user->lang($row['lang_name']),
 						'LANG_EXPLAIN'	=> $this->user->lang($row['lang_explain']),
 						'FIELD_ID'	=> $profile_field->get_field_ident($row),
+						'FIELD_VALUE' => $user_data,
 						'S_REQUIRED'	=> ($row['field_required']) ? true : false,
 						'USER_DATA' => $user_data-1,
 					));
