@@ -455,6 +455,7 @@ class main_controller implements main_interface
 					'ATTENDING' => $row_count['attending'],
 					'DECLINE' => $row_count['decline'],
 					'SUBSTITUTE' => $row_count['substitute'],
+					'NEW_COMMENT' => $comment,
 				);
 
 				if ($this->request->is_ajax())
@@ -529,6 +530,8 @@ class main_controller implements main_interface
 			$response = array(
 				'MESSAGE_TITLE' => $this->user->lang['COMMENT_CHANGE_TITLE'],
 				'MESSAGE_TEXT' => sprintf($this->user->lang['COMMENT_CHANGE_TEXT'], $raid_id, $this->user->format_date($raid_data['raid_time'])),
+				'NEW_COMMENT' => $comment,
+				'USER_ID' => $user_id,
 			);
 
 			if ($this->request->is_ajax())
@@ -545,6 +548,7 @@ class main_controller implements main_interface
 				'COMMENT' => $this->getComment($raid_id, $user_id),
 				'U_ACTION' => $this->u_action,
 			));
+			
 			confirm_box(false, 'COMMENT_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
 		}
 	}

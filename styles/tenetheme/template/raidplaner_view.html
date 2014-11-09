@@ -27,7 +27,7 @@
 		</div>
 		<div class="col-sm-3">
 			<!-- IF U_RAIDPLANER and FLAG == 'future' -->
-			<button type="button" id="btn_{RAID_ID}" class="pull-right btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
+			<button type="button" id="btn_{RAID_ID}" class="btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
 				<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu" role="menu">
@@ -44,7 +44,9 @@
 		<thead>
 			<tr>
 				<!-- BEGIN n_roleNames -->
-				<th>{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i></th>
+				<th>
+					{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
+				</th>
 				<!-- END n_roleNames -->
 			</tr>
 		</thead>
@@ -52,7 +54,19 @@
 		
 			<!-- BEGIN n_status -->
 			<tr class="<!-- IF n_status.STATUS == 4 -->success<!-- ELSEIF n_status.STATUS == 3 -->warning<!-- ELSEIF n_status.STATUS == 2 -->danger<!-- ELSEIF n_status.STATUS == 1 -->active<!-- ELSE -->info<!-- ENDIF -->">
-				<th colspan="4">{n_status.STATUSLANG} <small id="{n_status.STATUSNAME}_count">( {n_status.MEMBERS_COUNT} )</small></th>
+				<th colspan="4">
+					{n_status.STATUSLANG} <small id="{n_status.STATUSNAME}_count">( {n_status.MEMBERS_COUNT} )</small>
+					<!-- IF n_status.STATUS == 4 and M_RAIDPLANER and FLAG == 'future' -->
+					<div class="btn-group pull-right">
+					<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-default">
+							<input type="checkbox" name="preview" id="preview" value="1" autocomplete="off">{L_PREVIEW}
+						</label>
+					</div>
+					<button type="button" id="apply" class="btn btn-default">{L_SAVE}</button>
+					</div>
+					<!-- ENDIF -->
+				</th>
 			</tr>
 			
 			<tr id="{n_status.STATUSNAME}">

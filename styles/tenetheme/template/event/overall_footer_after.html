@@ -112,15 +112,35 @@ $(document).ready(function() {
 		$('ul#' + res.STATUSNAME + res.ROLENAME + 'View').removeClass('emptyList');
 		if($('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').children('li').length === 0) $('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').addClass('emptyList');
 		
+		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
+		
 		raidplanerView.sortable( 'refresh' );
 		
 		updateCount(res.STATUSNAME);
 		updateCount(res.OLD_STATUSNAME);
 	});
 	
+	phpbb.addAjaxCallback('raidplaner_comment', function(res) {
+		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
+	});
+	
 	<!-- ENDIF -->
 	
 	<!-- IF M_RAIDPLANER -->
+	var preview = 0;
+	$( "#preview" ).on( "change", function() {
+		preview = $( "input#preview:checked" ).val();
+	});
+	
+	$( "#apply" ).click(function() {
+		if( preview == 1 )
+		{
+			raidplanerView.sortable( 'refresh' );
+			var sorted = raidplanerView.sortable( "toArray" );
+			console.log(sorted);
+		}
+	});
+	
 	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
 	raidplanerView.sortable({
 		connectWith: ".connectedSortable",
@@ -137,17 +157,18 @@ $(document).ready(function() {
 			}
 		},
 		update: function (e, ui) {
-			if (this === ui.item.parent()[0]) {
-				var data = "user_id=" + ui.item.context.id.replace("user_", "") + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
-				$.ajax({
-					data: data,
-					type: 'POST',
-					url: '{U_MODSTATUSCHANGE}'
-				});
-				
-				
+			if( preview != 1 )
+			{
+				if (this === ui.item.parent()[0])
+				{
+					var data = "user_id=" + ui.item.context.id.replace("user_", "") + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
+					$.ajax({
+						data: data,
+						type: 'POST',
+						url: '{U_MODSTATUSCHANGE}'
+					});
+				}
 			}
-			
 			updateCount(status_name[e.target.dataset.status]);
 		}
 	}).disableSelection();
