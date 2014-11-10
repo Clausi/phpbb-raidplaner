@@ -275,13 +275,13 @@ class main_controller implements main_interface
 		$this->db->sql_freeresult($result);
 
 		foreach($this->roles as $role_id => $role_name)
-			{
-				$this->template->assign_block_vars('n_roleNames', array(
-					'ROLE' => $role_id,
-					'ROLENAME' => strtolower($role_name),
-					'ROLELANG' => $this->user->lang[$this->roles[$role_id]],
-				));
-			}
+		{
+			$this->template->assign_block_vars('n_roleNames', array(
+				'ROLE' => $role_id,
+				'ROLENAME' => strtolower($role_name),
+				'ROLELANG' => $this->user->lang[$this->roles[$role_id]],
+			));
+		}
 		
 		$currentUsername = '';
 		$currentUserId = '';
@@ -295,7 +295,6 @@ class main_controller implements main_interface
 				'STATUS' => $status_id,
 				'STATUSNAME' => strtolower($status_name),
 				'STATUSLANG' => $this->user->lang[$this->status[$status_id]],
-							
 				'MEMBERS_COUNT' => (!empty($row_count[0][strtolower($status_name)])) ? $row_count[0][strtolower($status_name)] : 0,
 			));
 			$i_roles = 0;
@@ -353,6 +352,7 @@ class main_controller implements main_interface
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
 			'U_MODSTATUSCHANGE' => ($this->auth->acl_get('m_raidplaner')) ? $this->helper->route('clausi_raidplaner_controller_modstatus', array('raid_id' => $raid_id)) : '',
+			'U_MODALLSTATUSCHANGE' => ($this->auth->acl_get('m_raidplaner')) ? $this->helper->route('clausi_raidplaner_controller_modallstatus', array('raid_id' => $raid_id)) : '',
 		));
 		return $this->helper->render('raidplaner_view.html', $this->user->lang['RAIDPLANER_RAID'] . ': ' . $raid_id);
 	}
@@ -713,6 +713,78 @@ class main_controller implements main_interface
 			'statusupdate' => true,
 		));
 		
+		return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
+	}
+	
+	public function setModAllstatus($raid_id)
+	{
+		if( ! $this->auth->acl_get('m_raidplaner'))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_USER'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+
+		if( ! is_numeric($raid_id))
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_ID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
+		}
+		
+		$raid_data = $this->getRaidData($raid_id);
+		if( $raid_data['raid_time'] < time())
+		{
+			if ($this->request->is_ajax())
+			{
+				$this->json_response->send(array(
+					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
+					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_RAID'],
+				));
+			}
+			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_RAID']);
+			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
+		}
+		
+		foreach($this->status as $status_id => $statusName)
+		{
+			foreach($this->roles as $role_id => $roleName)
+			{
+				$current = $this->request->variable(strtolower($statusName) . '_' . strtolower($roleName), '');
+				$current = explode('&amp;', $current);
+				foreach($current as $user_id)
+				{
+					$user_id = str_replace('user[]=', '', $user_id);
+					if($user_id && $user_id != 0)
+					{
+						$this->setStatus($raid_id, $user_id, $status_id, $role_id, true);
+					}
+				}
+			}
+		}
+		
+		$response = array(
+			'MESSAGE_TITLE' => $this->user->lang['STATUS_PREVIEW_SAVE'],
+			'MESSAGE_TEXT' => sprintf($this->user->lang['STATUS_PREVIEW_TEXT'], $raid_id, $this->user->format_date($raid_data['raid_time'])),
+		);
+		
+		if ($this->request->is_ajax())
+		{
+			$this->json_response->send($response);
+		}
+		$this->template->assign_vars($response);
 		return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
 	}
 	

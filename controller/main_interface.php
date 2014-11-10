@@ -14,6 +14,7 @@ interface main_interface
 	public function setUserstatus($raid_id, $status_id);
 	public function setUsercomment($raid_id);
 	public function setModstatus($raid_id);
+	public function setModAllstatus($raid_id);
 	public function setModRaidnote($raid_id);
 	
 }

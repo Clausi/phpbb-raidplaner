@@ -71,6 +71,12 @@ $(document).ready(function() {
 		3: 'substitute',
 		4: 'accept'
 	};
+	var role_name = {
+		1: 'tank',
+		2: 'heal',
+		3: 'melee',
+		4: 'range'
+	};
 	var icon = {
 		0: 'minus',
 		1: 'circle',
@@ -126,19 +132,14 @@ $(document).ready(function() {
 	
 	<!-- ENDIF -->
 	
-	<!-- IF M_RAIDPLANER -->
+	<!-- IF M_RAIDPLANER and FLAG == 'future' -->
+	phpbb.addAjaxCallback('raidplaner_updateall', function(res) {
+		console.log(res);
+	});
+	
 	var preview = 0;
 	$( "#preview" ).on( "change", function() {
 		preview = $( "input#preview:checked" ).val();
-	});
-	
-	$( "#apply" ).click(function() {
-		if( preview == 1 )
-		{
-			raidplanerView.sortable( 'refresh' );
-			var sorted = raidplanerView.sortable( "toArray" );
-			console.log(sorted);
-		}
 	});
 	
 	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
@@ -168,6 +169,20 @@ $(document).ready(function() {
 						url: '{U_MODSTATUSCHANGE}'
 					});
 				}
+			}
+			else if( preview == 1 )
+			{
+				raidplanerView.sortable( 'refresh' );
+				var sorted = new Array();
+				
+				for (status in status_name) {
+					for(role in role_name) {
+						sorted = $('#' + status_name[status] + role_name[role] + 'View').sortable('serialize');
+						$('input#' + status_name[status] + '_' + role_name[role]).val(sorted);
+					}
+				}
+				
+				$('input#sorted').val(sorted);
 			}
 			updateCount(status_name[e.target.dataset.status]);
 		}
