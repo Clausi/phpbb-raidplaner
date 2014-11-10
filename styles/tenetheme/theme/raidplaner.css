@@ -9,11 +9,12 @@
 	background-color: #282828 !important;
 }
 
-.checkbox {
+.rp-checkbox {
 	background-color: #6c6c6c;
 }
 
-.checkbox:hover {
+.rp-checkbox:hover {
+	border-color: #636363;
 	background-color: #636363;
 }
 
