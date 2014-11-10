@@ -53,9 +53,6 @@ $(document).ready(function() {
 		trigger: 'hover',
 	});
 
-	$("table.checkboxes").on('change', "input[id^=status_]", function(e){
-		$("#statuslabel_"+this.id.split('_')[1]).toggleClass("fa-square-o fa-check-square-o");
-	});
 
 	var lang_status = {
 		0: '{L_NOT_SIGNUP}',
@@ -137,7 +134,7 @@ $(document).ready(function() {
 		console.log(res);
 	});
 	
-	var preview = 0;
+	var preview = 1;
 	$( "#preview" ).on( "change", function() {
 		preview = $( "input#preview:checked" ).val();
 		
