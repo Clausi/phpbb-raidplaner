@@ -140,6 +140,15 @@ $(document).ready(function() {
 	var preview = 0;
 	$( "#preview" ).on( "change", function() {
 		preview = $( "input#preview:checked" ).val();
+		
+		if(preview == 1){
+			$('#apply').removeClass('hidden');
+			$('#apply').addClass('show');
+		}
+		else {
+			$('#apply').removeClass('show');
+			$('#apply').addClass('hidden');
+		}
 	});
 	
 	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
