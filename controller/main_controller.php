@@ -184,6 +184,7 @@ class main_controller implements main_interface
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
 			'RAIDPLANER_INDEX' => true,
+			'S_CLAUSI_RAIDPLANER_PAGE' => true,
 			'U_ACTION' => $this->u_action,
 		));
 		return $this->helper->render('raidplaner_index.html', $this->user->lang['RAIDPLANER_PAGE']);
@@ -348,6 +349,7 @@ class main_controller implements main_interface
 		else $u_raidplaner = false;
 
 		$this->template->assign_vars(array(
+			'S_CLAUSI_RAIDPLANER_PAGE' => true,
 			'U_RAIDPLANER' => ($u_raidplaner && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),

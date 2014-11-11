@@ -1,4 +1,4 @@
-<!-- IF S_CLAUSI_RAIDPLANER_ACTIVE -->
+<!-- IF S_CLAUSI_RAIDPLANER_ACTIVE and S_CLAUSI_RAIDPLANER_PAGE -->
 
 <!-- INCLUDEJS jquery-ui/jquery-ui.min.js -->
 <!-- INCLUDEJS raidplaner.js -->
@@ -88,6 +88,21 @@ $(document).ready(function() {
 		$('#' + status + '_count').text('( ' + count + ' )');
 	}
 	
+	function closeEditorWarning(text){
+		if(text == false) {
+			window.onbeforeunload = null;
+		}
+		else {
+			window.onbeforeunload = function(e) {
+				return text;
+			};
+		}
+	}
+	
+	phpbb.addAjaxCallback('raidplaner_updateall', function(res) {
+		closeEditorWarning(false);
+	});
+	
 	phpbb.addAjaxCallback('raidplaner_status', function(res) {
 		$(this).parent('div.btn-group');
 		$('#btn_' + res.RAID_ID).removeClass('btn-danger btn-warning btn-success btn-default');
@@ -130,9 +145,6 @@ $(document).ready(function() {
 	<!-- ENDIF -->
 	
 	<!-- IF M_RAIDPLANER and FLAG == 'future' -->
-	phpbb.addAjaxCallback('raidplaner_updateall', function(res) {
-		console.log(res);
-	});
 	
 	var preview = 1;
 	$( "#preview" ).on( "change", function() {
@@ -191,6 +203,7 @@ $(document).ready(function() {
 				$('input#sorted').val(sorted);
 			}
 			updateCount(status_name[e.target.dataset.status]);
+			closeEditorWarning('{L_SAVE_CHANGES}');
 		}
 	}).disableSelection();
 	<!-- ENDIF -->
