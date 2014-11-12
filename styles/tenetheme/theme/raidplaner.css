@@ -9,15 +9,6 @@
 	background-color: #282828 !important;
 }
 
-.rp-checkbox {
-	background-color: #6c6c6c;
-}
-
-.rp-checkbox:hover {
-	border-color: #636363;
-	background-color: #636363;
-}
-
 .button-width {
 	min-width: 115px;
 }
@@ -26,13 +17,18 @@
 	height: 24px;
 }
 
-.attendee_view td {
-	width: 25%;
+.connectedSortable > .list-group-item {
+	padding: 3px 15px;
 }
 
 .raidplaner-comment:before {
 	font-family: FontAwesome;
 	content: " ";
+}
+
+.attendeeView {
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .cc_deathknight , .cc_deathknight  a{

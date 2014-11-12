@@ -4,104 +4,103 @@
 <h4>{DAY}, {DATE}</h4>
 <div class="panel panel-default">
 	<div class="panel-body">
-	
-		<div class="col-sm-3">
-			<dl class="dl-horizontal">
-				<dt>{L_RAIDINVITE}</dt><dd>{INVITE_TIME}</dd>
-				<dt>{L_RAIDSTART}</dt><dd>{START_TIME}</dd>
-				<dt>{L_RAIDEND}</dt><dd>{END_TIME}</dd>
-			</dl>
-		</div>
-		<div class="col-sm-6">
-			<!-- IF M_RAIDPLANER and FLAG == 'future' -->
-			<form method="post" action="{M_NOTE_ACTION}" class="form-inline" id="note_form" role="form" data-ajax="true">
-				<div class="form-group">
-					<textarea name="note" id="note" rows="2" cols="40" tabindex="1" class="form-control">{RAID_NOTE}</textarea>
-				</div>
-				{S_FORM_TOKEN}
-				<input type="submit" accesskey="s" tabindex="2" name="post" value="{L_SUBMIT}" class="btn btn-success" />
-			</form>
-			<!-- ELSE -->
-			<p>{RAID_NOTE}</p>
-			<!-- ENDIF -->
-		</div>
-		<div class="col-sm-3">
-			<div class="row">
-				<!-- IF U_RAIDPLANER and FLAG == 'future' -->
-				<button type="button" id="btn_{RAID_ID}" class="btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
-					<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li class="bg-primary"><a href="{U_COMMENT}" data-ajax="raidplaner_comment"><i class="fa fa-comment"></i> {L_COMMENT}</a></li>
-					<li class="bg-success"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
-					<li class="bg-warning"><a href="{U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
-					<li class="bg-danger"><a href="{U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
-				</ul>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3 top5">
+				<dl class="dl-horizontal">
+					<dt>{L_RAIDINVITE}</dt><dd>{INVITE_TIME}</dd>
+					<dt>{L_RAIDSTART}</dt><dd>{START_TIME}</dd>
+					<dt>{L_RAIDEND}</dt><dd>{END_TIME}</dd>
+				</dl>
+			</div>
+			<div class="col-md-6 top5">
+				<!-- IF M_RAIDPLANER and FLAG == 'future' -->
+				<form method="post" action="{M_NOTE_ACTION}" class="form-inline" id="note_form" role="form" data-ajax="true">
+					<div class="form-group">
+						<textarea name="note" id="note" rows="2" cols="40" tabindex="1" class="form-control">{RAID_NOTE}</textarea>
+					</div>
+					{S_FORM_TOKEN}
+					<input type="submit" accesskey="s" tabindex="2" name="post" value="{L_SUBMIT}" class="btn btn-success" />
+				</form>
+				<!-- ELSE -->
+				<p>{RAID_NOTE}</p>
 				<!-- ENDIF -->
 			</div>
-			<!-- IF M_RAIDPLANER and FLAG == 'future' -->
-			<div class="row top10">
-				<form method="post" action="{U_MODALLSTATUSCHANGE}" class="form-inline" id="updateall_form" role="form" data-ajax="raidplaner_updateall">
-					<div class="btn-group">
-					<div class="btn-group" data-toggle="buttons">
-						<label class="btn btn-default active">
-							<input type="checkbox" name="preview" id="preview" value="1" checked="checked" autocomplete="off">{L_PREVIEW}
-						</label>
-					</div>
-					<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-default show" />
-					</div>
+			<div class="col-md-3 top5">
+				<div class="row">
+					<!-- IF U_RAIDPLANER and FLAG == 'future' -->
+					<button type="button" id="btn_{RAID_ID}" class="btn <!-- IF USERSTATUS == 2 -->btn-danger<!-- ELSEIF USERSTATUS == 3 -->btn-warning<!-- ELSEIF USERSTATUS == 4 -->btn-success<!-- ELSE -->btn-default<!-- ENDIF--> dropdown-toggle button-width" data-toggle="dropdown">
+						<!-- IF USERSTATUS == 2 --><i class="fa fa-times"></i> {L_DECLINE}<!-- ELSEIF USERSTATUS == 3 --><i class="fa fa-minus"></i> {L_SUBSTITUTE}<!-- ELSEIF USERSTATUS == 4 --><i class="fa fa-check"></i> {L_ACCEPT}<!-- ELSEIF USERSTATUS == 1 --><i class="fa fa-circle"></i> {L_ATTENDING}<!-- ELSE -->{L_NOT_SIGNUP}<!-- ENDIF--> <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li class="bg-primary"><a href="{U_COMMENT}" data-ajax="raidplaner_comment"><i class="fa fa-comment"></i> {L_COMMENT}</a></li>
+						<li class="bg-success"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+						<li class="bg-warning"><a href="{U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
+						<li class="bg-danger"><a href="{U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
+					</ul>
+					<!-- ENDIF -->
+				</div>
+				<!-- IF M_RAIDPLANER and FLAG == 'future' -->
+				<div class="row top10">
+					<form method="post" action="{U_MODALLSTATUSCHANGE}" class="form-inline" id="updateall_form" role="form" data-ajax="raidplaner_updateall">
+						<div class="btn-group">
+						<div class="btn-group" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="checkbox" name="preview" id="preview" value="1" checked="checked" autocomplete="off">{L_PREVIEW}
+							</label>
+						</div>
+						<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-default show" />
+						</div>
+					
+						<!-- BEGIN n_status -->
+							<!-- BEGIN n_roles -->
+								<input type="hidden" name="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" value="" />
+							<!-- END n_roles -->
+						<!-- END n_status -->
 				
-					<!-- BEGIN n_status -->
-						<!-- BEGIN n_roles -->
-							<input type="hidden" name="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" value="" />
-						<!-- END n_roles -->
-					<!-- END n_status -->
-			
-					{S_FORM_TOKEN}
-				</form>
+						{S_FORM_TOKEN}
+					</form>
+				</div>
+				<!-- ENDIF -->
 			</div>
-			<!-- ENDIF -->
+		</div>
+		
+		<div class="row top5 hidden-xs hidden-sm">
+			<!-- BEGIN n_roleNames -->
+			<div class="col-md-3">
+				{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
+			</div>
+			<!-- END n_roleNames -->
+		</div>
+		<!-- BEGIN n_status -->
+		<div class="row top10" id="{n_status.STATUSNAME}">
+
+			<div class="col-md-12 attendeeView bottom5 bg-<!-- IF n_status.STATUS == 4 -->success<!-- ELSEIF n_status.STATUS == 3 -->warning<!-- ELSEIF n_status.STATUS == 2 -->danger<!-- ELSEIF n_status.STATUS == 1 -->primary<!-- ELSE -->info<!-- ENDIF -->">
+			{n_status.STATUSLANG} <small id="{n_status.STATUSNAME}_count">( {n_status.MEMBERS_COUNT} )</small>
+			</div>
+			
+			<!-- BEGIN n_roles -->
+			<div class="col-md-3" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}">
+				<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group connectedSortable<!-- IF .n_status.n_roles.n_users == 0 --> emptyList<!-- ENDIF -->" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
+					<li class="list-group-item header visible-xs visible-sm">
+						{n_status.n_roles.ROLELANG} <i class="fa fa-<!-- IF n_status.n_roles.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
+					</li>
+					<!-- BEGIN n_users -->
+					<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" data-content="{n_status.n_roles.n_users.COMMENT}">
+						<!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>({n_status.n_roles.n_users.USERNAME})</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF -->
+						<span class="badge"><i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF-->"></i></span>
+					</li>
+					<!-- END n_users -->
+				</ul>
+			</div>
+			<!-- END n_roles -->
+			
+		</div>
+		<!-- END n_status -->
+
+		
 		</div>
 	</div>
-	
-	<table class="table attendee_view">
-		<thead>
-			<tr>
-				<!-- BEGIN n_roleNames -->
-				<th>
-					{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
-				</th>
-				<!-- END n_roleNames -->
-			</tr>
-		</thead>
-		<tbody>
-		
-			<!-- BEGIN n_status -->
-			<tr class="<!-- IF n_status.STATUS == 4 -->success<!-- ELSEIF n_status.STATUS == 3 -->warning<!-- ELSEIF n_status.STATUS == 2 -->danger<!-- ELSEIF n_status.STATUS == 1 -->active<!-- ELSE -->info<!-- ENDIF -->">
-				<th colspan="4">
-					{n_status.STATUSLANG} <small id="{n_status.STATUSNAME}_count">( {n_status.MEMBERS_COUNT} )</small>
-				</th>
-			</tr>
-			
-			<tr id="{n_status.STATUSNAME}">
-				<!-- BEGIN n_roles -->
-				<td>
-					<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group connectedSortable<!-- IF .n_status.n_roles.n_users == 0 --> emptyList<!-- ENDIF -->" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
-						<!-- BEGIN n_users -->
-						<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" data-content="{n_status.n_roles.n_users.COMMENT}">
-							<!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>({n_status.n_roles.n_users.USERNAME})</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF -->
-							<i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF--> pull-right"></i>
-						</li>
-						<!-- END n_users -->
-					</ul>
-				</td>
-				<!-- END n_roles -->
-			</tr>
-			<!-- END n_status -->
-			
-		</tbody>
-	</table>
-		
 </div>
 
 <!-- INCLUDE overall_footer.html -->

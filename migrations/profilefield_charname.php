@@ -38,7 +38,7 @@ class profilefield_charname extends \phpbb\db\migration\profilefield_base_migrat
 		'field_show_novalue'	=> 0,
 		'field_show_on_reg'		=> 0,
 		'field_show_on_pm'		=> 0,
-		'field_show_on_vt'		=> 0,
+		'field_show_on_vt'		=> 1,
 		'field_show_profile'	=> 0,
 		'field_hide'			=> 0,
 		'field_no_view'			=> 0,
