@@ -85,7 +85,7 @@ $(document).ready(function() {
 	
 	function updateCount(status)
 	{
-		var count = $('#' + status + ' > div > ul').children('li').length;
+		var count = $('#' + status + ' > div > ul').children('li:not(.header)').length;
 		$('#' + status + '_count').text('( ' + count + ' )');
 	}
 	
@@ -178,7 +178,7 @@ $(document).ready(function() {
 		},
 		out: function(e, ui) {
 			if (this === ui.item.parent()[0]) {
-				if($(e.target).children('li:not(.header)').length == 2) {
+				if($(e.target).children('li:not(.header)').length == 0) {
 					$(e.target).addClass('emptyList');
 				}
 			}
