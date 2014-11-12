@@ -10,3 +10,7 @@
 	height: 24px;
 	background-color: #999;
 }
+
+textarea#note {
+	resize: vertical;
+}
