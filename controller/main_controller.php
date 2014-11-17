@@ -434,7 +434,7 @@ class main_controller implements main_interface
 		{
 			if (confirm_box(true))
 			{
-				$this->setStatus($raid_id, $user_id, $status_id);
+				$this->setStatus($raid_id, $user_id, $status_id, $currentAttendee['status']);
 				$comment = $this->request->variable('comment', '', true);
 				$this->setComment($raid_id, $user_id, $comment);
 				
@@ -709,7 +709,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
 		}
 		
-		$this->setStatus($raid_id, $user_id, $status_id, $role_id, true);
+		$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
 		
 		$this->json_response->send(array(
 			'statusupdate' => true,
@@ -771,7 +771,7 @@ class main_controller implements main_interface
 					$user_id = str_replace('user[]=', '', $user_id);
 					if($user_id && $user_id != 0)
 					{
-						$this->setStatus($raid_id, $user_id, $status_id, $role_id, true);
+						$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
 					}
 				}
 			}
@@ -842,10 +842,11 @@ class main_controller implements main_interface
 			if( $status_value == 1)
 			{
 				$user_id = $this->user->data['user_id'];
+				$currentStatus = $this->getStatus($raid_id, $user_id);
 				
-				$this->setStatus($raid_id, $user_id, $status_id);
+				$this->setStatus($raid_id, $user_id, $status_id, $currentStatus);
 				
-				echo $comment = $this->request->variable('comment', '', true);
+				$comment = $this->request->variable('comment', '', true);
 				$this->setComment($raid_id, $user_id, $comment);
 			}
 		}
@@ -975,7 +976,7 @@ class main_controller implements main_interface
 	}
 	
 	
-	private function setStatus($raid_id, $user_id, $status_id, $role_id = 0, $mod = false)
+	private function setStatus($raid_id, $user_id, $status_id, $old_status = 0, $role_id = 0, $mod = false)
 	{
 		if( $role_id == 0)
 		{
@@ -983,7 +984,17 @@ class main_controller implements main_interface
 		}
 		
 		if($mod && $this->auth->acl_get('m_raidplaner')) $sql_mod = array('adminchange_time' => time());
-		else $sql_mod = array('change_time' => time());
+		else {
+			// Send message if user was accepted
+			if($old_status == 4 && $status_id != 4 && $old_status != 0)
+			{
+				$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
+				$to = array('u' => array(2 => 'bcc'), 'g' => array($raid_admingroup => 'to', $raid_admingroup2 => 'to'));
+				$this->sendPm($subject, $message, $to)
+			}
+			
+			$sql_mod = array('change_time' => time());
+		}
 		
 		$sql_ary = array(
 			'status' => $status_id,
@@ -1129,6 +1140,32 @@ class main_controller implements main_interface
 				}
 			}
 		}
+	}
+	
+	
+	private function sendPm($subject, $message, $to) {
+		$uid = $bitfield = $options = ''; 
+		generate_text_for_storage($subject, $uid, $bitfield, $options, false, false, false);
+		generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
+
+		$data = array( 
+			'address_list'      => $to,
+			'from_user_id'      => 117,
+			'from_username'     => 'Raidplaner',
+			'icon_id'           => 0,
+			'from_user_ip'      => $this->user->data['user_ip'],
+			 
+			'enable_bbcode'     => true,
+			'enable_smilies'    => true,
+			'enable_urls'       => true,
+			'enable_sig'        => false,
+
+			'message'           => $message,
+			'bbcode_bitfield'   => $bitfield,
+			'bbcode_uid'        => $uid,
+		);
+
+		submit_pm('post', $subject, $data, false);
 	}
 	
 	

@@ -67,4 +67,9 @@ $lang = array_merge($lang, array(
 	'RAIDINVITE' => 'Invite time',
 	'RAIDSTART' => 'Start time',
 	'RAIDEND' => 'End time',
+	
+	'PM_SUBJECT_DECLINE' => "%s changed status of %s!";
+	'PM_MESSAGE_DECLINE' => "%s changed status of [url=%s]Raid #%s am %s[/url] after she/he was accepted!
+		[i]New status:[/i] %s
+		[i]Comment:[/i] %s",
 ));
