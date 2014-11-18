@@ -990,7 +990,7 @@ class main_controller implements main_interface
 			{
 				$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 				$to = array('u' => array(2 => 'bcc'), 'g' => array($raid_admingroup => 'to', $raid_admingroup2 => 'to'));
-				$this->sendPm($subject, $message, $to)
+				$this->sendPm($subject, $message, $to);
 			}
 			
 			$sql_mod = array('change_time' => time());

@@ -68,7 +68,7 @@ $lang = array_merge($lang, array(
 	'RAIDSTART' => 'Start',
 	'RAIDEND' => 'Ende',
 	
-	'PM_SUBJECT_DECLINE' => "%s hat seinen Status vom %s geändert!";
+	'PM_SUBJECT_DECLINE' => "%s hat seinen Status vom %s geändert!",
 	'PM_MESSAGE_DECLINE' => "%s hat seinen Status von [url=%s]Raid #%s am %s[/url] geändert nachdem er/sie bestätigt war!
 		[i]Neuer Status:[/i] %s
 		[i]Kommentar:[/i] %s",
