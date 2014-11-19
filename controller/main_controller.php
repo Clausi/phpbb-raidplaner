@@ -204,7 +204,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
 		}
 		$message = false;
-
+		
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
 		
@@ -246,11 +246,14 @@ class main_controller implements main_interface
 		
 		$row_attendees = $this->getAttendees($raid_id);
 		
-		if($row_raid['raid_time'] >= time() && $row_raid['autoaccept'] == 1)
+		if($row_raid['raid_time'] >= time())
 		{
 			// Get all users with U_RAIDPLANER
 			$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
 			$user_ary = $user_ary[0]['u_raidplaner'];
+			
+			// Remove removed attendees 
+			$this->removeAttendees($raid_id, $row_attendees, $user_ary);
 			
 			// Create a similar $attendee_ary as $user_ary
 			$attendee_ary = array();
@@ -262,10 +265,14 @@ class main_controller implements main_interface
 			}
 
 			$diff = array_diff($user_ary, $attendee_ary);
-
+			
 			if(is_array($diff) && count($diff) > 0)
 			{
-				$this->addAttendees($raid_id);
+				// Add missing member
+				if($row_raid['autoaccept'] == 1)
+				{
+					$this->addAttendees($raid_id);
+				}
 				$row_attendees = $this->getAttendees($raid_id);
 			}
 		}
@@ -274,7 +281,7 @@ class main_controller implements main_interface
 		$result = $this->db->sql_query($sql);
 		$row_user = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
-
+		
 		foreach($this->roles as $role_id => $role_name)
 		{
 			$this->template->assign_block_vars('n_roleNames', array(
@@ -324,6 +331,7 @@ class main_controller implements main_interface
 						}
 						
 						$user_profile = $this->getUserProfileFields($currentUserId);
+						
 						if(!empty($user_profile['charname'])) $currentCharname = $user_profile['charname'];
 						else $currentCharname = '';
 						
@@ -988,9 +996,25 @@ class main_controller implements main_interface
 			// Send message if user was accepted
 			if($old_status == 4 && $status_id != 4 && $old_status != 0)
 			{
-				$user_ary = $this->auth->acl_get_list(false, 'u_raidplaner', false);
-				$to = array('u' => array(2 => 'bcc'), 'g' => array($raid_admingroup => 'to', $raid_admingroup2 => 'to'));
-				$this->sendPm($subject, $message, $to);
+				$mod_ary = $this->auth->acl_get_list(false, 'm_raidplaner', false);
+				foreach($mod_ary[0]['m_raidplaner'] as $mod)
+				{
+					$user_to[$mod] = 'to';
+				}
+				$to = array('u' => $user_to);
+				
+				$raid_data = $this->getRaidData($raid_id);
+				
+				$subject = sprintf($this->user->lang['PM_SUBJECT_DECLINE'], $user_id, date('d.m.Y', $raid_data['raid_time']));
+				$message = sprintf($this->user->lang['PM_SUBJECT_DECLINE'], 
+					$user_id,
+					$this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $raid_id)),
+					$raid_id,
+					date('d.m.Y', $raid_data['raid_time'])
+				);
+
+				
+				//$this->sendPm($subject, $message, $to);
 			}
 			
 			$sql_mod = array('change_time' => time());
@@ -1140,6 +1164,46 @@ class main_controller implements main_interface
 				}
 			}
 		}
+	}
+	
+	
+	private function removeAttendees($raid_id, $attendees = false, $users = false)
+	{
+		if( ! $attendees)
+		{
+			$attendees = $this->getAttendees($raid_id);
+		}
+		if( ! $users)
+		{
+			$users = $this->auth->acl_get_list(false, 'u_raidplaner', false);
+			$users = $users[0]['u_raidplaner'];
+		}
+
+		foreach($attendees as $attendee)
+		{
+			$seen = false;
+			foreach($users as $user)
+			{
+				if($user == $attendee['user_id']) 
+				{
+					$seen = true;
+					break;
+				}
+			}
+			
+			if($seen == false)
+			{
+				$this->removeAttendee($raid_id, $attendee['user_id']);
+			}
+		}
+	}
+	
+	private function removeAttendee($raid_id, $user_id)
+	{
+		$sql = "DELETE FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
+			WHERE raid_id = '". $raid_id ."'
+			AND user_id = '". $user_id ."'";
+		$this->db->sql_query($sql);
 	}
 	
 	
