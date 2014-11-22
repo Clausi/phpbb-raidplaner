@@ -442,8 +442,24 @@ class main_controller implements main_interface
 		{
 			if (confirm_box(true))
 			{
-				$this->setStatus($raid_id, $user_id, $status_id, $currentAttendee['status']);
 				$comment = $this->request->variable('comment', '', true);
+				if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
+				{
+					$response = array(
+						'MESSAGE_TITLE' => $this->user->lang('RAIDPLANER_COMMENT_SHORT_TITLE'),
+						'MESSAGE_TEXT' => $this->user->lang('RAIDPLANER_COMMENT_SHORT'),
+					);
+					
+					if ($this->request->is_ajax())
+					{
+						$this->json_response->send($response);
+					}
+
+					$this->template->assign_vars($response);
+					return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
+				}
+				
+				$this->setStatus($raid_id, $user_id, $status_id, $currentAttendee['status']);
 				$this->setComment($raid_id, $user_id, $comment);
 				
 				$row_count = $this->getRaidmemberCount($raid_id);
@@ -832,7 +848,15 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
 		}
 		
+		$comment = $this->request->variable('comment', '', true);
+		if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
+		{
+			meta_refresh(5, $this->u_action);
+			trigger_error($this->user->lang('RAIDPLANER_COMMENT_SHORT') . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . str_replace('&', '&amp;', $this->u_action) . '">', '</a>'));
+		}
+		
 		$status = $this->request->variable('status', array(0 => 0));
+
 		foreach($status as $raid_id => $status_value)
 		{
 			if( ! is_numeric($raid_id))
@@ -853,8 +877,7 @@ class main_controller implements main_interface
 				$currentStatus = $this->getStatus($raid_id, $user_id);
 				
 				$this->setStatus($raid_id, $user_id, $status_id, $currentStatus);
-				
-				$comment = $this->request->variable('comment', '', true);
+
 				$this->setComment($raid_id, $user_id, $comment);
 			}
 		}

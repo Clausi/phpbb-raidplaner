@@ -59,6 +59,9 @@ $lang = array_merge($lang, array(
 	'SAVE' => 'Save',
 	'SAVE_CHANGES' => 'Changes have not been saved.',
 	
+	'RAIDPLANER_COMMENT_SHORT_TITLE' => 'Please enter a comment',
+	'RAIDPLANER_COMMENT_SHORT' => 'You have to enter a comment with at least 5 characters if you decline a raid. Status was NOT updated.',
+	
 	'TANK' => 'Tank',
 	'HEAL' => 'Heal',
 	'MELEE' => 'Melee',
