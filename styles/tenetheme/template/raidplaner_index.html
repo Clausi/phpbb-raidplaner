@@ -1,5 +1,7 @@
 <!-- INCLUDE overall_header.html -->
 
+<!-- IF S_CLAUSI_RAIDPLANER_ACTIVE and U_RAIDPLANER -->
+
 <h2>{L_RAIDPLANER_PAGE}</h2>
 
 <div class="panel panel-default">
@@ -94,5 +96,11 @@
 
 	</div>
 </div>
+
+<!-- ELSE -->
+
+<div class="well">{L_RAIDPLANER_NOACCESS}</div>
+
+<!-- ENDIF -->
 
 <!-- INCLUDE overall_footer.html -->

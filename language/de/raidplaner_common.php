@@ -14,6 +14,7 @@ $lang = array_merge($lang, array(
 	'RAIDPLANER_PAGE' => 'Raidplaner',
 	'RAIDPLANER_RAID' => 'Raid',
 	'RAIDPLANER_INACTIVE' => 'Raidplaner ist derzeit deaktiviert.',
+	'RAIDPLANER_NOACCESS' => 'Kein Zugriff.',
 	'RAIDPLANER_INVALID_ID' => 'Keine gültige Raid ID.',
 	'RAIDPLANER_INVALID_STATUS' => 'Keine gültiger Status.',
 	'RAIDPLANER_INVALID_ROLE' => 'Keine gültige Rolle.',

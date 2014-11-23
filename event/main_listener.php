@@ -27,6 +27,8 @@ class main_listener implements EventSubscriberInterface
 	protected $template;
 	
 	protected $config;
+	
+	protected $auth;
 
 	/**
 	* Constructor
@@ -34,11 +36,12 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\controller\helper	$helper		Controller helper object
 	* @param \phpbb\template			$template	Template object
 	*/
-	public function __construct(\phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config)
+	public function __construct(\phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth)
 	{
 		$this->helper = $helper;
 		$this->template = $template;
 		$this->config = $config;
+		$this->auth = $auth;
 	}
 
 	public function load_language_on_setup($event)
@@ -63,6 +66,7 @@ class main_listener implements EventSubscriberInterface
 	public function add_page_header_link($event)
 	{
 		$this->template->assign_vars(array(
+			'U_RAIDPLANER' => ($this->auth->acl_get('u_raidplaner') || $this->auth->acl_get('m_raidplaner') || $this->auth->acl_get('a_raidplaner')),
 			'U_RAIDPLANER_PAGE'	=> $this->helper->route('clausi_raidplaner_controller'),
 			'S_CLAUSI_RAIDPLANER_ACTIVE' => $this->config['clausi_raidplaner_active'],
 		));

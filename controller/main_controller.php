@@ -1237,7 +1237,7 @@ class main_controller implements main_interface
 
 		$data = array( 
 			'address_list'      => $to,
-			'from_user_id'      => 117,
+			'from_user_id'      => 0,
 			'from_username'     => 'Raidplaner',
 			'icon_id'           => 0,
 			'from_user_ip'      => $this->user->data['user_ip'],

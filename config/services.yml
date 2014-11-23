@@ -19,6 +19,7 @@ services:
             - @controller.helper
             - @template
             - @config
+            - @auth
         tags:
             - { name: event.listener }
     clausi.raidplaner.admin.controller:

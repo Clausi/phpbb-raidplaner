@@ -1,5 +1,7 @@
 <!-- INCLUDE overall_header.html -->
 
+<!-- IF S_CLAUSI_RAIDPLANER_ACTIVE and U_RAIDPLANER -->
+
 <h2>Raid #{RAID_ID}</h2>
 <h4>{DAY}, {DATE}</h4>
 <div class="panel panel-default">
@@ -102,5 +104,11 @@
 		</div>
 	</div>
 </div>
+
+<!-- ELSE -->
+
+<div class="well">{L_RAIDPLANER_NOACCESS}</div>
+
+<!-- ENDIF -->
 
 <!-- INCLUDE overall_footer.html -->
