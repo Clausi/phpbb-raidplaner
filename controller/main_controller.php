@@ -208,8 +208,6 @@ class main_controller implements main_interface
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
 		
-		$row_count = $this->getRaidmemberCount($raid_id);
-		
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
@@ -276,6 +274,8 @@ class main_controller implements main_interface
 				$row_attendees = $this->getAttendees($raid_id);
 			}
 		}
+		
+		$row_count = $this->getRaidmemberCount($raid_id);
 		
 		$sql = "SELECT user_id, username FROM " . $this->container->getParameter('tables.users') . "";
 		$result = $this->db->sql_query($sql);

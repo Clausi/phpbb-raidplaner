@@ -1,27 +1,27 @@
 clausi_raidplaner_controller:
-    pattern: /raidplaner/index
+    path: /raidplaner/index
     defaults: { _controller: clausi.raidplaner.main.controller:index }
 
 clausi_raidplaner_controller_view:
-    pattern: /raidplaner/view/{raid_id}
+    path: /raidplaner/view/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:view, view: "0" }
 
 clausi_raidplaner_controller_status:
-    pattern: /raidplaner/status/{raid_id}/{status_id}
+    path: /raidplaner/status/{raid_id}/{status_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setUserstatus, raid_id: "0", status_id: "0" }
 
 clausi_raidplaner_controller_modstatus:
-    pattern: /raidplaner/modstatus/{raid_id}
+    path: /raidplaner/modstatus/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setModstatus, raid_id: "0" }
 
 clausi_raidplaner_controller_modallstatus:
-    pattern: /raidplaner/modallstatus/{raid_id}
+    path: /raidplaner/modallstatus/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setModAllstatus, raid_id: "0" }
 
 clausi_raidplaner_controller_comment:
-    pattern: /raidplaner/comment/{raid_id}
+    path: /raidplaner/comment/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setUsercomment, raid_id: "0" }
 
 clausi_raidplaner_controller_note:
-    pattern: /raidplaner/note/{raid_id}
+    path: /raidplaner/note/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setModRaidnote, raid_id: "0" }
