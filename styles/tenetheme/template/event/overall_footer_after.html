@@ -5,13 +5,15 @@
 <!-- INCLUDEJS raidplaner.js -->
 
 <script type="text/javascript">
+<!-- IF U_RAIDPLANER or M_RAIDPLANER -->
 function validateForm(e)
-	{
-		if($('#comment').val().length < 5) {
-			alert('{L_RAIDPLANER_COMMENT_SHORT}');
-			e.preventDefault();
-		}
+{
+	if($('#comment').val().length < 5) {
+		alert('{L_RAIDPLANER_COMMENT_SHORT}');
+		e.preventDefault();
 	}
+}
+<!-- ENDIF -->
 $(document).ready(function() {
 	
 	<!-- IF RAIDPLANER_INDEX -->
