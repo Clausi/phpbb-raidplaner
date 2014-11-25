@@ -5,7 +5,15 @@
 <!-- INCLUDEJS raidplaner.js -->
 
 <script type="text/javascript">
+function validateForm(e)
+	{
+		if($('#comment').val().length < 5) {
+			alert('{L_RAIDPLANER_COMMENT_SHORT}');
+			e.preventDefault();
+		}
+	}
 $(document).ready(function() {
+	
 	<!-- IF RAIDPLANER_INDEX -->
 	function filterTable(table, filter) {
 		if(filter == 0) table.fnFilter( '' , 0, false);

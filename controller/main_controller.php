@@ -494,7 +494,10 @@ class main_controller implements main_interface
 			}
 			else
 			{
-				$this->template->assign_var('U_ACTION', $this->u_action);
+				$this->template->assign_vars(array(
+					'COMMENT_WARNING' => ($status_id == 3 || $status_id == 4) ? true : false,
+					'U_ACTION' => $this->u_action,
+				));
 				confirm_box(false, 'STATUSCHANGE_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
 			}
 		}

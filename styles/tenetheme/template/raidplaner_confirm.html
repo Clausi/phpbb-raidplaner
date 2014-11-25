@@ -13,7 +13,7 @@
 		</div>
 		<div class="modal-footer">
 			{S_HIDDEN_FIELDS}
-			<input type="button" class="btn btn-success" id="confirm" name="confirm" value="{L_YES}" />
+			<input type="button" class="btn btn-success" id="confirm" name="confirm" value="{L_YES}"<!-- IF COMMENT_WARNING --> onClick="validateForm(event);"<!-- ENDIF --> />
 			<input type="button" class="btn btn-default" name="cancel" value="{L_NO}" data-dismiss="modal" />
 		</div>
 		</form>
