@@ -20,6 +20,7 @@ class main_controller implements main_interface
 	protected $user;
 	protected $auth;
 	protected $cp;
+	protected $container;
 	
 	/* @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -617,7 +618,7 @@ class main_controller implements main_interface
 			trigger_error('FORM_INVALID');
 		}
 		
-		$note = $this->request->variable('note', '');
+		$note = $this->request->variable('note', '', true);
 		$errors = generate_text_for_storage($note, $uid, $bitfield, $flags, true, true, true);
 		
 		if(sizeof($errors))
