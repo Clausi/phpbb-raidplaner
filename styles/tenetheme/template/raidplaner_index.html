@@ -27,7 +27,6 @@
 						<th>{L_EVENT}</th>
 						<th>{L_DATE}</th>
 						<th>Timestamp</th>
-						<th>{L_DAY}</th>
 						<th style="min-width: 300px;">{L_NOTE}</th>
 						<th>{L_MEMBERS}</th>
 						<th>&nbsp;</th>
@@ -39,9 +38,8 @@
 					<tr class="<!-- IF n_raids.FIRSTFUTURE == 1 -->active<!-- ENDIF -->" data-url="{n_raids.U_RAID}">
 						<td>{n_raids.FLAG}</td>
 						<td>{n_raids.EVENTNAME}</td>
-						<td><a href="{n_raids.U_RAID}">{n_raids.DATE}</a></td>
+						<td><a href="{n_raids.U_RAID}">{n_raids.DATE}</a> <small><em>( {n_raids.DAY} )</em></small></td>
 						<td>{n_raids.TIMESTAMP}</td>
-						<td>{n_raids.DAY}</td>
 						<td>{n_raids.NOTE}</td>
 						<td>
 							<strong><abbr title="{L_ACCEPT}" class="text-success" id="accept_{n_raids.ID}">{n_raids.MEMBERS_ACCEPT} / {n_raids.RAIDSIZE}</abbr></strong><br />
