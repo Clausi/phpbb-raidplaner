@@ -17,6 +17,8 @@ $lang = array_merge($lang, array(
 	// Settings
 	'ACP_RAIDPLANER_SETTING_SAVED' => 'Einstellungen wurden erfolgreich gespeichert.',
 	'ACP_RAIDPLANER_ACTIVE' => 'Raidplaner aktiv?',
+	'ACP_RAIDPLANER_USER' => 'Raidplaner User Id',
+	'ACP_RAIDPLANER_USER_EXPLAIN' => 'Gib eine User Id ein, welche der Raidplaner verwendet um PMs zu versenden.',
 	
 	// Events
 	'ACP_ADD_RAIDEVENT' => 'Ereignis hinzufügen',

@@ -65,12 +65,14 @@ class admin_controller implements admin_interface
 		$this->template->assign_vars(array(
 			'U_ACTION'	=> $this->u_action,
 			'CLAUSI_RAIDPLANER_ACTIVE' => $this->config['clausi_raidplaner_active'],
+			'RAIDPLANER_USER' => $this->config['clausi_raidplaner_user'],
 		));
 	}
 	
 	protected function set_options()
 	{
 		$this->config->set('clausi_raidplaner_active', $this->request->variable('clausi_raidplaner_active', 0));
+		$this->config->set('clausi_raidplaner_user', $this->request->variable('raidplaner_user', 2));
 	}
 	
 	public function display_events()

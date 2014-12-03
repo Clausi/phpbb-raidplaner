@@ -76,4 +76,8 @@ $lang = array_merge($lang, array(
 	'PM_MESSAGE_DECLINE' => "%s changed status of [url=%s]Raid #%s am %s[/url] after she/he was accepted!
 		[i]New status:[/i] %s
 		[i]Comment:[/i] %s",
+		
+	'PM_SUBJECT_COMMENT' => "%s changed comment on %s!",
+	'PM_MESSAGE_COMMENT' => "%s changed comment of [url=%s]Raid #%s am %s[/url] after she/he was accepted!
+		[i]Comment:[/i] %s",
 ));

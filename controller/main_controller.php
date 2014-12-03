@@ -4,6 +4,12 @@ namespace clausi\raidplaner\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+// TODO: find a better way to include privmsgs
+if (defined('ADMIN_START')) $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './../';
+else $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
+require_once($phpbb_root_path . 'includes/functions_privmsgs.php');
 
 class main_controller implements main_interface
 {
@@ -205,7 +211,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
 		}
 		$message = false;
-		
+
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
 		
@@ -280,7 +286,7 @@ class main_controller implements main_interface
 		
 		$sql = "SELECT user_id, username FROM " . $this->container->getParameter('tables.users') . "";
 		$result = $this->db->sql_query($sql);
-		$row_user = $this->db->sql_fetchrowset($result);
+		$row_user = $this->db->sql_fetchrowset($result);		
 		$this->db->sql_freeresult($result);
 		
 		foreach($this->roles as $role_id => $role_name)
@@ -899,6 +905,31 @@ class main_controller implements main_interface
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
 		$this->db->sql_query($sql);
 		
+		// Send message if user was accepted
+		if($this->getStatus($raid_id, $user_id) == 4)
+		{
+			$mod_ary = $this->auth->acl_get_list(false, 'm_raidplaner', false);
+			foreach($mod_ary[0]['m_raidplaner'] as $mod)
+			{
+				$user_to[$mod] = 'bcc';
+			}
+			$to = array('u' => $user_to);
+			
+			$raid_data = $this->getRaidData($raid_id);
+			
+			$subject = sprintf($this->user->lang['PM_SUBJECT_COMMENT'], $this->user->data['username'], date('d.m.Y', $raid_data['raid_time']));
+			$message = sprintf($this->user->lang['PM_MESSAGE_COMMENT'], 
+				$this->user->data['username'],
+				$this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $raid_id), true, false, UrlGeneratorInterface::ABSOLUTE_URL),
+				$raid_id,
+				date('d.m.Y', $raid_data['raid_time']),
+				$this->user->lang[$this->status[$status_id]],
+				$comment
+			);
+			
+			$this->sendPm($subject, $message, $to);
+		}
+		
 		if($this->db->sql_affectedrows() == 0)
 		{
 			$user_profile = $this->getUserProfileFields($user_id);
@@ -1026,22 +1057,23 @@ class main_controller implements main_interface
 				$mod_ary = $this->auth->acl_get_list(false, 'm_raidplaner', false);
 				foreach($mod_ary[0]['m_raidplaner'] as $mod)
 				{
-					$user_to[$mod] = 'to';
+					$user_to[$mod] = 'bcc';
 				}
 				$to = array('u' => $user_to);
 				
 				$raid_data = $this->getRaidData($raid_id);
 				
-				$subject = sprintf($this->user->lang['PM_SUBJECT_DECLINE'], $user_id, date('d.m.Y', $raid_data['raid_time']));
-				$message = sprintf($this->user->lang['PM_SUBJECT_DECLINE'], 
-					$user_id,
-					$this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $raid_id)),
+				$subject = sprintf($this->user->lang['PM_SUBJECT_DECLINE'], $this->user->data['username'], date('d.m.Y', $raid_data['raid_time']));
+				$message = sprintf($this->user->lang['PM_MESSAGE_DECLINE'], 
+					$this->user->data['username'],
+					$this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $raid_id), true, false, UrlGeneratorInterface::ABSOLUTE_URL),
 					$raid_id,
-					date('d.m.Y', $raid_data['raid_time'])
+					date('d.m.Y', $raid_data['raid_time']),
+					$this->user->lang[$this->status[$status_id]],
+					$this->request->variable('comment', '', true)
 				);
-
 				
-				//$this->sendPm($subject, $message, $to);
+				$this->sendPm($subject, $message, $to);
 			}
 			
 			$sql_mod = array('change_time' => time());
@@ -1241,7 +1273,7 @@ class main_controller implements main_interface
 
 		$data = array( 
 			'address_list'      => $to,
-			'from_user_id'      => 0,
+			'from_user_id'      => $this->config['clausi_raidplaner_user'],
 			'from_username'     => 'Raidplaner',
 			'icon_id'           => 0,
 			'from_user_ip'      => $this->user->data['user_ip'],
