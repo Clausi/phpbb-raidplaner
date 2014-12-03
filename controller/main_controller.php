@@ -556,11 +556,30 @@ class main_controller implements main_interface
 		$user_id = $this->user->data['user_id'];
 		
 		$this->u_action = $this->helper->route('clausi_raidplaner_controller_comment', array('raid_id' => $raid_id));
+		
+		$status_id = $this->getStatus($raid_id, $user_id);
+		$this->template->assign_var('COMMENT_WARNING', ($status_id == 3 || $status_id == 2) ? true : false);
 
 		// TODO: Check back if last value of confirm_box() can be done better
 		if(confirm_box(true))
 		{
 			$comment = $this->request->variable('comment', '', true);
+			if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
+			{
+				$response = array(
+					'MESSAGE_TITLE' => $this->user->lang('RAIDPLANER_COMMENT_SHORT_TITLE'),
+					'MESSAGE_TEXT' => $this->user->lang('RAIDPLANER_COMMENT_SHORT'),
+				);
+				
+				if ($this->request->is_ajax())
+				{
+					$this->json_response->send($response);
+				}
+
+				$this->template->assign_vars($response);
+				return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
+			}
+			
 			$this->setComment($raid_id, $user_id, $comment);
 			
 			$response = array(
