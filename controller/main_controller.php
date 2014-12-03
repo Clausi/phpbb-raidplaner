@@ -858,7 +858,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
 		}
 		
-		$comment = $this->request->variable('comment', '', true);
+		$comment = $this->request->variable('comment_all', '', true);
 		if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
 		{
 			meta_refresh(5, $this->u_action);
@@ -923,7 +923,6 @@ class main_controller implements main_interface
 				$this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $raid_id), true, false, UrlGeneratorInterface::ABSOLUTE_URL),
 				$raid_id,
 				date('d.m.Y', $raid_data['raid_time']),
-				$this->user->lang[$this->status[$status_id]],
 				$comment
 			);
 			
