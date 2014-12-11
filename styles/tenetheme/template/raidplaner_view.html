@@ -36,7 +36,7 @@
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li class="bg-primary"><a href="{U_COMMENT}" data-ajax="raidplaner_comment"><i class="fa fa-comment"></i> {L_COMMENT}</a></li>
-						<li class="bg-success"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+						<!-- IF USERSTATUS != 4 --><li class="bg-success"><a href="{U_STATUS}/1" data-ajax="raidplaner_status"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li><!-- ENDIF -->
 						<li class="bg-warning"><a href="{U_STATUS}/3" data-ajax="raidplaner_status"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
 						<li class="bg-danger"><a href="{U_STATUS}/2" data-ajax="raidplaner_status"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
 					</ul>
