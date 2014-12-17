@@ -1148,8 +1148,8 @@ class main_controller implements main_interface
 	
 	private function getRaidmemberCount($raid_id = 0)
 	{
-		if($raid_id == 0) $where = 'GROUP BY raid_id';
-		else $where = "WHERE raid_id = '".$raid_id."'";
+		if($raid_id == 0) $where = 'WHERE role > 0 AND class > 0 GROUP BY raid_id';
+		else $where = "WHERE raid_id = '".$raid_id."' AND role > 0 AND class > 0";
 		
 		$sql = "SELECT 
 			raid_id,
