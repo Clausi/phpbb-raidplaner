@@ -1362,7 +1362,7 @@ class main_controller implements main_interface
 				'STATUS' => $this->user->lang($this->status[$row['new_status']]),
 				'COMMENT' => $row['new_comment'],
 				'TIMESTAMP' => $row['created'],
-				'TIME' => $this->user->format_date($row['created']),
+				'TIME' => date('d.m.Y, H:i:s', $row['created']),
 			));
 		}
 		$this->db->sql_freeresult($result);
