@@ -1348,17 +1348,38 @@ class main_controller implements main_interface
 		$sql = "SELECT * FROM 
 			" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
 			WHERE 
-				raid_id = '". $raid_id ."'
-				AND deleted = '0' 			
-			ORDER BY log_id";
+				raid_id = ". $raid_id ."
+				AND deleted = '0' 
+			GROUP BY created
+			ORDER BY log_id
+			";
 		$result = $this->db->sql_query($sql);
 		
 		while($row = $this->db->sql_fetchrow($result))
 		{
+			$sql = "SELECT COUNT(*) as count_logs FROM 
+				" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
+				WHERE 
+					created = ". $row['created'] ."
+					AND deleted = '0' 
+				ORDER BY log_id
+				";
+			$result2 = $this->db->sql_query($sql);
+			$changed_user = '';
+			if($this->db->sql_fetchfield('count_logs') > 1)
+			{
+				while($row_changed = $this->db->sql_fetchrow($result2))
+				{
+					$changed_user .= $this->getUsername($row_changed['changed_user_id']) . ',';
+				}
+			}
+			else $changed_user = $this->getUsername($row['changed_user_id']);
+			$this->db->sql_freeresult($result2);
+			
 			$this->template->assign_block_vars('n_raidlog', array(
 				'LOG_ID' => $row['log_id'],
 				'USERNAME' => $this->getUsername($row['user_id']),
-				'CHANGED_USERNAME' => $this->getUsername($row['changed_user_id']),
+				'CHANGED_USERNAME' => $changed_user,
 				'STATUS' => $this->user->lang($this->status[$row['new_status']]),
 				'COMMENT' => $row['new_comment'],
 				'TIMESTAMP' => $row['created'],
