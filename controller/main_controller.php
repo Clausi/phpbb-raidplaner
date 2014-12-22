@@ -242,6 +242,8 @@ class main_controller implements main_interface
 				'M_NOTE_ACTION' => $this->helper->route('clausi_raidplaner_controller_note', array('raid_id' => $raid_id)),
 				'RAID_NOTE' => $row_raid['note']['text'],
 			));
+			
+			$this->getRaidlog($raid_id);
 		}
 		else
 		{
@@ -365,6 +367,7 @@ class main_controller implements main_interface
 
 		$this->template->assign_vars(array(
 			'S_CLAUSI_RAIDPLANER_PAGE' => true,
+			'RAIDPLANER_VIEW' => true,
 			'U_RAIDPLANER' => ($u_raidplaner && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
 			'A_RAIDPLANER' => $this->auth->acl_get('a_raidplaner'),
@@ -1331,11 +1334,52 @@ class main_controller implements main_interface
 			'new_status' => $newStatus,
 			'new_comment' => $newComment,
 			'changed_user_id' => $changed_user_id,
+			'log_ip' => $this->user->data['user_ip'],
 			'created' => time(),
 			'modified' => time(),
 		);
 		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_logs') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
+	}
+	
+	
+	private function getRaidlog($raid_id)
+	{
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
+			WHERE 
+				raid_id = '". $raid_id ."'
+				AND deleted = '0' 			
+			ORDER BY log_id";
+		$result = $this->db->sql_query($sql);
+		
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('n_raidlog', array(
+				'LOG_ID' => $row['log_id'],
+				'USERNAME' => $this->getUsername($row['user_id']),
+				'CHANGED_USERNAME' => $this->getUsername($row['changed_user_id']),
+				'STATUS' => $this->user->lang($this->status[$row['new_status']]),
+				'COMMENT' => $row['new_comment'],
+				'TIMESTAMP' => $row['created'],
+				'TIME' => $this->user->format_date($row['created']),
+			));
+		}
+		$this->db->sql_freeresult($result);
+	}
+	
+	
+	private function getUsername($user_id)
+	{
+		$sql_ary = array(
+			'user_id' => $user_id,
+		);
+		$sql = "SELECT username FROM " . $this->container->getParameter('tables.users') . " WHERE " . $this->db->sql_build_array('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row_user = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+		
+		return $row_user[0]['username'];
 	}
 	
 	

@@ -4,7 +4,19 @@
 
 <h2>Raid #{RAID_ID}</h2>
 <h4>{DAY}, {DATE}</h4>
-<div class="panel panel-default">
+<!-- IF M_RAIDPLANER -->
+<ul class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#raidView" aria-controls="raid" role="tab" data-toggle="tab">Raid</a></li>
+	<li role="presentation"><a href="#raidLog" aria-controls="log" role="tab" data-toggle="tab">Log</a></li>
+</ul>
+<div class="tab-content">
+<div class="panel panel-default tab-pane" role="tabpanel" id="raidLog">
+	<div class="panel-body">
+		<!-- INCLUDE raidplaner_raidlogs.html -->
+	</div>
+</div>
+<!-- ENDIF -->
+<div class="panel panel-default<!-- IF M_RAIDPLANER --> tab-pane active<!-- ENDIF -->"<!-- IF M_RAIDPLANER --> role="tabpanel"<!-- ENDIF --> id="raidView">
 	<div class="panel-body">
 	<div class="container-fluid">
 		<div class="row">
@@ -46,12 +58,12 @@
 				<div class="row top10">
 					<form method="post" action="{U_MODALLSTATUSCHANGE}" class="form-inline" id="updateall_form" role="form" data-ajax="raidplaner_updateall">
 						<div class="btn-group">
-						<div class="btn-group" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="checkbox" name="preview" id="preview" value="1" checked="checked" autocomplete="off">{L_PREVIEW}
-							</label>
-						</div>
-						<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-default show" />
+							<div class="btn-group" data-toggle="buttons">
+								<label class="btn btn-default active">
+									<input type="checkbox" name="preview" id="preview" value="1" checked="checked">{L_PREVIEW}
+								</label>
+							</div>
+							<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-default show" />
 						</div>
 					
 						<!-- BEGIN n_status -->
@@ -82,7 +94,7 @@
 			</div>
 			
 			<!-- BEGIN n_roles -->
-			<div class="col-md-3" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}">
+			<div class="col-md-3" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}_wrapper">
 				<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group connectedSortable<!-- IF .n_status.n_roles.n_users == 0 --> emptyList<!-- ENDIF -->" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
 					<li class="list-group-item header visible-xs visible-sm">
 						{n_status.n_roles.ROLELANG} <i class="fa fa-<!-- IF n_status.n_roles.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
@@ -104,7 +116,9 @@
 		</div>
 	</div>
 </div>
-
+<!-- IF M_RAIDPLANER -->
+</div>
+<!-- ENDIF -->
 <!-- ELSE -->
 
 <div class="well">{L_RAIDPLANER_NOACCESS}</div>

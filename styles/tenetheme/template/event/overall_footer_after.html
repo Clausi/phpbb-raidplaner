@@ -54,6 +54,22 @@ $(document).ready(function() {
 		  filterTable(raidplanerTable, selectedValue);
 	});
 	<!-- ENDIF -->
+	
+	<!-- IF M_RAIDPLANER and RAIDPLANER_VIEW -->
+	var raidplanerLogTable = $('#datatables-raidplaner-logs').dataTable( {
+		"oLanguage": {
+			<!-- IF S_USER_LANG == 'de' -->"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"<!-- ENDIF -->
+		},
+		"order": [[ 6, "asc" ]],
+		"pageLength": 50,
+		"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "{L_ALL}"] ],
+		
+		"columnDefs": [
+		  { "targets": 5, "visible": false },
+		  { "orderData": [5,6], "targets": 6 },
+		],
+	});
+	<!-- ENDIF -->
 
 	<!-- IF U_RAIDPLANER or M_RAIDPLANER -->
 	
@@ -202,6 +218,7 @@ $(document).ready(function() {
 						type: 'POST',
 						url: '{U_MODSTATUSCHANGE}'
 					});
+					closeEditorWarning(false);
 				}
 			}
 			else if( preview == 1 )
@@ -217,9 +234,9 @@ $(document).ready(function() {
 				}
 				
 				$('input#sorted').val(sorted);
+				closeEditorWarning('{L_SAVE_CHANGES}');
 			}
 			updateCount(status_name[e.target.dataset.status]);
-			closeEditorWarning('{L_SAVE_CHANGES}');
 			raidplanerView.sortable( 'refreshPositions' );
 		}
 	}).disableSelection();

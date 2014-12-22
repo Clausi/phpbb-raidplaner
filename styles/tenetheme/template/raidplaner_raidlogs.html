@@ -1,0 +1,26 @@
+<table class="table table-hover table-striped" id="datatables-raidplaner-logs">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>{L_USER}</th>
+			<th>{L_CHANGED_USER}</th>
+			<th>{L_STATUS}</th>
+			<th>{L_COMMENT}</th>
+			<th>{L_TIMESTAMP}</th>
+			<th>{L_TIME}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- BEGIN n_raidlog -->
+		<tr>
+			<td>{n_raidlog.LOG_ID}</td>
+			<td>{n_raidlog.USERNAME} <!-- IF n_raidlog.USERNAME != n_raidlog.CHANGED_USERNAME --><small class="text-warning"><em>({L_MOD_CHANGE})</em></small><!-- ENDIF --></td>
+			<td>{n_raidlog.CHANGED_USERNAME}</td>
+			<td>{n_raidlog.STATUS}</td>
+			<td>{n_raidlog.COMMENT}</td>
+			<td>{n_raidlog.TIMESTAMP}</td>
+			<td>{n_raidlog.TIME}</td>
+		</tr>
+		<!-- END n_raidlog -->
+	</tbody>
+</table>

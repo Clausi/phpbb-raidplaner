@@ -36,12 +36,12 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 			array('permission.add', array('m_raidplaner', true)),
 			array('permission.add', array('u_raidplaner', true)),
 			// Set permissions
-			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'a_raidplaner')),
-			array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'a_raidplaner')),
-			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'a_raidplaner_usermanage')),
-			array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'a_raidplaner_usermanage')),
-			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'm_raidplaner')),
-			array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'm_raidplaner')),
+			// array('permission.permission_set', array('ROLE_ADMIN_FULL', 'a_raidplaner')),
+			// array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'a_raidplaner')),
+			// array('permission.permission_set', array('ROLE_ADMIN_FULL', 'a_raidplaner_usermanage')),
+			// array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'a_raidplaner_usermanage')),
+			// array('permission.permission_set', array('ROLE_ADMIN_FULL', 'm_raidplaner')),
+			// array('permission.permission_set', array('ROLE_ADMIN_STANDARD', 'm_raidplaner')),
 			
 			array('custom', array(array($this, 'add_raidplaner_event_data'))),
 		);
