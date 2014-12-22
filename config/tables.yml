@@ -4,5 +4,3 @@ parameters:
     tables.clausi.raidplaner_attendees: %core.table_prefix%rp_attendees
     tables.clausi.raidplaner_logs: %core.table_prefix%rp_logs
     tables.clausi.raidplaner_events: %core.table_prefix%rp_events
-    tables.clausi.raidplaner_comp: %core.table_prefix%rp_comp
-    tables.clausi.raidplaner_buffs: %core.table_prefix%rp_buffs

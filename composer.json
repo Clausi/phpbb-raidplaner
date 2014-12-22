@@ -3,8 +3,8 @@
 	"type": "phpbb-extension",
 	"description": "Guild raidplaner.",
 	"homepage": "https://github.com/Clausi/phpbb-raidplaner/",
-	"version": "1.0.1",
-	"time": "2014-10-08",
+	"version": "1.0.2",
+	"time": "2014-12-22",
 	"keywords": ["phpbb", "extension", "raidplaner", "guild"],
 	"license": "GPL-2.0",
 	"authors": [

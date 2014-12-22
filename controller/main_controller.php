@@ -470,6 +470,8 @@ class main_controller implements main_interface
 				$this->setStatus($raid_id, $user_id, $status_id, $currentAttendee['status']);
 				$this->setComment($raid_id, $user_id, $comment);
 				
+				$this->raidLog($raid_id, $user_id, $status_id, $comment, $user_id);
+				
 				$row_count = $this->getRaidmemberCount($raid_id);
 				foreach($row_count as $raid)
 				{
@@ -581,6 +583,8 @@ class main_controller implements main_interface
 			}
 			
 			$this->setComment($raid_id, $user_id, $comment);
+			
+			$this->raidLog($raid_id, $user_id, $status_id, $comment, $user_id);
 			
 			$response = array(
 				'MESSAGE_TITLE' => $this->user->lang['COMMENT_CHANGE_TITLE'],
@@ -763,6 +767,7 @@ class main_controller implements main_interface
 		}
 		
 		$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
+		$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, '', $user_id);
 		
 		$this->json_response->send(array(
 			'statusupdate' => true,
@@ -825,6 +830,7 @@ class main_controller implements main_interface
 					if($user_id && $user_id != 0)
 					{
 						$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
+						$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, '', $user_id);
 					}
 				}
 			}
@@ -908,6 +914,8 @@ class main_controller implements main_interface
 				$this->setStatus($raid_id, $user_id, $status_id, $currentStatus);
 
 				$this->setComment($raid_id, $user_id, $comment);
+				
+				$this->raidLog($raid_id, $user_id, $status_id, $comment, $user_id);
 			}
 		}
 	}
@@ -924,8 +932,11 @@ class main_controller implements main_interface
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
 		$this->db->sql_query($sql);
 		
+		$currentStatus = $this->getStatus($raid_id, $user_id);
+		// $this->raidLog($raid_id, $user_id, $currentStatus, $comment, $user_id);
+		
 		// Send message if user was accepted
-		if($this->getStatus($raid_id, $user_id) == 4)
+		if($currentStatus == 4)
 		{
 			$mod_ary = $this->auth->acl_get_list(false, 'm_raidplaner', false);
 			foreach($mod_ary[0]['m_raidplaner'] as $mod)
@@ -1107,6 +1118,8 @@ class main_controller implements main_interface
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
 		$this->db->sql_query($sql);
+		
+		// $this->raidLog($raid_id, $user_id, $status_id, $this->request->variable('comment', '', true), $user_id);
 		
 		if($this->db->sql_affectedrows() == 0)
 		{
@@ -1307,6 +1320,22 @@ class main_controller implements main_interface
 		);
 
 		submit_pm('post', $subject, $data, false);
+	}
+	
+	
+	private function raidLog($raid_id, $user_id, $newStatus, $newComment, $changed_user_id)
+	{
+		$sql_ary = array(
+			'user_id' => $user_id,
+			'raid_id' => $raid_id,
+			'new_status' => $newStatus,
+			'new_comment' => $newComment,
+			'changed_user_id' => $changed_user_id,
+			'created' => time(),
+			'modified' => time(),
+		);
+		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_logs') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
 	}
 	
 	
