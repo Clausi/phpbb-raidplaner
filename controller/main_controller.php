@@ -406,7 +406,7 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
 		}
 		
-		if( ! is_numeric($status_id) || $status_id < 0 || $status_id > 3)
+		if( ! is_numeric($status_id) || $status_id < 1 || $status_id > 3)
 		{
 			if ($this->request->is_ajax())
 			{
@@ -880,7 +880,7 @@ class main_controller implements main_interface
 		}
 		
 		$status_id = $this->request->variable('change_all_status', 0);
-		if( ! is_numeric($status_id) || $status_id < 0 || $status_id > 3)
+		if( ! is_numeric($status_id) || $status_id < 1 || $status_id > 3)
 		{
 			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_STATUS']);
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
