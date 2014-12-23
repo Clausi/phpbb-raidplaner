@@ -42,7 +42,6 @@ class main_controller implements main_interface
 	];
 	
 	protected $roles = [
-		0 => 'Unkown',
 		1 => 'TANK',
 		2 => 'HEAL',
 		3 => 'MELEE',
@@ -1369,7 +1368,7 @@ class main_controller implements main_interface
 				";
 			$result2 = $this->db->sql_query($sql);
 			$changed_user = '';
-			$changed_role = $this->user->lang($this->roles[$row['new_role']]);
+			$changed_role = (!empty($this->roles[$row['new_role']])) ? $this->user->lang($this->roles[$row['new_role']]) : 'Unkown';
 			$i = 0;
 			while($row_changed = $this->db->sql_fetchrow($result2))
 			{
