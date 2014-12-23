@@ -42,6 +42,7 @@ class main_controller implements main_interface
 	];
 	
 	protected $roles = [
+		0 => 'Unkown',
 		1 => 'TANK',
 		2 => 'HEAL',
 		3 => 'MELEE',
@@ -473,7 +474,7 @@ class main_controller implements main_interface
 				$this->setStatus($raid_id, $user_id, $status_id, $currentAttendee['status']);
 				$this->setComment($raid_id, $user_id, $comment);
 				
-				$this->raidLog($raid_id, $user_id, $status_id, $comment, $user_id);
+				$this->raidLog($raid_id, $user_id, $status_id, $currentAttendee['role'], $comment, $user_id);
 				
 				$row_count = $this->getRaidmemberCount($raid_id);
 				foreach($row_count as $raid)
@@ -562,7 +563,8 @@ class main_controller implements main_interface
 		
 		$this->u_action = $this->helper->route('clausi_raidplaner_controller_comment', array('raid_id' => $raid_id));
 		
-		$status_id = $this->getStatus($raid_id, $user_id);
+		$currentAttendee = $this->getAttendee($raid_id, $user_id);
+		$status_id = $currentAttendee['status'];
 		$this->template->assign_var('COMMENT_WARNING', ($status_id == 3 || $status_id == 2) ? true : false);
 
 		// TODO: Check back if last value of confirm_box() can be done better
@@ -587,7 +589,7 @@ class main_controller implements main_interface
 			
 			$this->setComment($raid_id, $user_id, $comment);
 			
-			$this->raidLog($raid_id, $user_id, $status_id, $comment, $user_id);
+			$this->raidLog($raid_id, $user_id, $status_id, $currentAttendee['role'], $comment, $user_id);
 			
 			$response = array(
 				'MESSAGE_TITLE' => $this->user->lang['COMMENT_CHANGE_TITLE'],
@@ -770,7 +772,7 @@ class main_controller implements main_interface
 		}
 		
 		$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
-		$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, '', $user_id);
+		$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, $role_id, '', $user_id);
 		
 		$this->json_response->send(array(
 			'statusupdate' => true,
@@ -833,7 +835,7 @@ class main_controller implements main_interface
 					if($user_id && $user_id != 0)
 					{
 						$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
-						$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, '', $user_id);
+						$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, $role_id, '', $user_id);
 					}
 				}
 			}
@@ -912,13 +914,14 @@ class main_controller implements main_interface
 			if( $status_value == 1)
 			{
 				$user_id = $this->user->data['user_id'];
-				$currentStatus = $this->getStatus($raid_id, $user_id);
+				$currentAttendee = $this->getAttendee($raid_id, $user_id);
+				$currentStatus = $currentAttendee['status'];
 				
 				$this->setStatus($raid_id, $user_id, $status_id, $currentStatus);
 
 				$this->setComment($raid_id, $user_id, $comment);
 				
-				$this->raidLog($raid_id, $user_id, $status_id, $comment, $user_id);
+				$this->raidLog($raid_id, $user_id, $status_id, $currentAttendee['role'], $comment, $user_id);
 			}
 		}
 	}
@@ -936,7 +939,6 @@ class main_controller implements main_interface
 		$this->db->sql_query($sql);
 		
 		$currentStatus = $this->getStatus($raid_id, $user_id);
-		// $this->raidLog($raid_id, $user_id, $currentStatus, $comment, $user_id);
 		
 		// Send message if user was accepted
 		if($currentStatus == 4)
@@ -1121,9 +1123,7 @@ class main_controller implements main_interface
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
 		$this->db->sql_query($sql);
-		
-		// $this->raidLog($raid_id, $user_id, $status_id, $this->request->variable('comment', '', true), $user_id);
-		
+			
 		if($this->db->sql_affectedrows() == 0)
 		{
 			$user_profile = $this->getUserProfileFields($user_id);
@@ -1326,12 +1326,13 @@ class main_controller implements main_interface
 	}
 	
 	
-	private function raidLog($raid_id, $user_id, $newStatus, $newComment, $changed_user_id)
+	private function raidLog($raid_id, $user_id, $newStatus, $newRole, $newComment, $changed_user_id)
 	{
 		$sql_ary = array(
 			'user_id' => $user_id,
 			'raid_id' => $raid_id,
 			'new_status' => $newStatus,
+			'new_role' => $newRole,
 			'new_comment' => $newComment,
 			'changed_user_id' => $changed_user_id,
 			'log_ip' => $this->user->data['user_ip'],
@@ -1357,7 +1358,7 @@ class main_controller implements main_interface
 		
 		while($row = $this->db->sql_fetchrow($result))
 		{
-			$sql = "SELECT COUNT(*) as count_logs FROM 
+			$sql = "SELECT * FROM 
 				" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
 				WHERE 
 					created = ". $row['created'] ."
@@ -1366,21 +1367,22 @@ class main_controller implements main_interface
 				";
 			$result2 = $this->db->sql_query($sql);
 			$changed_user = '';
-			if($this->db->sql_fetchfield('count_logs') > 1)
+			$changed_role = $this->user->lang($this->roles[$row['new_role']]);
+			$i = 0;
+			while($row_changed = $this->db->sql_fetchrow($result2))
 			{
-				while($row_changed = $this->db->sql_fetchrow($result2))
-				{
-					$changed_user .= $this->getUsername($row_changed['changed_user_id']) . ',';
-				}
+				if($i > 0) $changed_role = '';
+				$changed_user .= $this->getUsername($row_changed['changed_user_id']) . ', ';
+				$i++;
 			}
-			else $changed_user = $this->getUsername($row['changed_user_id']);
 			$this->db->sql_freeresult($result2);
 			
 			$this->template->assign_block_vars('n_raidlog', array(
 				'LOG_ID' => $row['log_id'],
 				'USERNAME' => $this->getUsername($row['user_id']),
-				'CHANGED_USERNAME' => $changed_user,
+				'CHANGED_USERNAME' => rtrim($changed_user, ', '),
 				'STATUS' => $this->user->lang($this->status[$row['new_status']]),
+				'ROLE' => $changed_role,
 				'COMMENT' => $row['new_comment'],
 				'TIMESTAMP' => $row['created'],
 				'TIME' => date('d.m.Y, H:i:s', $row['created']),

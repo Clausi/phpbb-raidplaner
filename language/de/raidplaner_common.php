@@ -63,6 +63,7 @@ $lang = array_merge($lang, array(
 	'USER' => 'Benutzer',
 	'CHANGED_USER' => 'Geänderter Benutzer',
 	'MOD_CHANGE' => 'Moderatoraktion',
+	'LOG_ID' => 'ID',
 	
 	'RAIDPLANER_COMMENT_SHORT_TITLE' => 'Bitte einen Kommentar eingeben',
 	'RAIDPLANER_COMMENT_SHORT' => 'Wenn du dich abmeldest musst du einen Kommentar mit mindestens 5 Zeichen eingeben. Status wurde NICHT geändert.',
