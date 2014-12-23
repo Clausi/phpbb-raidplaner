@@ -771,8 +771,9 @@ class main_controller implements main_interface
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
 		}
 		
+		$currentAttendee = $this->getAttendee($raid_id, $user_id);
 		$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
-		$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, $role_id, '', $user_id);
+		if($currentAttendee['status'] != $status_id || $currentAttendee['role'] != $role_id) $this->raidLog($raid_id, $this->user->data['user_id'], $status_id, $role_id, '', $user_id);
 		
 		$this->json_response->send(array(
 			'statusupdate' => true,
@@ -834,8 +835,9 @@ class main_controller implements main_interface
 					$user_id = str_replace('user[]=', '', $user_id);
 					if($user_id && $user_id != 0)
 					{
+						$currentAttendee = $this->getAttendee($raid_id, $user_id);
 						$this->setStatus($raid_id, $user_id, $status_id, 0, $role_id, true);
-						$this->raidLog($raid_id, $this->user->data['user_id'], $status_id, $role_id, '', $user_id);
+						if($currentAttendee['status'] != $status_id || $currentAttendee['role'] != $role_id) $this->raidLog($raid_id, $this->user->data['user_id'], $status_id, $role_id, '', $user_id);
 					}
 				}
 			}
