@@ -438,7 +438,8 @@ class admin_controller implements admin_interface
 				$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
 					SET " . $this->db->sql_build_array('UPDATE', $raid_data) . " 
 					WHERE 
-						user_id = '".$user_id."' 
+						user_id = '".$user_id."'
+						AND status != 4 
 						AND raid_id IN ( SELECT raid_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time > '".time()."' )
 					";
 				$result = $this->db->sql_query($sql);
