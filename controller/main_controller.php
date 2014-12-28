@@ -244,6 +244,18 @@ class main_controller implements main_interface
 			));
 			
 			$this->getRaidlog($raid_id);
+			
+			// Get ids of last 6 raids
+			$sql_ary = array(
+				'deleted' => 0,
+			);
+			$sql = "SELECT raid_id, raid_time FROM " .  $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+				WHERE " . $this->db->sql_build_array('SELECT', $sql_ary) ."
+				AND raid_time < ".$row_raid['raid_time'] ."
+				ORDER BY raid_time DESC LIMIT 6";
+			$result = $this->db->sql_query($sql);
+			$row_lastraids = $this->db->sql_fetchrowset($result);
+			$this->db->sql_freeresult($result);
 		}
 		else
 		{
@@ -343,7 +355,7 @@ class main_controller implements main_interface
 						
 						if(!empty($user_profile['charname'])) $currentCharname = $user_profile['charname'];
 						else $currentCharname = '';
-						
+
 						$this->template->assign_block_vars('n_status.n_roles.n_users', array(
 							'USER_ID' => $currentUserId,
 							'USERNAME' => $currentUsername,
@@ -352,6 +364,21 @@ class main_controller implements main_interface
 							'CLASSNAME' => $this->classes[$attendee['class']],
 							'COMMENT' => $attendee['comment'],
 						));
+						
+						if( $this->auth->acl_get('m_raidplaner'))
+						{
+							foreach($row_lastraids as $lastraid)
+							{
+								$past_status = $this->getStatus($lastraid['raid_id'], $currentUserId);
+								if(is_numeric($past_status))
+								{
+									$this->template->assign_block_vars('n_status.n_roles.n_users.n_lastraids', array(
+										'RAID_DATE' => date('d.m.Y', $lastraid['raid_time']),
+										'STATUS' => $this->user->lang($this->status[$past_status]),
+									));
+								}
+							}
+						}
 					}
 				}
 			}

@@ -69,15 +69,15 @@ $(document).ready(function() {
 		  { "orderData": [6,7], "targets": 7 },
 		],
 	});
+
 	<!-- ENDIF -->
 
 	<!-- IF U_RAIDPLANER or M_RAIDPLANER -->
 	
-	$('.raidplaner-comment').popover({
+	$('.raidplaner-comment, .raidplaner-lastraids').popover({
 		placement: 'top',
 		trigger: 'hover',
 	});
-
 
 	var lang_status = {
 		0: '{L_NOT_SIGNUP}',

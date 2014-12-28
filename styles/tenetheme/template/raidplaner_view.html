@@ -100,10 +100,24 @@
 						{n_status.n_roles.ROLELANG} <i class="fa fa-<!-- IF n_status.n_roles.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
 					</li>
 					<!-- BEGIN n_users -->
-					<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" data-content="{n_status.n_roles.n_users.COMMENT}">
-						<!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>({n_status.n_roles.n_users.USERNAME})</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF -->
-						<span class="badge"><i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF-->"></i></span>
-					</li>
+						<!-- IF n_users.USER_ID -->
+						<li class="list-group-item cc_{n_status.n_roles.n_users.CLASSNAME}<!-- IF n_status.n_roles.n_users.COMMENT != '' --> raidplaner-comment<!-- ENDIF --><!-- IF M_RAIDPLANER --> raidplaner-lastraids<!-- ENDIF -->" id="user_{n_status.n_roles.n_users.USER_ID}" 
+							data-html="true" data-content='
+								<!-- IF n_status.n_roles.n_users.COMMENT != '' --><p>{n_status.n_roles.n_users.COMMENT}</p><!-- ENDIF -->
+								<!-- IF M_RAIDPLANER -->
+									<small>
+									<ul class="list-unstyled">
+									<!-- BEGIN n_lastraids -->
+										<li>{n_status.n_roles.n_users.n_lastraids.RAID_DATE} <i class="fa fa-angle-double-right"></i> {n_status.n_roles.n_users.n_lastraids.STATUS}</li>
+									<!-- END n_lastraids -->
+									</ul>
+									</small>
+								<!-- ENDIF -->
+							'>
+							<!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>({n_status.n_roles.n_users.USERNAME})</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF -->
+							<span class="badge"><i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF-->"></i></span>
+						</li>
+						<!-- ENDIF -->
 					<!-- END n_users -->
 				</ul>
 			</div>
