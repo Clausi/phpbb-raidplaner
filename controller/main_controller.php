@@ -964,7 +964,7 @@ class main_controller implements main_interface
 		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
 		
 		$currentStatus = $this->getStatus($raid_id, $user_id);
 		
@@ -992,7 +992,7 @@ class main_controller implements main_interface
 			$this->sendPm($subject, $message, $to);
 		}
 		
-		if($this->db->sql_affectedrows() == 0)
+		if($this->db->sql_affectedrows($result) == 0)
 		{
 			$user_profile = $this->getUserProfileFields($user_id);
 			if( empty($user_profile['role']) || empty($user_profile['class']))
@@ -1006,7 +1006,7 @@ class main_controller implements main_interface
 				'raid_id' => $raid_id,
 				'role' => $user_profile['role'],
 				'class' => $user_profile['class'],
-				'status' => $status_id,
+				'status' => $currentStatus,
 				'comment' => $comment,
 				'signup_time' => time(),
 			);
