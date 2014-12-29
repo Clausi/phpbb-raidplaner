@@ -967,6 +967,28 @@ class main_controller implements main_interface
 		$result = $this->db->sql_query($sql);
 		
 		$currentStatus = $this->getStatus($raid_id, $user_id);
+
+		if($this->db->sql_affectedrows() <= 0)
+		{
+			$user_profile = $this->getUserProfileFields($user_id);
+			if( empty($user_profile['role']) || empty($user_profile['class']))
+			{
+				$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
+				return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
+			}
+
+			$sql_ary = array(
+				'user_id' => $user_id,
+				'raid_id' => $raid_id,
+				'role' => $user_profile['role'],
+				'class' => $user_profile['class'],
+				'status' => $currentStatus,
+				'comment' => $comment,
+				'signup_time' => time(),
+			);
+			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+			$this->db->sql_query($sql);
+		}
 		
 		// Send message if user was accepted
 		if($currentStatus == 4)
@@ -990,28 +1012,6 @@ class main_controller implements main_interface
 			);
 			
 			$this->sendPm($subject, $message, $to);
-		}
-		
-		if($this->db->sql_affectedrows($result) == 0)
-		{
-			$user_profile = $this->getUserProfileFields($user_id);
-			if( empty($user_profile['role']) || empty($user_profile['class']))
-			{
-				$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
-				return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 500);
-			}
-
-			$sql_ary = array(
-				'user_id' => $user_id,
-				'raid_id' => $raid_id,
-				'role' => $user_profile['role'],
-				'class' => $user_profile['class'],
-				'status' => $currentStatus,
-				'comment' => $comment,
-				'signup_time' => time(),
-			);
-			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
-			$this->db->sql_query($sql);
 		}
 	}
 	
@@ -1150,9 +1150,9 @@ class main_controller implements main_interface
 		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
 			
-		if($this->db->sql_affectedrows() == 0)
+		if($this->db->sql_affectedrows() <= 0)
 		{
 			$user_profile = $this->getUserProfileFields($user_id);
 			if( empty($user_profile['role']) || empty($user_profile['class']))
