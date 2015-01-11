@@ -1390,6 +1390,7 @@ class main_controller implements main_interface
 				" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
 				WHERE 
 					created = ". $row['created'] ."
+					AND raid_id = ". $raid_id ."
 					AND deleted = '0' 
 				ORDER BY log_id
 				";
