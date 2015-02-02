@@ -156,6 +156,8 @@ $(document).ready(function() {
 		if($('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').children('li').length === 0) $('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').addClass('emptyList');
 		
 		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
+		if(res.NEW_COMMENT.length > 0) { $('li#user_' + res.USER_ID).addClass('raidplaner-comment'); }
+		else { $('li#user_' + res.USER_ID).removeClass('raidplaner-comment'); }
 		
 		raidplanerView.sortable( 'refresh' );
 		
@@ -165,6 +167,8 @@ $(document).ready(function() {
 	
 	phpbb.addAjaxCallback('raidplaner_comment', function(res) {
 		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
+		if(res.NEW_COMMENT.length > 0) { $('li#user_' + res.USER_ID).addClass('raidplaner-comment'); }
+		else { $('li#user_' + res.USER_ID).removeClass('raidplaner-comment'); }
 	});
 	
 	<!-- ENDIF -->
