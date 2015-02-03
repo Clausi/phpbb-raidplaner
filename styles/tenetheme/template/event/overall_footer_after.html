@@ -69,7 +69,6 @@ $(document).ready(function() {
 		  { "orderData": [6,7], "targets": 7 },
 		],
 	});
-
 	<!-- ENDIF -->
 
 	<!-- IF U_RAIDPLANER or M_RAIDPLANER -->
@@ -189,6 +188,19 @@ $(document).ready(function() {
 		}
 	});
 	
+	var viewSortable = 0;
+	$( "#viewSortable" ).on( "change", function() {
+		viewSortable = $( "input#viewSortable:checked" ).val();
+		if(viewSortable) {
+			raidplanerView.sortable( "enable" );
+			$('.ui-sortable-handle').addClass('moveCursor');
+		}
+		else {
+			raidplanerView.sortable( "disable" );
+			$('.ui-sortable-handle').removeClass('moveCursor');
+		}
+	});
+	
 	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
 	raidplanerView.sortable({
 		connectWith: ".connectedSortable",
@@ -243,7 +255,11 @@ $(document).ready(function() {
 			updateCount(status_name[e.target.dataset.status]);
 			raidplanerView.sortable( 'refreshPositions' );
 		}
-	}).disableSelection();
+	}).disableSelection().sortable( "disable" );
+	
+	$('button#raid_reset').on('click', function() {
+		raidplanerView.sortable( "cancel" );
+	});
 	<!-- ENDIF -->
 
 });

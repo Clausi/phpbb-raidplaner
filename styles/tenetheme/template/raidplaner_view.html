@@ -54,30 +54,37 @@
 					</ul>
 					<!-- ENDIF -->
 				</div>
-				<!-- IF M_RAIDPLANER and FLAG == 'future' -->
-				<div class="row top10">
-					<form method="post" action="{U_MODALLSTATUSCHANGE}" class="form-inline" id="updateall_form" role="form" data-ajax="raidplaner_updateall">
-						<div class="btn-group">
-							<div class="btn-group" data-toggle="buttons">
-								<label class="btn btn-default active">
-									<input type="checkbox" name="preview" id="preview" value="1" checked="checked">{L_PREVIEW}
-								</label>
-							</div>
-							<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-default show" />
-						</div>
-					
-						<!-- BEGIN n_status -->
-							<!-- BEGIN n_roles -->
-								<input type="hidden" name="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" value="" />
-							<!-- END n_roles -->
-						<!-- END n_status -->
-				
-						{S_FORM_TOKEN}
-					</form>
-				</div>
-				<!-- ENDIF -->
 			</div>
 		</div>
+		<!-- IF M_RAIDPLANER and FLAG == 'future' -->
+		<div class="row top10 bottom10 text-center">
+			<form method="post" action="{U_MODALLSTATUSCHANGE}" class="form-inline" id="updateall_form" role="form" data-ajax="raidplaner_updateall">
+				<div class="btn-group">
+					<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-default active">
+							<input type="checkbox" name="preview" id="preview" value="1" checked="checked">{L_PREVIEW}
+						</label>
+						<label class="btn btn-default">
+							<input type="checkbox" name="viewSortable" id="viewSortable" value="1">{L_SORTABLE}
+						</label>
+					</div>
+				</div>
+				
+				<div class="btn-group">
+					<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-success show" />
+					<button class="btn btn-danger" id="raid_reset" type="button">{L_RESET}</button>
+				</div>
+			
+				<!-- BEGIN n_status -->
+					<!-- BEGIN n_roles -->
+						<input type="hidden" name="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}" value="" />
+					<!-- END n_roles -->
+				<!-- END n_status -->
+		
+				{S_FORM_TOKEN}
+			</form>
+		</div>
+		<!-- ENDIF -->
 		
 		<div class="row top5 hidden-xs hidden-sm">
 			<!-- BEGIN n_roleNames -->

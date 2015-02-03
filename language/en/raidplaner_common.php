@@ -47,6 +47,7 @@ $lang = array_merge($lang, array(
 	'STATUS_CHANGE_TEXT' => 'Changed status to "%s" for raid #%s, %s',
 	'STATUS_PREVIEW_SAVE' => 'Saved',
 	'STATUS_PREVIEW_TEXT' => 'Saved status for raid #%s, %s',
+	'SORTABLE' => 'Drag&Drop',
 	'ACCEPTED_TITLE' => 'Change status?',
 	'ACCEPTED_TITLE_CONFIRM' => 'You have already been accepted for this raid, do you really want to change your status?',
 	'STATUSCHANGE_TITLE' => 'Change status?',
