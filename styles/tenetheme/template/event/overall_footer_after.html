@@ -199,11 +199,12 @@ $(document).ready(function() {
 			raidplanerView.sortable( "disable" );
 			$('.ui-sortable-handle').removeClass('moveCursor');
 		}
+		raidplanerView.sortable( 'refresh' );
 	});
 	
 	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
 	raidplanerView.sortable({
-		connectWith: ".connectedSortable",
+		connectWith: ".connectedSortable, ul:not(.nodrop)",
 		items: "li:not(.header)",
 		placeholder: "list-group-item list-group-item-warning placeholder",
 		receive: function (e, ui) {
@@ -259,6 +260,11 @@ $(document).ready(function() {
 	
 	$('button#raid_reset').on('click', function() {
 		raidplanerView.sortable( "cancel" );
+		raidplanerView.sortable( 'refresh' );
+		for (status in status_name) {
+			updateCount(status_name[status]);
+		}
+		
 	});
 	<!-- ENDIF -->
 

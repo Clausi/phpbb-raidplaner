@@ -72,7 +72,6 @@
 				
 				<div class="btn-group">
 					<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-success show" />
-					<button class="btn btn-danger" id="raid_reset" type="button">{L_RESET}</button>
 				</div>
 			
 				<!-- BEGIN n_status -->
@@ -113,7 +112,7 @@
 								<!-- IF n_status.n_roles.n_users.COMMENT != '' --><p>{n_status.n_roles.n_users.COMMENT}</p><!-- ENDIF -->
 								<!-- IF M_RAIDPLANER -->
 									<small>
-									<ul class="list-unstyled">
+									<ul class="list-unstyled nodrop">
 									<!-- BEGIN n_lastraids -->
 										<li>{n_status.n_roles.n_users.n_lastraids.RAID_DATE} <i class="fa fa-angle-double-right"></i> {n_status.n_roles.n_users.n_lastraids.STATUS}</li>
 									<!-- END n_lastraids -->
