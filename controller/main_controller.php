@@ -471,8 +471,7 @@ class main_controller implements main_interface
 			'COMMENT' => $currentAttendee['comment'],
 		));
 		
-		// TODO: Check back if last value of confirm_box() can be done better
-		if($currentAttendee['status'] == 4 && confirm_box(false, 'ACCEPTED_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/')))
+		if($currentAttendee['status'] == 4 && confirm_box(false, 'ACCEPTED_TITLE', '', 'raidplaner_confirm.html', $this->u_action))
 		{
 			
 		}
@@ -537,7 +536,7 @@ class main_controller implements main_interface
 				$this->template->assign_vars(array(
 					'U_ACTION' => $this->u_action,
 				));
-				confirm_box(false, 'STATUSCHANGE_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
+				confirm_box(false, 'STATUSCHANGE_TITLE', '', 'raidplaner_confirm.html', $this->u_action);
 			}
 		}
 	}
@@ -593,7 +592,6 @@ class main_controller implements main_interface
 		$status_id = $currentAttendee['status'];
 		$this->template->assign_var('COMMENT_WARNING', ($status_id == 3 || $status_id == 2) ? true : false);
 
-		// TODO: Check back if last value of confirm_box() can be done better
 		if(confirm_box(true))
 		{
 			$comment = $this->request->variable('comment', '', true);
@@ -635,11 +633,11 @@ class main_controller implements main_interface
 		else 
 		{
 			$this->template->assign_vars(array(
-				'COMMENT' => $this->getComment($raid_id, $user_id),
+				'COMMENT' => $currentAttendee['comment'],
 				'U_ACTION' => $this->u_action,
 			));
-			
-			confirm_box(false, 'COMMENT_TITLE', '', 'raidplaner_confirm.html', ltrim($this->u_action, '/'));
+
+			confirm_box(false, 'COMMENT_TITLE', '', 'raidplaner_confirm.html', $this->u_action);
 		}
 	}
 	

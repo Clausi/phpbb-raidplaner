@@ -1,7 +1,6 @@
 <!-- IF S_CLAUSI_RAIDPLANER_ACTIVE and S_CLAUSI_RAIDPLANER_PAGE -->
 
 <!-- INCLUDEJS jquery-ui/jquery-ui.min.js -->
-<!-- INCLUDEJS jquery.ui.touch-punch.min.js -->
 
 <script type="text/javascript">
 <!-- IF U_RAIDPLANER or M_RAIDPLANER -->
@@ -155,10 +154,10 @@ $(document).ready(function() {
 		if($('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').children('li').length === 0) $('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').addClass('emptyList');
 		
 		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
+		<!-- IF U_RAIDPLANER and RAIDPLANER_VIEW -->
 		if(res.NEW_COMMENT.length > 0) { $('li#user_' + res.USER_ID).addClass('raidplaner-comment'); }
 		else { $('li#user_' + res.USER_ID).removeClass('raidplaner-comment'); }
-		
-		raidplanerView.sortable( 'refresh' );
+		<!-- ENDIF -->
 		
 		updateCount(res.STATUSNAME);
 		updateCount(res.OLD_STATUSNAME);
@@ -186,92 +185,6 @@ $(document).ready(function() {
 			$('#apply').removeClass('show');
 			$('#apply').addClass('hidden');
 		}
-	});
-	
-	var viewSortable = 0;
-	$( "#viewSortable" ).on( "change", function() {
-		viewSortable = $( "input#viewSortable:checked" ).val();
-		if(viewSortable) {
-			raidplanerView.sortable( "enable" );
-			$('.ui-sortable-handle').addClass('moveCursor');
-		}
-		else {
-			raidplanerView.sortable( "disable" );
-			$('.ui-sortable-handle').removeClass('moveCursor');
-		}
-		raidplanerView.sortable( 'refresh' );
-	});
-	
-	var raidplanerView = $( "<!-- BEGIN n_status --><!-- BEGIN n_roles -->#{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View<!-- IF n_status.n_roles.LASTELEMENT == false -->, <!-- ENDIF --><!-- END n_roles --><!-- END n_status -->" );
-	raidplanerView.sortable({
-		connectWith: ".connectedSortable, ul:not(.nodrop)",
-		items: "li:not(.header)",
-		placeholder: "list-group-item list-group-item-warning placeholder",
-		receive: function (e, ui) {
-			if($(e.target).children('li:not(.header)').length > 0) {
-				$(e.target).removeClass('emptyList');
-			}
-		},
-		remove: function(e, ui) {
-			if($(e.target).children('li:not(.header)').length == 0) {
-				$(e.target).addClass('emptyList');
-			}
-		},
-		out: function(e, ui) {
-			if (this === ui.item.parent()[0]) {
-				if($(e.target).children('li:not(.header)').length == 2) {
-					$(e.target).addClass('emptyList');
-				}
-			}
-			$('.raidplaner-comment, .raidplaner-lastraids').popover('destroy');
-		},
-		stop: function(e, ui) {
-			$('.raidplaner-comment, .raidplaner-lastraids').popover({
-				placement: 'top',
-				trigger: 'hover',
-			});
-		},
-		update: function (e, ui) {
-			if( preview != 1 )
-			{
-				if (this === ui.item.parent()[0])
-				{
-					var data = "user_id=" + ui.item.context.id.replace("user_", "") + "&status_id=" + e.target.dataset.status + "&role_id=" + e.target.dataset.role;
-					$.ajax({
-						data: data,
-						type: 'POST',
-						url: '{U_MODSTATUSCHANGE}'
-					});
-					closeEditorWarning(false);
-				}
-			}
-			else if( preview == 1 )
-			{
-				raidplanerView.sortable( 'refresh' );
-				var sorted = new Array();
-				
-				for (status in status_name) {
-					for(role in role_name) {
-						sorted = $('#' + status_name[status] + role_name[role] + 'View').sortable('serialize');
-						$('input#' + status_name[status] + '_' + role_name[role]).val(sorted);
-					}
-				}
-				
-				$('input#sorted').val(sorted);
-				closeEditorWarning('{L_SAVE_CHANGES}');
-			}
-			updateCount(status_name[e.target.dataset.status]);
-			raidplanerView.sortable( 'refreshPositions' );
-		}
-	}).disableSelection().sortable( "disable" );
-	
-	$('button#raid_reset').on('click', function() {
-		raidplanerView.sortable( "cancel" );
-		raidplanerView.sortable( 'refresh' );
-		for (status in status_name) {
-			updateCount(status_name[status]);
-		}
-		
 	});
 	<!-- ENDIF -->
 
