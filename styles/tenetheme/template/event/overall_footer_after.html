@@ -219,10 +219,17 @@ $(document).ready(function() {
 		},
 		out: function(e, ui) {
 			if (this === ui.item.parent()[0]) {
-				if($(e.target).children('li:not(.header)').length == 0) {
+				if($(e.target).children('li:not(.header)').length == 2) {
 					$(e.target).addClass('emptyList');
 				}
 			}
+			$('.raidplaner-comment, .raidplaner-lastraids').popover('destroy');
+		},
+		stop: function(e, ui) {
+			$('.raidplaner-comment, .raidplaner-lastraids').popover({
+				placement: 'top',
+				trigger: 'hover',
+			});
 		},
 		update: function (e, ui) {
 			if( preview != 1 )
