@@ -60,6 +60,9 @@ $lang = array_merge($lang, array(
 	'NOTE_CHANGE_TEXT' => 'New raidnote for Raid #%s, %s',
 	'SAVE' => 'Save',
 	'SAVE_CHANGES' => 'Changes have not been saved.',
+	'NEW_STATUS' => 'Set new status',
+	'NEW_ROLE' => 'Set new role',
+	'SELECTED' => 'selected',
 	
 	'USER' => 'User',
 	'CHANGED_USER' => 'Changed user',

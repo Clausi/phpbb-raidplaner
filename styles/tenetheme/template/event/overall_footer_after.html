@@ -149,10 +149,9 @@ $(document).ready(function() {
 		<!-- IF U_RAIDPLANER and RAIDPLANER_VIEW -->
 			createUserPopover(res);
 			initUserPopover();
+			updateCount(res.STATUSNAME);
+			updateCount(res.OLD_STATUSNAME);
 		<!-- ENDIF -->
-		
-		updateCount(res.STATUSNAME);
-		updateCount(res.OLD_STATUSNAME);
 	});
 	
 	phpbb.addAjaxCallback('raidplaner_comment', function(res) {
@@ -173,13 +172,107 @@ $(document).ready(function() {
 		}
 	}
 	
+	var raidSetup = {};
+	function serializeStatus() {
+		raidSetup = {};
+		for (status in status_name) {
+			if( ! raidSetup[status_name[status]]) raidSetup[status_name[status]] = {};
+			for (role in role_name) {
+				if( ! raidSetup[status_name[status]][role_name[role]]) raidSetup[status_name[status]][role_name[role]] = [];
+				var user = $('#' + status_name[status] + role_name[role] + 'View').children('li:not(.header)');
+				if(user) {
+					user.each(function(){
+						raidSetup[status_name[status]][role_name[role]].push($(this).attr('id').replace('user_', '')); 
+					});
+					
+					$( 'input#' + status_name[status] + '_' + role_name[role] ).val( raidSetup[status_name[status]][role_name[role]] );
+				}
+			}
+			updateCount(status_name[status]);
+		}
+	}
+	serializeStatus();
+	
+	
+	var selectedUser = {};
+	function countUser() {
+		var count = 0;
+		for(user in selectedUser) {
+			if(selectedUser[user]) count++;
+		}
+		$('button#countUser').text(count + ' {L_SELECTED}');
+	}
+
+	$('.raidplanerView > li:not(.header)').on('click', function () {
+		var user = $(this).attr('id').replace('user_', '');
+		if( selectedUser[user] ) {
+			selectedUser[user] = false;
+			$(this).removeClass('userSelected');
+			countUser();
+		}
+		else {
+			selectedUser[user] = true;
+			$(this).addClass('userSelected');
+			countUser();
+		}
+	});
+	
+	function clearSelection() {
+		selectedUser = {};
+		$('.raidplanerView > li').removeClass('userSelected');
+		countUser();
+	}
+	
+	$('#countUser').on('click', function() {
+		clearSelection();
+	});
+	
+
+	function getRole(user) {
+		return $('li#user_' + user).parent('ul').data('role');
+	}
+	
+	function getStatus(user) {
+		return $('li#user_' + user).parent('ul').data('status');
+	}
+	
+	
+	$('.setRole').on('click', function (e) {
+		e.preventDefault();
+		var newRole = $(this).attr('id').replace('set', '');
+		
+		for(user in selectedUser) {
+			if( selectedUser[user] ) $('#' + status_name[getStatus(user)] + newRole + 'View').append($('li#user_' + user));
+		}
+		
+		clearSelection();
+		serializeStatus();
+		closeEditorWarning("{L_SAVE_CHANGES}");
+	});
+	
+	$('.setStatus').on('click', function (e) {
+		e.preventDefault();
+		var newStatus = $(this).attr('id').replace('set', '');
+		
+		for(user in selectedUser) {
+			if( selectedUser[user] ) $('#' + newStatus + role_name[getRole(user)] + 'View').append($('li#user_' + user));
+		}
+		
+		clearSelection();
+		serializeStatus();
+		closeEditorWarning("{L_SAVE_CHANGES}");
+	});
+	
+	
+	$('#note').on('change', function() {
+		closeEditorWarning("{L_SAVE_CHANGES}");
+	});
+	
 	
 	phpbb.addAjaxCallback('raidplaner_updateall', function(res) {
 		closeEditorWarning(false);
 	});
-	
 	<!-- ENDIF -->
-
 });
 
 </script>

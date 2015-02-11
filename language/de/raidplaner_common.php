@@ -60,6 +60,9 @@ $lang = array_merge($lang, array(
 	'NOTE_CHANGE_TEXT' => 'Neue Raidnotiz für Raid #%s, %s',
 	'SAVE' => 'Speichern',
 	'SAVE_CHANGES' => 'Änderungen wurde nicht gespeichert.',
+	'NEW_STATUS' => 'Neuer Status',
+	'NEW_ROLE' => 'Neue Rolle',
+	'SELECTED' => 'ausgewählt',
 	
 	'USER' => 'Benutzer',
 	'CHANGED_USER' => 'Geänderter Benutzer',

@@ -814,10 +814,9 @@ class main_controller implements main_interface
 			foreach($this->roles as $role_id => $roleName)
 			{
 				$current = $this->request->variable(strtolower($statusName) . '_' . strtolower($roleName), '');
-				$current = explode('&amp;', $current);
+				$current = explode(',', $current);
 				foreach($current as $user_id)
 				{
-					$user_id = str_replace('user[]=', '', $user_id);
 					if($user_id && $user_id != 0)
 					{
 						$currentAttendee = $this->getAttendee($raid_id, $user_id);

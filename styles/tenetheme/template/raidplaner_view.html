@@ -56,11 +56,35 @@
 				<!-- IF M_RAIDPLANER and FLAG == 'future' -->
 				<div class="row top10 bottom10 text-center">
 						<div class="btn-group">
-							<button type="button" class="btn btn-warning" name="preview" disabled="disabled">{L_PREVIEW}</button>
+							<button type="button" class="btn btn-warning" name="countUser" id="countUser">0 {L_SELECTED}</button>
 						</div>
 						
 						<div class="btn-group">
-							<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-success show" />
+							<button type="button" id="btn_{RAID_ID}_status" class="btn btn-primary dropdown-toggle button-width" data-toggle="dropdown">
+								<i class="fa fa-circle"></i> {L_NEW_STATUS} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li class="bg-success"><a href="#setaccept" id="setaccept" class="setStatus"><i class="fa fa-check"></i> {L_ACCEPT}</a></li>
+								<li class="bg-primary"><a href="#setattending" id="setattending" class="setStatus"><i class="fa fa-circle"></i> {L_ATTENDING}</a></li>
+								<li class="bg-warning"><a href="#setsubstitute" id="setsubstitute" class="setStatus"><i class="fa fa-minus"></i> {L_SUBSTITUTE}</a></li>
+								<li class="bg-danger"><a href="#setdecline" id="setdecline" class="setStatus"><i class="fa fa-times"></i> {L_DECLINE}</a></li>
+							</ul>
+						</div>
+							
+						<div class="btn-group">
+							<button type="button" id="btn_{RAID_ID}_role" class="btn btn-primary dropdown-toggle button-width" data-toggle="dropdown">
+								<i class="fa fa-circle"></i> {L_NEW_ROLE} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="#settank" id="settank" class="setRole"><i class="fa fa-shield"></i> {L_TANK}</a></li>
+								<li><a href="#setheal" id="setheal" class="setRole"><i class="fa fa-plus"></i> {L_HEAL}</a></li>
+								<li><a href="#setmelee" id="setmelee" class="setRole"><i class="fa fa-gavel fa-flip-horizontal"></i> {L_MELEE}</a></li>
+								<li><a href="#setrange" id="setrange" class="setRole"><i class="fa fa-magic"></i> {L_RANGE}</a></li>
+							</ul>
+						</div>
+						
+						<div class="btn-group">
+							<input type="submit" value="{L_SAVE}" id="apply" class="btn btn-success" />
 						</div>
 					
 						<!-- BEGIN n_status -->

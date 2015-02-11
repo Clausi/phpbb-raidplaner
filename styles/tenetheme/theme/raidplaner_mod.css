@@ -1,3 +1,16 @@
 textarea#note {
 	resize: vertical;
 }
+
+.raidplanerView > .list-group-item {
+	cursor: pointer;
+}
+
+.userSelected {
+	background-color: #777 !important;
+}
+
+.userSelected > .badge > .fa:before {
+	font-family: FontAwesome;
+	content: "";
+}
