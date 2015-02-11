@@ -13,11 +13,7 @@
 	min-width: 115px;
 }
 
-.emptyList {
-	height: 24px;
-}
-
-.connectedSortable > .list-group-item {
+.raidplanerView > .list-group-item {
 	padding: 3px 15px;
 }
 

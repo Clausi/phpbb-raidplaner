@@ -21,7 +21,3 @@ clausi_raidplaner_controller_modallstatus:
 clausi_raidplaner_controller_comment:
     path: /raidplaner/comment/{raid_id}
     defaults: { _controller: clausi.raidplaner.main.controller:setUsercomment, raid_id: "0" }
-
-clausi_raidplaner_controller_note:
-    path: /raidplaner/note/{raid_id}
-    defaults: { _controller: clausi.raidplaner.main.controller:setModRaidnote, raid_id: "0" }

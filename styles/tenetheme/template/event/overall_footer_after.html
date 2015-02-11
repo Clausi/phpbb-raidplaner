@@ -1,7 +1,5 @@
 <!-- IF S_CLAUSI_RAIDPLANER_ACTIVE and S_CLAUSI_RAIDPLANER_PAGE -->
 
-<!-- INCLUDEJS jquery-ui/jquery-ui.min.js -->
-
 <script type="text/javascript">
 <!-- IF U_RAIDPLANER or M_RAIDPLANER -->
 function validateForm(e)
@@ -71,11 +69,24 @@ $(document).ready(function() {
 	<!-- ENDIF -->
 
 	<!-- IF U_RAIDPLANER or M_RAIDPLANER -->
+	function createUserPopover(res) {
+		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
+		if(res.NEW_COMMENT.length > 0) { 
+			$('li#user_' + res.USER_ID).addClass('raidplaner-comment'); 
+		}
+		else { 
+			$('li#user_' + res.USER_ID).removeClass('raidplaner-comment');
+			$('li#user_' + res.USER_ID).popover('destroy')
+		}
+	}
 	
-	$('.raidplaner-comment, .raidplaner-lastraids').popover({
-		placement: 'top',
-		trigger: 'hover',
-	});
+	function initUserPopover() {
+		$('.raidplaner-comment, .raidplaner-lastraids').popover({
+			placement: 'top',
+			trigger: 'hover',
+		});
+	}
+	initUserPopover();
 
 	var lang_status = {
 		0: '{L_NOT_SIGNUP}',
@@ -111,21 +122,6 @@ $(document).ready(function() {
 		$('#' + status + '_count').text('( ' + count + ' )');
 	}
 	
-	function closeEditorWarning(text){
-		if(text == false) {
-			window.onbeforeunload = null;
-		}
-		else {
-			window.onbeforeunload = function(e) {
-				return text;
-			};
-		}
-	}
-	
-	phpbb.addAjaxCallback('raidplaner_updateall', function(res) {
-		closeEditorWarning(false);
-	});
-	
 	phpbb.addAjaxCallback('raidplaner_status', function(res) {
 		$(this).parent('div.btn-group');
 		$('#btn_' + res.RAID_ID).removeClass('btn-danger btn-warning btn-success btn-default');
@@ -150,13 +146,9 @@ $(document).ready(function() {
 		$('#attending_' + res.RAID_ID).text(res.ATTENDING);
 		
 		$('ul#' + res.STATUSNAME + res.ROLENAME + 'View').append($('li#user_' + res.USER_ID));
-		$('ul#' + res.STATUSNAME + res.ROLENAME + 'View').removeClass('emptyList');
-		if($('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').children('li').length === 0) $('ul#' + res.OLD_STATUSNAME + res.OLD_ROLENAME + 'View').addClass('emptyList');
-		
-		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
 		<!-- IF U_RAIDPLANER and RAIDPLANER_VIEW -->
-		if(res.NEW_COMMENT.length > 0) { $('li#user_' + res.USER_ID).addClass('raidplaner-comment'); }
-		else { $('li#user_' + res.USER_ID).removeClass('raidplaner-comment'); }
+			createUserPopover(res);
+			initUserPopover();
 		<!-- ENDIF -->
 		
 		updateCount(res.STATUSNAME);
@@ -164,28 +156,28 @@ $(document).ready(function() {
 	});
 	
 	phpbb.addAjaxCallback('raidplaner_comment', function(res) {
-		$('li#user_' + res.USER_ID).attr('data-content', res.NEW_COMMENT);
-		if(res.NEW_COMMENT.length > 0) { $('li#user_' + res.USER_ID).addClass('raidplaner-comment'); }
-		else { $('li#user_' + res.USER_ID).removeClass('raidplaner-comment'); }
+		createUserPopover(res);
+		initUserPopover();
 	});
-	
 	<!-- ENDIF -->
 	
 	<!-- IF M_RAIDPLANER and FLAG == 'future' -->
-	
-	var preview = 1;
-	$( "#preview" ).on( "change", function() {
-		preview = $( "input#preview:checked" ).val();
-		
-		if(preview == 1){
-			$('#apply').removeClass('hidden');
-			$('#apply').addClass('show');
+	function closeEditorWarning(text){
+		if(text == false) {
+			window.onbeforeunload = null;
 		}
 		else {
-			$('#apply').removeClass('show');
-			$('#apply').addClass('hidden');
+			window.onbeforeunload = function(e) {
+				return text;
+			};
 		}
+	}
+	
+	
+	phpbb.addAjaxCallback('raidplaner_updateall', function(res) {
+		closeEditorWarning(false);
 	});
+	
 	<!-- ENDIF -->
 
 });

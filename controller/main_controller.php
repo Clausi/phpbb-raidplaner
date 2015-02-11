@@ -239,7 +239,6 @@ class main_controller implements main_interface
 			add_form_key('clausi/raidplaner');
 			$row_raid['note'] = generate_text_for_edit($row_raid['note'], $row_raid['bbcode_uid'], $row_raid['bbcode_bitfield'], $flags);
 			$this->template->assign_vars(array(
-				'M_NOTE_ACTION' => $this->helper->route('clausi_raidplaner_controller_note', array('raid_id' => $raid_id)),
 				'RAID_NOTE' => $row_raid['note']['text'],
 			));
 			
@@ -642,40 +641,8 @@ class main_controller implements main_interface
 	}
 	
 	
-	public function setModRaidnote($raid_id)
+	private function setModRaidnote($raid_id)
 	{
-		if( ! $this->auth->acl_get('m_raidplaner'))
-		{
-			if ($this->request->is_ajax())
-			{
-				$this->json_response->send(array(
-					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
-					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_USER'],
-				));
-			}
-			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_USER']);
-			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
-		}
-		
-		if( ! is_numeric($raid_id))
-		{
-			if ($this->request->is_ajax())
-			{
-				$this->json_response->send(array(
-					'MESSAGE_TITLE' => $this->user->lang['ERROR'],
-					'MESSAGE_TEXT' => $this->user->lang['RAIDPLANER_INVALID_ID'],
-				));
-			}
-			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_ID']);
-			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 404);
-		}
-		
-		add_form_key('clausi/raidplaner');
-		if (!check_form_key('clausi/raidplaner'))
-		{
-			trigger_error('FORM_INVALID');
-		}
-		
 		$note = $this->request->variable('note', '', true);
 		$errors = generate_text_for_storage($note, $uid, $bitfield, $flags, true, true, true);
 		
@@ -689,25 +656,11 @@ class main_controller implements main_interface
 			{
 				$this->json_response->send($response);
 			}
+			$this->template->assign_vars($response);
+			return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
 		}
-		else
-		{
-			$this->setRaidnote($raid_id, $note, $uid, $bitfield);
-			
-			$raid_data = $this->getRaidData($raid_id);
-			
-			$response = array(
-				'MESSAGE_TITLE' => $this->user->lang['NOTE_CHANGE_TITLE'],
-				'MESSAGE_TEXT' => sprintf($this->user->lang['NOTE_CHANGE_TEXT'], $raid_id, $this->user->format_date($raid_data['raid_time'])),
-			);
-			if ($this->request->is_ajax())
-			{
-				$this->json_response->send($response);
-			}
-		}
-		
-		$this->template->assign_vars($response);
-		return $this->helper->render('raidplaner_status.html', $this->user->lang['RAIDPLANER_PAGE']);
+
+		$this->setRaidnote($raid_id, $note, $uid, $bitfield);
 	}
 	
 	
@@ -847,6 +800,14 @@ class main_controller implements main_interface
 			$this->template->assign_var('RAIDPLANER_MESSAGE', $this->user->lang['RAIDPLANER_INVALID_RAID']);
 			return $this->helper->render('raidplaner_error.html', $this->user->lang['RAIDPLANER_PAGE'], 403);
 		}
+		
+		add_form_key('clausi/raidplaner');
+		if (!check_form_key('clausi/raidplaner'))
+		{
+			trigger_error('FORM_INVALID');
+		}
+		
+		$this->setModRaidnote($raid_id);
 		
 		foreach($this->status as $status_id => $statusName)
 		{
