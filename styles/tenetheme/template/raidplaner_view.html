@@ -78,7 +78,7 @@
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="#settank" id="settank" class="setRole"><i class="fa fa-shield"></i> {L_TANK}</a></li>
 								<li><a href="#setheal" id="setheal" class="setRole"><i class="fa fa-plus"></i> {L_HEAL}</a></li>
-								<li><a href="#setmelee" id="setmelee" class="setRole"><i class="fa fa-gavel fa-flip-horizontal"></i> {L_MELEE}</a></li>
+								<li><a href="#setmelee" id="setmelee" class="setRole"><i class="fa fa-gavel"></i> {L_MELEE}</a></li>
 								<li><a href="#setrange" id="setrange" class="setRole"><i class="fa fa-magic"></i> {L_RANGE}</a></li>
 							</ul>
 						</div>
@@ -98,7 +98,7 @@
 				<div class="row top5 hidden-xs hidden-sm">
 					<!-- BEGIN n_roleNames -->
 					<div class="col-md-3">
-						{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
+						{n_roleNames.ROLELANG} <i class="fa fa-<!-- IF n_roleNames.ROLENAME == 'tank' -->shield<!-- ELSEIF n_roleNames.ROLENAME == 'heal' -->plus<!-- ELSEIF n_roleNames.ROLENAME == 'melee' -->gavel<!-- ELSEIF n_roleNames.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
 					</div>
 					<!-- END n_roleNames -->
 				</div>
@@ -113,7 +113,7 @@
 					<div class="col-md-3" id="{n_status.STATUSNAME}_{n_status.n_roles.ROLENAME}_wrapper">
 						<ul data-role="{n_status.n_roles.ROLE}" data-status="{n_status.STATUS}" class="list-group raidplanerView" id="{n_status.STATUSNAME}{n_status.n_roles.ROLENAME}View">
 							<li class="list-group-item header visible-xs visible-sm">
-								{n_status.n_roles.ROLELANG} <i class="fa fa-<!-- IF n_status.n_roles.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
+								{n_status.n_roles.ROLELANG} <i class="fa fa-<!-- IF n_status.n_roles.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.ROLENAME == 'melee' -->gavel<!-- ELSEIF n_status.n_roles.ROLENAME == 'range' -->magic<!-- ENDIF--> fa-fw"></i>
 							</li>
 							<!-- BEGIN n_users -->
 								<!-- IF n_users.USER_ID -->
@@ -131,7 +131,7 @@
 										<!-- ENDIF -->
 									'>
 									<!-- IF n_status.n_roles.n_users.CHARNAME != '' -->{n_status.n_roles.n_users.CHARNAME} <small><em>({n_status.n_roles.n_users.USERNAME})</em></small><!-- ELSE -->{n_status.n_roles.n_users.USERNAME}<!-- ENDIF -->
-									<span class="badge"><i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel fa-flip-horizontal<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF-->"></i></span>
+									<span class="badge"><i class="fa fa-<!-- IF n_status.n_roles.n_users.ROLENAME == 'tank' -->shield<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'heal' -->plus<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'melee' -->gavel<!-- ELSEIF n_status.n_roles.n_users.ROLENAME == 'range' -->magic<!-- ENDIF-->"></i></span>
 								</li>
 								<!-- ENDIF -->
 							<!-- END n_users -->
