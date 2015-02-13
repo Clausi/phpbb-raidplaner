@@ -151,6 +151,9 @@ $(document).ready(function() {
 			initUserPopover();
 			updateCount(res.STATUSNAME);
 			updateCount(res.OLD_STATUSNAME);
+			<!-- IF M_RAIDPLANER and FLAG == 'future' -->
+				serializeStatus();
+			<!-- ENDIF -->
 		<!-- ENDIF -->
 	});
 	
