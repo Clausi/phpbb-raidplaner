@@ -185,7 +185,9 @@ class main_controller implements main_interface
 			$user_profile = $this->getUserProfileFields($user_id);
 		}
 		else $u_raidplaner = false;
-				
+		
+		$this->getRaidstatistics();
+		
 		$this->template->assign_vars(array(
 			'U_RAIDPLANER' => ($u_raidplaner && !empty($user_profile['role']) && !empty($user_profile['class'])),
 			'M_RAIDPLANER' => $this->auth->acl_get('m_raidplaner'),
@@ -1376,6 +1378,32 @@ class main_controller implements main_interface
 			));
 		}
 		$this->db->sql_freeresult($result);
+	}
+	
+	
+	private function getRaidstatistics()
+	{
+		$sql = "SELECT * FROM 
+			" . $this->container->getParameter('tables.clausi.raidplaner_statistics') . "
+			ORDER BY user_id
+			";
+		$result = $this->db->sql_query($sql);
+		
+		while($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('n_statistics', array(
+				'USERNAME' => $this->getUsername($row['user_id']),
+				'RAIDS' => $row['raids'],
+				'ACCEPTED' => $row['accepted'],
+				'ACCEPTEDPERCENT' => round($row['accepted'] / $row['raids'] *100),
+				'ATTENDING' => $row['attending'],
+				'ATTENDINGPERCENT' => round($row['attending'] / $row['raids'] *100),
+				'SUBSTITUTE' => $row['substitute'],
+				'SUBSTITUTEPERCENT' => round($row['substitute'] / $row['raids'] *100),
+				'DECLINED' => $row['declined'],
+				'DECLINEDPERCENT' => round($row['declined'] / $row['raids'] *100),
+			));
+		}
 	}
 	
 	

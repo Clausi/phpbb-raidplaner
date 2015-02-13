@@ -1,0 +1,56 @@
+<table class="table table-hover table-striped" id="datatables-raidplaner-statistics">
+	<thead>
+		<tr>
+			<th>{L_USER}</th>
+			<th>{L_POSSIBLE_RAIDS}</th>
+			<th>{L_ACCEPT}</th>
+			<th>{L_ACCEPT} %</th>
+			<th>{L_ATTENDING}</th>
+			<th>{L_ATTENDING} %</th>
+			<th>{L_SUBSTITUTE}</th>
+			<th>{L_SUBSTITUTE} %</th>
+			<th>{L_DECLINE}</th>
+			<th>{L_DECLINE} %</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- BEGIN n_statistics -->
+		<tr>
+			<td>{n_statistics.USERNAME}</td>
+			<td>{n_statistics.RAIDS}</td>
+			<td>{n_statistics.ACCEPTEDPERCENT}</td>
+			<td>
+				<div class="progress">
+					<div class="progress-bar<!-- IF n_statistics.ACCEPTEDPERCENT > 66 --> progress-bar-success<!-- ELSEIF n_statistics.ACCEPTEDPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.ACCEPTEDPERCENT <= 33 --> progress-bar-danger<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.ACCEPTED}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; min-width: 2em; width: {n_statistics.ACCEPTEDPERCENT}%;">
+						{n_statistics.ACCEPTEDPERCENT} %
+					</div>
+				</div>
+			</td>
+			<td>{n_statistics.ATTENDINGPERCENT}</td>
+			<td>
+				<div class="progress">
+					<div class="progress-bar<!-- IF n_statistics.ATTENDINGPERCENT > 66 --> progress-bar-success<!-- ELSEIF n_statistics.ATTENDINGPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.ATTENDINGPERCENT <= 33 --> progress-bar-danger<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.ATTENDING}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.ATTENDINGPERCENT}%;">
+						{n_statistics.ATTENDINGPERCENT} %
+					</div>
+				</div>
+			</td>
+			<td>{n_statistics.SUBSTITUTEPERCENT}</td>
+			<td>
+				<div class="progress">
+					<div class="progress-bar<!-- IF n_statistics.SUBSTITUTEPERCENT > 66 --> progress-bar-success<!-- ELSEIF n_statistics.SUBSTITUTEPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.SUBSTITUTEPERCENT <= 33 --> progress-bar-danger<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.SUBSTITUTE}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.SUBSTITUTEPERCENT}%;">
+						{n_statistics.SUBSTITUTEPERCENT} %
+					</div>
+				</div>
+			</td>
+			<td>{n_statistics.DECLINEDPERCENT}</td>
+			<td>
+				<div class="progress">
+					<div class="progress-bar<!-- IF n_statistics.DECLINEDPERCENT > 66 --> progress-bar-success<!-- ELSEIF n_statistics.DECLINEDPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.DECLINEDPERCENT <= 33 --> progress-bar-danger<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.DECLINED}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.DECLINEDPERCENT}%;">
+						{n_statistics.DECLINEDPERCENT} %
+					</div>
+				</div>
+			</td>
+		</tr>
+		<!-- END n_statistics -->
+	</tbody>
+</table>

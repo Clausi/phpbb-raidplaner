@@ -4,7 +4,19 @@
 
 <h2>{L_RAIDPLANER_PAGE}</h2>
 
-<div class="panel panel-default">
+<!-- IF M_RAIDPLANER -->
+<ul class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#raidIndex" aria-controls="raidIndex" role="tab" data-toggle="tab">Raids</a></li>
+	<li role="presentation"><a href="#raidStatistic" aria-controls="raidStatistic" role="tab" data-toggle="tab">{L_STATISTICS}</a></li>
+</ul>
+<div class="tab-content">
+<div class="panel panel-default tab-pane" role="tabpanel" id="raidStatistic">
+	<div class="panel-body">
+		<!-- INCLUDE raidplaner_statistics.html -->
+	</div>
+</div>
+<!-- ENDIF -->
+<div class="panel panel-default<!-- IF M_RAIDPLANER --> tab-pane active<!-- ENDIF -->"<!-- IF M_RAIDPLANER --> role="tabpanel"<!-- ENDIF --> id="raidIndex">
 	<div class="panel-body">
 		<div class="row bottom5">
 			<div class="col-xs-12">
@@ -94,6 +106,9 @@
 
 	</div>
 </div>
+<!-- IF M_RAIDPLANER -->
+</div>
+<!-- ENDIF -->
 
 <!-- ELSE -->
 

@@ -34,7 +34,71 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-	// echo "run";
+		//echo "run";
+		$this->createScheduled();
+		$this->processStatistics();
+	}
+	
+	
+	private function processStatistics()
+	{
+		// Get unprocessed past raids
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+			WHERE 
+				deleted = '0' 
+				AND raid_time < '". time() . "'
+				AND processed = 0
+			";
+		$result_raids = $this->db->sql_query($sql);
+		
+		while($row_raids = $this->db->sql_fetchrow($result_raids))
+		{
+			// Get attendees of raid
+			$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+				WHERE 
+					raid_id = '". $row_raids['raid_id'] . "'
+				";
+			$result_attendees = $this->db->sql_query($sql);
+			
+			while($row_attendees = $this->db->sql_fetchrow($result_attendees))
+			{
+				$sql = "INSERT INTO
+						" . $this->container->getParameter('tables.clausi.raidplaner_statistics') . "
+					SET
+						user_id = '". $row_attendees['user_id'] ."',
+						raids = 1,
+						accepted = CASE WHEN ". $row_attendees['status'] ." = 4 THEN 1 ELSE 0 END,
+						attending = CASE WHEN ". $row_attendees['status'] ." = 1 THEN 1 ELSE 0 END,
+						substitute = CASE WHEN ". $row_attendees['status'] ." = 3 THEN 1 ELSE 0 END,
+						declined = CASE WHEN ". $row_attendees['status'] ." = 2 THEN 1 ELSE 0 END,
+						created = UNIX_TIMESTAMP(),
+						modified = UNIX_TIMESTAMP()
+					ON DUPLICATE KEY UPDATE
+						raids = raids + 1,
+						accepted = CASE WHEN ". $row_attendees['status'] ." = 4 THEN accepted + 1 ELSE accepted END,
+						attending = CASE WHEN ". $row_attendees['status'] ." = 1 THEN attending + 1 ELSE attending END,
+						substitute = CASE WHEN ". $row_attendees['status'] ." = 3 THEN substitute + 1 ELSE substitute END,
+						declined = CASE WHEN ". $row_attendees['status'] ." = 2 THEN declined + 1 ELSE declined END,
+						modified = UNIX_TIMESTAMP()
+					";
+				$result_stat = $this->db->sql_query($sql);
+			}
+			$this->db->sql_freeresult($result_attendees);
+			
+			$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+				SET
+					processed = UNIX_TIMESTAMP()
+				WHERE 
+					raid_id = '". $row_raids['raid_id'] . "'
+				";
+			$result_updateraid = $this->db->sql_query($sql);
+		}
+		$this->db->sql_freeresult($result_raids);
+	}
+	
+	
+	private function createScheduled()
+	{
 		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'

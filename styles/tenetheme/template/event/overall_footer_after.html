@@ -50,6 +50,28 @@ $(document).ready(function() {
         var selectedValue = $(this).val();
 		  filterTable(raidplanerTable, selectedValue);
 	});
+	
+		<!-- IF M_RAIDPLANER -->
+			var raidplanerStatistics = $('#datatables-raidplaner-statistics').dataTable( {
+				"oLanguage": {
+					<!-- IF S_USER_LANG == 'de' -->"sUrl": "{T_THEME_PATH}/libs/datatables/lang/dataTables.german.txt"<!-- ENDIF -->
+				},
+				"order": [[ 0, "asc" ]],
+				"pageLength": 25,
+				"lengthMenu": [[ 10, 15, 25, 50, 100, -1], [ 10, 15, 25, 50, 100, "{L_ALL}"] ],
+				
+				"columnDefs": [
+				  { "targets": 2, "visible": false },
+				  { "orderData": [2,3], "targets": 7 },
+				  { "targets": 4, "visible": false },
+				  { "orderData": [4,5], "targets": 5 },
+				  { "targets": 6, "visible": false },
+				  { "orderData": [6,7], "targets": 7 },
+				  { "targets": 8, "visible": false },
+				  { "orderData": [8,9], "targets": 9 },
+				],
+			});
+		<!-- ENDIF -->
 	<!-- ENDIF -->
 	
 	<!-- IF M_RAIDPLANER and RAIDPLANER_VIEW -->
