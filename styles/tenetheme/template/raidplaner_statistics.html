@@ -37,7 +37,7 @@
 			<td>{n_statistics.SUBSTITUTEPERCENT}</td>
 			<td>
 				<div class="progress">
-					<div class="progress-bar<!-- IF n_statistics.SUBSTITUTEPERCENT > 66 --> progress-bar-success<!-- ELSEIF n_statistics.SUBSTITUTEPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.SUBSTITUTEPERCENT <= 33 --> progress-bar-danger<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.SUBSTITUTE}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.SUBSTITUTEPERCENT}%;">
+					<div class="progress-bar<!-- IF n_statistics.SUBSTITUTEPERCENT > 66 --> progress-bar-danger<!-- ELSEIF n_statistics.SUBSTITUTEPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.SUBSTITUTEPERCENT <= 33 --> progress-bar-success<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.SUBSTITUTE}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.SUBSTITUTEPERCENT}%;">
 						{n_statistics.SUBSTITUTEPERCENT} %
 					</div>
 				</div>
@@ -45,7 +45,7 @@
 			<td>{n_statistics.DECLINEDPERCENT}</td>
 			<td>
 				<div class="progress">
-					<div class="progress-bar<!-- IF n_statistics.DECLINEDPERCENT > 66 --> progress-bar-success<!-- ELSEIF n_statistics.DECLINEDPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.DECLINEDPERCENT <= 33 --> progress-bar-danger<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.DECLINED}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.DECLINEDPERCENT}%;">
+					<div class="progress-bar<!-- IF n_statistics.DECLINEDPERCENT > 66 --> progress-bar-danger<!-- ELSEIF n_statistics.DECLINEDPERCENT > 33 --> progress-bar-warning<!-- ELSEIF n_statistics.DECLINEDPERCENT <= 33 --> progress-bar-success<!-- ELSE --> progress-bar-info<!-- ENDIF -->" role="progressbar" aria-valuenow="{n_statistics.DECLINED}" aria-valuemin="0" aria-valuemax="{n_statistics.RAIDS}" style="min-width: 2em; width: {n_statistics.DECLINEDPERCENT}%;">
 						{n_statistics.DECLINEDPERCENT} %
 					</div>
 				</div>

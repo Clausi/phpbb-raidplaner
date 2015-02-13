@@ -34,7 +34,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		//echo "run";
+		echo "run";
 		$this->createScheduled();
 		$this->processStatistics();
 	}
@@ -94,6 +94,25 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			$result_updateraid = $this->db->sql_query($sql);
 		}
 		$this->db->sql_freeresult($result_raids);
+		
+		// Get next raid to softdelete removed attendees
+		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+			WHERE 
+				deleted = '0' 
+				AND raid_time >= '". time() . "'
+			ORDER BY raid_time ASC
+			LIMIT 1
+			";
+		$result_next = $this->db->sql_query($sql);
+		$row_next = $this->db->sql_fetchrow($result_next);
+
+		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_statistics') . " 
+			SET
+				deleted = UNIX_TIMESTAMP()
+			WHERE 
+				user_id not in (SELECT user_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = " . $row_next['raid_id'] . " )
+			";
+		$this->db->sql_query($sql);
 	}
 	
 	

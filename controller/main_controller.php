@@ -1385,6 +1385,8 @@ class main_controller implements main_interface
 	{
 		$sql = "SELECT * FROM 
 			" . $this->container->getParameter('tables.clausi.raidplaner_statistics') . "
+			WHERE
+				deleted = 0
 			ORDER BY user_id
 			";
 		$result = $this->db->sql_query($sql);
