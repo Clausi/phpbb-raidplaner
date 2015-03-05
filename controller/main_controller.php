@@ -514,8 +514,8 @@ class main_controller implements main_interface
 					'USER_ID' => $user_id,
 					'RAID_ID' => $raid_id,
 					'STATUS_ID' => $status_id,
-					'OLD_STATUSNAME' => strtolower($this->status[$currentAttendee['status']]),
-					'OLD_ROLENAME' => strtolower($this->roles[$currentAttendee['role']]),
+					'OLD_STATUSNAME' => ( !empty($this->status[$currentAttendee['status']]) ) ? strtolower($this->status[$currentAttendee['status']]) : 0,
+					'OLD_ROLENAME' => ( !empty($this->roles[$currentAttendee['role']]) ) ? strtolower($this->roles[$currentAttendee['role']]) : 0,
 					'STATUSNAME' => strtolower($this->status[$status_id]),
 					'ROLENAME' => strtolower($this->roles[$this->getRole($raid_id, $user_id)]),
 					'ATTENDING' => $row_count['attending'],
@@ -1314,8 +1314,9 @@ class main_controller implements main_interface
 	}
 	
 	
-	private function raidLog($raid_id, $user_id, $newStatus, $newRole, $newComment, $changed_user_id)
+	private function raidLog($raid_id, $user_id, $newStatus = 0, $newRole = 0, $newComment = '', $changed_user_id)
 	{
+		if($newRole == NULL) $newRole = 0;
 		$sql_ary = array(
 			'user_id' => $user_id,
 			'raid_id' => $raid_id,
