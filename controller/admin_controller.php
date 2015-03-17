@@ -25,6 +25,11 @@ class admin_controller implements admin_interface
 	protected $auth;
 	protected $type_collection;
 	protected $raidplaner;
+	
+	protected $raidsTable;
+	protected $eventsTable;
+	protected $scheduleTable;
+	protected $attendeeTable;
 
 	/**
 	* Constructor
@@ -45,6 +50,11 @@ class admin_controller implements admin_interface
 		$this->container = $container;
 		$this->type_collection = $type_collection;
 		$this->raidplaner = $raidplaner;
+		
+		$this->raidsTable = $this->container->getParameter('tables.clausi.raidplaner_raids');
+		$this->eventsTable = $this->container->getParameter('tables.clausi.raidplaner_events');
+		$this->scheduleTable = $this->container->getParameter('tables.clausi.raidplaner_schedule');
+		$this->attendeeTable = $this->container->getParameter('tables.clausi.raidplaner_attendees');
 	}
 	
 	public function display_options()
@@ -92,7 +102,7 @@ class admin_controller implements admin_interface
 			trigger_error($this->user->lang('ACP_RAIDPLANER_EVENT_SAVED') . adm_back_link($this->u_action));
 		}
 	
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE deleted = '0' ORDER BY event_id";
+		$sql = "SELECT * FROM " . $this->eventsTable . " WHERE deleted = '0' ORDER BY event_id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
@@ -118,10 +128,10 @@ class admin_controller implements admin_interface
 		$sql_ary = array(
 			'deleted' => time(),
 		);
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $event_id;
+		$sql = 'UPDATE ' . $this->scheduleTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $event_id;
 		$this->db->sql_query($sql);
 		
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_events') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $event_id;
+		$sql = 'UPDATE ' . $this->eventsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $event_id;
 		$this->db->sql_query($sql);
 	}
 	
@@ -145,13 +155,13 @@ class admin_controller implements admin_interface
 				'name' => $event_name,
 				'raidsize' => $raidsize,
 			);
-			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_events') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $event_id;
+			$sql = 'UPDATE ' . $this->eventsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE event_id = ' . $event_id;
 			$this->db->sql_query($sql);
 			
 			trigger_error($this->user->lang('ACP_RAIDPLANER_EVENT_SAVED') . adm_back_link($this->u_action));
 		}
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE event_id = '".$event_id."' LIMIT 1";
+		$sql = "SELECT * FROM " . $this->eventsTable . " WHERE event_id = '".$event_id."' LIMIT 1";
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->template->assign_vars(array(
@@ -178,7 +188,7 @@ class admin_controller implements admin_interface
 			'name' => $event_name,
 			'raidsize' => $raidsize,
 		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_events') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->eventsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 	}
 	
@@ -197,11 +207,11 @@ class admin_controller implements admin_interface
 			trigger_error($this->user->lang('ACP_RAIDPLANER_SCHEDULE_SAVED_SAVED') . adm_back_link($this->u_action));
 		}
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " WHERE deleted = '0' AND repeatable != 'no_repeat' ORDER BY schedule_id";
+		$sql = "SELECT * FROM " . $this->scheduleTable . " WHERE deleted = '0' AND repeatable != 'no_repeat' ORDER BY schedule_id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
-			$sql = "SELECT name, raidsize FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE event_id = '".$row['event_id']."' LIMIT 1";
+			$sql = "SELECT name, raidsize FROM " . $this->eventsTable . " WHERE event_id = '".$row['event_id']."' LIMIT 1";
 			$result_event = $this->db->sql_query($sql);
 			$row_event = $this->db->sql_fetchrow($result_event);
 			$this->db->sql_freeresult($result_event);
@@ -263,14 +273,14 @@ class admin_controller implements admin_interface
 					'start_time' => $start_time,
 					'end_time' => $end_time,
 				);
-				$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+				$sql = 'INSERT INTO ' . $this->scheduleTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 				$this->db->sql_query($sql);
 				
 				trigger_error($this->user->lang('ACP_RAIDPLANER_SCHEDULE_SAVED') . adm_back_link($this->u_action));
 			}
 		}
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE deleted = '0' ORDER BY event_id";
+		$sql = "SELECT * FROM " . $this->eventsTable . " WHERE deleted = '0' ORDER BY event_id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
@@ -326,16 +336,16 @@ class admin_controller implements admin_interface
 				'end_time' => $end_time,
 			);
 			
-			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', array_merge($sql_ary, $sql_ary_both)) . ' WHERE schedule_id = ' . $schedule_id;
+			$sql = 'UPDATE ' . $this->scheduleTable . ' SET ' . $this->db->sql_build_array('UPDATE', array_merge($sql_ary, $sql_ary_both)) . ' WHERE schedule_id = ' . $schedule_id;
 			$this->db->sql_query($sql);
 			
-			$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary_both) . ' WHERE schedule_id = ' . $schedule_id . ' AND raid_time > ' . time();
+			$sql = 'UPDATE ' . $this->raidsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary_both) . ' WHERE schedule_id = ' . $schedule_id . ' AND raid_time > ' . time();
 			$this->db->sql_query($sql);
 			
 			trigger_error($this->user->lang('ACP_RAIDPLANER_SCHEDULE_SAVED') . adm_back_link($this->u_action));
 		}
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " WHERE schedule_id = '".$schedule_id."' LIMIT 1";
+		$sql = "SELECT * FROM " . $this->scheduleTable . " WHERE schedule_id = '".$schedule_id."' LIMIT 1";
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$event_id = $row['event_id'];
@@ -353,7 +363,7 @@ class admin_controller implements admin_interface
 		));
 		$this->db->sql_freeresult($result);
 		
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE deleted = '0' ORDER BY event_id";
+		$sql = "SELECT * FROM " . $this->eventsTable . " WHERE deleted = '0' ORDER BY event_id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
@@ -381,10 +391,10 @@ class admin_controller implements admin_interface
 		$sql_ary = array(
 			'deleted' => time(),
 		);
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_schedule') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $schedule_id;
+		$sql = 'UPDATE ' . $this->scheduleTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $schedule_id;
 		$this->db->sql_query($sql);
 		
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $schedule_id . ' AND raid_time > ' . time();
+		$sql = 'UPDATE ' . $this->raidsTable . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE schedule_id = ' . $schedule_id . ' AND raid_time > ' . time();
 		$this->db->sql_query($sql);
 	}
 	
@@ -435,12 +445,12 @@ class admin_controller implements admin_interface
 				{
 					if($key == 'class' || $key == 'role') $raid_data[$key] = $raid_data[$key]-1;
 				}
-				$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+				$sql = "UPDATE " . $this->attendeeTable . " 
 					SET " . $this->db->sql_build_array('UPDATE', $raid_data) . " 
 					WHERE 
 						user_id = '".$user_id."'
 						AND status != 4 
-						AND raid_id IN ( SELECT raid_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time > '".time()."' )
+						AND raid_id IN ( SELECT raid_id FROM " . $this->raidsTable . " WHERE deleted = '0' AND raid_time > '".time()."' )
 					";
 				$result = $this->db->sql_query($sql);
 			}

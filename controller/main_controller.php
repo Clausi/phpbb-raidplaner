@@ -61,6 +61,14 @@ class main_controller implements main_interface
 		10 => "monk",
 		11 => "druid",
 	];
+	
+	protected $raidsTable;
+	protected $eventsTable;
+	protected $scheduleTable;
+	protected $attendeeTable;
+	protected $userTable;
+	protected $statisticTable;
+	protected $logsTable;
 
 
 	public function __construct(\phpbb\config\config $config, \phpbb\auth\auth $auth, \phpbb\controller\helper $helper, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, ContainerInterface $container)
@@ -75,6 +83,14 @@ class main_controller implements main_interface
 		$this->container = $container;
 				
 		$this->json_response = new \phpbb\json_response;
+		
+		$this->raidsTable = $this->container->getParameter('tables.clausi.raidplaner_raids');
+		$this->eventsTable = $this->container->getParameter('tables.clausi.raidplaner_events');
+		$this->scheduleTable = $this->container->getParameter('tables.clausi.raidplaner_schedule');
+		$this->attendeeTable = $this->container->getParameter('tables.clausi.raidplaner_attendees');
+		$this->userTable = $this->container->getParameter('tables.users');
+		$this->statisticTable = $this->container->getParameter('tables.clausi.raidplaner_statistics');
+		$this->logsTable = $this->container->getParameter('tables.clausi.raidplaner_logs');
 	}
 
 	
@@ -107,9 +123,9 @@ class main_controller implements main_interface
 		// get all raids up to one year ago
 		// TODO Archive
 		$sql = "SELECT r.*, e.name, e.raidsize FROM 
-			" . $this->container->getParameter('tables.clausi.raidplaner_raids') . " r,
-			" . $this->container->getParameter('tables.clausi.raidplaner_events') . " e, 
-			" . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " s 
+			" . $this->raidsTable . " r,
+			" . $this->eventsTable . " e, 
+			" . $this->scheduleTable . " s 
 			WHERE 
 				r.deleted = '0' 
 				AND r.raid_time > '".(time()-31536000)."'
@@ -119,7 +135,7 @@ class main_controller implements main_interface
 		$result = $this->db->sql_query($sql);
 		
 		$sql = "SELECT status, raid_id FROM 
-			" . $this->container->getParameter('tables.clausi.raidplaner_attendees') ." 
+			" . $this->attendeeTable ." 
 			WHERE
 				user_id = '" . $user_id . "' 
 			";
@@ -250,7 +266,7 @@ class main_controller implements main_interface
 			$sql_ary = array(
 				'deleted' => 0,
 			);
-			$sql = "SELECT raid_id, raid_time FROM " .  $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+			$sql = "SELECT raid_id, raid_time FROM " .  $this->raidsTable . " 
 				WHERE " . $this->db->sql_build_array('SELECT', $sql_ary) ."
 				AND raid_time < ".$row_raid['raid_time'] ."
 				ORDER BY raid_time DESC LIMIT 6";
@@ -299,7 +315,7 @@ class main_controller implements main_interface
 		
 		$row_count = $this->getRaidmemberCount($raid_id);
 		
-		$sql = "SELECT user_id, username FROM " . $this->container->getParameter('tables.users') . "";
+		$sql = "SELECT user_id, username FROM " . $this->userTable . "";
 		$result = $this->db->sql_query($sql);
 		$row_user = $this->db->sql_fetchrowset($result);		
 		$this->db->sql_freeresult($result);
@@ -854,7 +870,7 @@ class main_controller implements main_interface
 			'bbcode_bitfield' => $bitfield,
 			'bbcode_uid' => $uid,
 		);
-		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+		$sql = "UPDATE " . $this->raidsTable . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id ."";
 		$this->db->sql_query($sql);
@@ -921,7 +937,7 @@ class main_controller implements main_interface
 			'comment' => $comment,
 			'change_time' => time(),
 		);
-		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+		$sql = "UPDATE " . $this->attendeeTable . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
 		$result = $this->db->sql_query($sql);
@@ -946,7 +962,7 @@ class main_controller implements main_interface
 				'comment' => $comment,
 				'signup_time' => time(),
 			);
-			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+			$sql = 'INSERT INTO ' . $this->attendeeTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			$this->db->sql_query($sql);
 		}
 		
@@ -982,7 +998,7 @@ class main_controller implements main_interface
 			'raid_id' => $raid_id,
 			'user_id' => $user_id,
 		);
-		$sql = "SELECT comment FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$sql = "SELECT comment FROM " .  $this->attendeeTable . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -997,7 +1013,7 @@ class main_controller implements main_interface
 			'raid_id' => $raid_id,
 			'user_id' => $user_id,
 		);
-		$sql = "SELECT role FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$sql = "SELECT role FROM " .  $this->attendeeTable . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -1012,7 +1028,7 @@ class main_controller implements main_interface
 			'raid_id' => $raid_id,
 			'user_id' => $user_id,
 		);
-		$sql = "SELECT class FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$sql = "SELECT class FROM " .  $this->attendeeTable . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -1024,7 +1040,7 @@ class main_controller implements main_interface
 	// Get all attendees of raid
 	private function getAttendees($raid_id)
 	{
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = '".$raid_id."' ORDER BY class, user_id";
+		$sql = "SELECT * FROM " . $this->attendeeTable . " WHERE raid_id = '".$raid_id."' ORDER BY class, user_id";
 		$result = $this->db->sql_query($sql);
 		$row_attendees = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
@@ -1040,7 +1056,7 @@ class main_controller implements main_interface
 			'raid_id' => $raid_id,
 			'user_id' => $user_id,
 		);
-		$sql = "SELECT * FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$sql = "SELECT * FROM " .  $this->attendeeTable . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -1055,7 +1071,7 @@ class main_controller implements main_interface
 			'raid_id' => $raid_id,
 			'user_id' => $user_id,
 		);
-		$sql = "SELECT status FROM " .  $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
+		$sql = "SELECT status FROM " .  $this->attendeeTable . " WHERE "  . $this->db->sql_build_array('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -1107,7 +1123,7 @@ class main_controller implements main_interface
 		);
 		$sql_ary = array_merge($sql_mod, $sql_ary);
 		
-		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+		$sql = "UPDATE " . $this->attendeeTable . " 
 			SET " . $this->db->sql_build_array('UPDATE', $sql_ary) . " 
 			WHERE raid_id = " . $raid_id . " AND user_id = '". $user_id ."'";
 		$result = $this->db->sql_query($sql);
@@ -1129,7 +1145,7 @@ class main_controller implements main_interface
 				'status' => $status_id,
 				'signup_time' => time(),
 			);
-			$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_attendees') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+			$sql = 'INSERT INTO ' . $this->attendeeTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			$this->db->sql_query($sql);
 		}
 	}
@@ -1161,7 +1177,7 @@ class main_controller implements main_interface
 			SUM(IF(status = 2, 1, 0)) AS decline,
 			SUM(IF(status = 3, 1, 0)) AS substitute,
 			SUM(IF(status = 4, 1, 0)) AS accept
-			FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') ."
+			FROM " . $this->attendeeTable ."
 			".$where."
 			";
 		$result_count = $this->db->sql_query($sql);
@@ -1175,9 +1191,9 @@ class main_controller implements main_interface
 	private function getRaidData($raid_id)
 	{
 		$sql = "SELECT r.*, e.name, e.raidsize FROM 
-			" . $this->container->getParameter('tables.clausi.raidplaner_raids') . " r,
-			" . $this->container->getParameter('tables.clausi.raidplaner_events') . " e, 
-			" . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " s 
+			" . $this->raidsTable . " r,
+			" . $this->eventsTable . " e, 
+			" . $this->scheduleTable . " s 
 			WHERE 
 				r.raid_id = '". $raid_id ."'
 				AND r.deleted = '0' 
@@ -1203,7 +1219,7 @@ class main_controller implements main_interface
 			'end_time' => $end_time,
 			'autoaccept' => $autoaccept,
 		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_raids') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->raidsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		
 		// Add attendees if autoaccept and raid in future
@@ -1233,12 +1249,12 @@ class main_controller implements main_interface
 						'status' => 1,
 						'signup_time' => time(),
 					);
-					$sql = "INSERT INTO " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+					$sql = "INSERT INTO " . $this->attendeeTable . " 
 						" . $this->db->sql_build_array('INSERT_SELECT', array_merge($sql_ary_index, $sql_ary)) . "
 						FROM dual
 							WHERE NOT EXISTS
 							( SELECT *
-								FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
+								FROM " . $this->attendeeTable . "
 								WHERE " . $this->db->sql_build_array('SELECT', $sql_ary_index) . " 
 							);";
 					$this->db->sql_query($sql);
@@ -1281,7 +1297,7 @@ class main_controller implements main_interface
 	
 	private function removeAttendee($raid_id, $user_id)
 	{
-		$sql = "DELETE FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . "
+		$sql = "DELETE FROM " . $this->attendeeTable . "
 			WHERE raid_id = '". $raid_id ."'
 			AND user_id = '". $user_id ."'";
 		$this->db->sql_query($sql);
@@ -1328,7 +1344,7 @@ class main_controller implements main_interface
 			'created' => time(),
 			'modified' => time(),
 		);
-		$sql = 'INSERT INTO ' . $this->container->getParameter('tables.clausi.raidplaner_logs') . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->logsTable . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 	}
 	
@@ -1336,7 +1352,7 @@ class main_controller implements main_interface
 	private function getRaidlog($raid_id)
 	{
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
+			" . $this->logsTable . "
 			WHERE 
 				raid_id = ". $raid_id ."
 				AND deleted = '0' 
@@ -1348,7 +1364,7 @@ class main_controller implements main_interface
 		while($row = $this->db->sql_fetchrow($result))
 		{
 			$sql = "SELECT * FROM 
-				" . $this->container->getParameter('tables.clausi.raidplaner_logs') . "
+				" . $this->logsTable . "
 				WHERE 
 					created = ". $row['created'] ."
 					AND raid_id = ". $raid_id ."
@@ -1385,7 +1401,7 @@ class main_controller implements main_interface
 	private function getRaidstatistics()
 	{
 		$sql = "SELECT * FROM 
-			" . $this->container->getParameter('tables.clausi.raidplaner_statistics') . "
+			" . $this->statisticTable . "
 			WHERE
 				deleted = 0
 			ORDER BY user_id
@@ -1415,7 +1431,7 @@ class main_controller implements main_interface
 		$sql_ary = array(
 			'user_id' => $user_id,
 		);
-		$sql = "SELECT username FROM " . $this->container->getParameter('tables.users') . " WHERE " . $this->db->sql_build_array('SELECT', $sql_ary);
+		$sql = "SELECT username FROM " . $this->userTable . " WHERE " . $this->db->sql_build_array('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row_user = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
