@@ -13,7 +13,7 @@ class release_1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			array('config.add', array('clausi_raidplaner_active', 0)),
-			array('config.add', array('clausi_raidplaner_cron_lastrun', 0)),
+			array('config.add', array('clausi_raidplaner_cron_lastrun', 0, true)),
 			array('config.add', array('clausi_raidplaner_cron_interval', 60)),
 
 			array('module.add', array(

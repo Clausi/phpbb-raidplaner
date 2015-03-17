@@ -17,6 +17,12 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	protected $start_time;
 	protected $end_time;
 	protected $autoaccept;
+	
+	protected $raidsTable;
+	protected $eventsTable;
+	protected $scheduleTable;
+	protected $attendeeTable;
+	protected $statisticTable;
 
 	
 	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, ContainerInterface $container, \clausi\raidplaner\controller\main_controller $raidplaner)
@@ -25,6 +31,12 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		$this->db = $db;
 		$this->container = $container;
 		$this->raidplaner = $raidplaner;
+		
+		$this->raidsTable = $this->container->getParameter('tables.clausi.raidplaner_raids');
+		$this->eventsTable = $this->container->getParameter('tables.clausi.raidplaner_events');
+		$this->scheduleTable = $this->container->getParameter('tables.clausi.raidplaner_schedule');
+		$this->attendeeTable = $this->container->getParameter('tables.clausi.raidplaner_attendees');
+		$this->statisticTable = $this->container->getParameter('tables.clausi.raidplaner_statistics');
 	}
 	
 	/**
@@ -34,7 +46,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		//echo "run";
+		echo "run";
 		$this->createScheduled();
 		$this->processStatistics();
 	}
@@ -43,7 +55,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	private function processStatistics()
 	{
 		// Get unprocessed past raids
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+		$sql = "SELECT * FROM " . $this->raidsTable . " 
 			WHERE 
 				deleted = '0' 
 				AND raid_time < '". time() . "'
@@ -54,7 +66,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		while($row_raids = $this->db->sql_fetchrow($result_raids))
 		{
 			// Get attendees of raid
-			$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " 
+			$sql = "SELECT * FROM " . $this->attendeeTable . " 
 				WHERE 
 					raid_id = '". $row_raids['raid_id'] . "'
 				";
@@ -63,7 +75,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			while($row_attendees = $this->db->sql_fetchrow($result_attendees))
 			{
 				$sql = "INSERT INTO
-						" . $this->container->getParameter('tables.clausi.raidplaner_statistics') . "
+						" . $this->statisticTable . "
 					SET
 						user_id = '". $row_attendees['user_id'] ."',
 						raids = 1,
@@ -85,7 +97,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 			}
 			$this->db->sql_freeresult($result_attendees);
 			
-			$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+			$sql = "UPDATE " . $this->raidsTable . " 
 				SET
 					processed = UNIX_TIMESTAMP()
 				WHERE 
@@ -96,7 +108,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		$this->db->sql_freeresult($result_raids);
 		
 		// Get next raid to softdelete removed attendees
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " 
+		$sql = "SELECT * FROM " . $this->raidsTable . " 
 			WHERE 
 				deleted = '0' 
 				AND raid_time >= '". time() . "'
@@ -106,11 +118,11 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		$result_next = $this->db->sql_query($sql);
 		$row_next = $this->db->sql_fetchrow($result_next);
 
-		$sql = "UPDATE " . $this->container->getParameter('tables.clausi.raidplaner_statistics') . " 
+		$sql = "UPDATE " . $this->statisticTable . " 
 			SET
 				deleted = UNIX_TIMESTAMP()
 			WHERE 
-				user_id not in (SELECT user_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_attendees') . " WHERE raid_id = " . $row_next['raid_id'] . " )
+				user_id not in (SELECT user_id FROM " . $this->attendeeTable . " WHERE raid_id = " . $row_next['raid_id'] . " )
 			";
 		$this->db->sql_query($sql);
 	}
@@ -118,14 +130,14 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	
 	private function createScheduled()
 	{
-		$sql = "SELECT * FROM " . $this->container->getParameter('tables.clausi.raidplaner_schedule') . " 
+		$sql = "SELECT * FROM " . $this->scheduleTable . " 
 			WHERE 
 				deleted = '0' AND repeatable != 'no_repeat'
 			ORDER BY schedule_id";
 		$result = $this->db->sql_query($sql);
 		while($row = $this->db->sql_fetchrow($result))
 		{
-			$sql = "SELECT precreate FROM " . $this->container->getParameter('tables.clausi.raidplaner_events') . " WHERE event_id = '". $row['event_id'] ."' LIMIT 1";
+			$sql = "SELECT precreate FROM " . $this->eventsTable . " WHERE event_id = '". $row['event_id'] ."' LIMIT 1";
 			$result_event = $this->db->sql_query($sql);
 			$row_event = $this->db->sql_fetchrow($result_event);
 			$this->db->sql_freeresult($result_event);
@@ -188,7 +200,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	
 	private function getRaids($offset = 0)
 	{
-		$sql = "SELECT COUNT(raid_id) as count_id FROM " . $this->container->getParameter('tables.clausi.raidplaner_raids') . " WHERE deleted = '0' AND raid_time = '".($this->raid_time+$offset)."' LIMIT 1";
+		$sql = "SELECT COUNT(raid_id) as count_id FROM " . $this->raidsTable . " WHERE deleted = '0' AND raid_time = '".($this->raid_time+$offset)."' LIMIT 1";
 		$result = $this->db->sql_query($sql);
 		if($this->db->sql_fetchfield('count_id') > 0) return true;
 		
