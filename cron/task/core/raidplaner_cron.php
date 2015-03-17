@@ -46,7 +46,7 @@ class raidplaner_cron extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		echo "run";
+		//echo "run";
 		$this->createScheduled();
 		$this->processStatistics();
 	}
