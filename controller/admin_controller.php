@@ -18,8 +18,6 @@ class admin_controller implements admin_interface
 	protected $user;
 	/** @var ContainerInterface */
 	protected $container;
-	/** @var \phpbb\boardrules\operators\rule */
-	protected $rule_operator;
 	/** string Custom form action */
 	protected $u_action;
 	protected $auth;
