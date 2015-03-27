@@ -72,7 +72,7 @@ $lang = array_merge($lang, array(
 	'POSSIBLE_RAIDS' => 'Mögliche Raids',
 	
 	'RAIDPLANER_COMMENT_SHORT_TITLE' => 'Bitte einen Kommentar eingeben',
-	'RAIDPLANER_COMMENT_SHORT' => 'Wenn du dich abmeldest musst du einen Kommentar mit mindestens 5 Zeichen eingeben. Status wurde NICHT geändert.',
+	'RAIDPLANER_COMMENT_SHORT' => 'Wenn du dich abmeldest musst du einen Kommentar mit mindestens 5 gültigen Zeichen eingeben. Status wurde NICHT geändert.',
 	
 	'TANK' => 'Schutz',
 	'HEAL' => 'Heilung',

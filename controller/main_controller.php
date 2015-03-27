@@ -497,7 +497,7 @@ class main_controller implements main_interface
 			if (confirm_box(true))
 			{
 				$comment = $this->request->variable('comment', '', true);
-				if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
+				if(($status_id == 2 || $status_id == 3) && ! $this->validComment($comment))
 				{
 					$response = array(
 						'MESSAGE_TITLE' => $this->user->lang('RAIDPLANER_COMMENT_SHORT_TITLE'),
@@ -612,7 +612,7 @@ class main_controller implements main_interface
 		if(confirm_box(true))
 		{
 			$comment = $this->request->variable('comment', '', true);
-			if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
+			if(($status_id == 2 || $status_id == 3) && ! $this->validComment($comment))
 			{
 				$response = array(
 					'MESSAGE_TITLE' => $this->user->lang('RAIDPLANER_COMMENT_SHORT_TITLE'),
@@ -893,7 +893,7 @@ class main_controller implements main_interface
 		}
 		
 		$comment = $this->request->variable('comment_all', '', true);
-		if(($status_id == 2 || $status_id == 3) && strlen($comment) < 5)
+		if(($status_id == 2 || $status_id == 3) && ! $this->validComment($comment))
 		{
 			meta_refresh(5, $this->u_action);
 			trigger_error($this->user->lang('RAIDPLANER_COMMENT_SHORT') . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . str_replace('&', '&amp;', $this->u_action) . '">', '</a>'));
@@ -1437,6 +1437,20 @@ class main_controller implements main_interface
 		$this->db->sql_freeresult($result);
 		
 		return $row_user[0]['username'];
+	}
+	
+	
+	private function validComment($comment)
+	{
+		if(strlen($comment) > 4)
+		{
+			if( preg_match('/(.*[a-z0-9]){3,}/i', $comment) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	

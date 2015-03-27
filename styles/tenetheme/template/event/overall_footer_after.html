@@ -4,10 +4,18 @@
 <!-- IF U_RAIDPLANER or M_RAIDPLANER -->
 function validateForm(e)
 {
-	if($('#comment').val().length < 5) {
-		alert('{L_RAIDPLANER_COMMENT_SHORT}');
-		e.preventDefault();
+	var comment = $('#comment').val();
+	var valid = comment.match(/(.*[a-z0-9]){3,}/i);
+		
+	if(comment.length > 4) {
+		
+		if( valid ) {
+			return;
+		}
 	}
+	
+	e.preventDefault();
+	if( ! valid ) alert('{L_RAIDPLANER_COMMENT_SHORT}');
 }
 <!-- ENDIF -->
 $(document).ready(function() {
