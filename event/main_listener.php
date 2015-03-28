@@ -20,22 +20,15 @@ class main_listener implements EventSubscriberInterface
 		);
 	}
 
-	/* @var \phpbb\controller\helper */
 	protected $helper;
 
-	/* @var \phpbb\template\template */
 	protected $template;
 	
 	protected $config;
 	
 	protected $auth;
 
-	/**
-	* Constructor
-	*
-	* @param \phpbb\controller\helper	$helper		Controller helper object
-	* @param \phpbb\template			$template	Template object
-	*/
+	
 	public function __construct(\phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\auth\auth $auth)
 	{
 		$this->helper = $helper;

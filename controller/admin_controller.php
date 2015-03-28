@@ -6,19 +6,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class admin_controller implements admin_interface
 {
-	/** @var \phpbb\config\config */
 	protected $config;
-	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
-	/** @var \phpbb\request\request */
 	protected $request;
-	/** @var \phpbb\template\template */
 	protected $template;
-	/** @var \phpbb\user */
 	protected $user;
-	/** @var ContainerInterface */
 	protected $container;
-	/** string Custom form action */
+	
 	protected $u_action;
 	protected $auth;
 	protected $type_collection;
@@ -29,14 +23,7 @@ class admin_controller implements admin_interface
 	protected $scheduleTable;
 	protected $attendeeTable;
 
-	/**
-	* Constructor
-	*
-	* @param \phpbb\config\config		$config
-	* @param \phpbb\controller\helper	$helper
-	* @param \phpbb\template\template	$template
-	* @param \phpbb\user				$user
-	*/
+
 	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\auth\auth $auth, ContainerInterface $container, \phpbb\di\service_collection $type_collection, \clausi\raidplaner\controller\main_controller $raidplaner)
 	{
 		$this->config = $config;
