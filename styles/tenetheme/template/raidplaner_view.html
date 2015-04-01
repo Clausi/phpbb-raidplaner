@@ -145,9 +145,21 @@
 			{S_FORM_TOKEN}
 			</form>
 			<!-- ENDIF -->
+			
+			
 		</div>
 	</div>
 </div>
+
+<div class="row">
+	<nav>
+		<ul class="pager">
+			<li class="previous<!-- IF not U_PREV_RAID --> disabled<!-- ENDIF -->"><a href="{U_PREV_RAID}""><span aria-hidden="true">&larr;</span> {L_PREVIOUS_RAID}</a></li>
+			<li class="next<!-- IF not U_NEXT_RAID --> disabled<!-- ENDIF -->"><a href="{U_NEXT_RAID}">{L_NEXT_RAID} <span aria-hidden="true">&rarr;</span></a></li>
+		</ul>
+	</nav>
+</div>
+
 <!-- IF M_RAIDPLANER -->
 </div>
 <!-- ENDIF -->

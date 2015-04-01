@@ -225,6 +225,38 @@ class main_controller implements main_interface
 		$row_raid = $this->getRaidData($raid_id);
 		$user_id = $this->user->data['user_id'];
 		
+		// Get previous and next raid ids
+		$sql_ary = array(
+			'deleted' => 0,
+		);
+		$sql = "(SELECT raid_id, 'next' AS pos FROM " .  $this->raidsTable . " 
+					WHERE " . $this->db->sql_build_array('SELECT', $sql_ary) ."
+					AND raid_time > ".$row_raid['raid_time'] ."
+					ORDER BY raid_time ASC LIMIT 1
+				)
+				
+				UNION
+				
+				(SELECT raid_id, 'previous' AS pos FROM " .  $this->raidsTable . " 
+					WHERE " . $this->db->sql_build_array('SELECT', $sql_ary) ."
+					AND raid_time < ".$row_raid['raid_time'] ."
+					ORDER BY raid_time DESC LIMIT 1
+				)
+			";
+		$result = $this->db->sql_query($sql);
+		
+		$row_next = $this->db->sql_fetchrowset($result);
+		
+		$next_raid = false;
+		$prev_raid = false;
+		foreach($row_next as $next)
+		{
+			if($next['pos'] == 'next') $next_raid = $next['raid_id'];
+			elseif($next['pos'] == 'previous') $prev_raid = $next['raid_id'];
+		}
+		
+		$this->db->sql_freeresult($result);
+		
 		$this->template->assign_vars(array(
 			'RAID_ID' => $raid_id,
 			'RAIDSIZE' => $row_raid['raidsize'],
@@ -235,6 +267,9 @@ class main_controller implements main_interface
 			'START_TIME' => $row_raid['start_time'],
 			'END_TIME' => $row_raid['end_time'],
 			'FLAG' => ($row_raid['raid_time'] < time()) ? 'past' : 'future',
+			
+			'U_NEXT_RAID' => ($next_raid) ? $this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $next_raid)) : false,
+			'U_PREV_RAID' => ($prev_raid) ? $this->helper->route('clausi_raidplaner_controller_view', array('raid_id' => $prev_raid)) : false,
 			
 			'USERSTATUS' => $this->getStatus($raid_id, $user_id),
 			

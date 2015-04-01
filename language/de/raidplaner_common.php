@@ -64,6 +64,9 @@ $lang = array_merge($lang, array(
 	'NEW_ROLE' => 'Neue Rolle',
 	'SELECTED' => 'ausgewählt',
 	
+	'PREVIOUS_RAID' => 'Vorheriger Raid',
+	'NEXT_RAID' => 'Nächster Raid',
+	
 	'USER' => 'Benutzer',
 	'CHANGED_USER' => 'Geänderter Benutzer',
 	'MOD_CHANGE' => 'Moderatoraktion',
