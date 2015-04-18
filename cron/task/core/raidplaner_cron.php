@@ -65,45 +65,48 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		
 		while($row_raids = $this->db->sql_fetchrow($result_raids))
 		{
-			// Get attendees of raid
-			$sql = "SELECT * FROM " . $this->attendeeTable . " 
-				WHERE 
-					raid_id = '". $row_raids['raid_id'] . "'
-				";
-			$result_attendees = $this->db->sql_query($sql);
-			
-			while($row_attendees = $this->db->sql_fetchrow($result_attendees))
+			if(!empty($row_raids['raid_id'])) 
 			{
-				$sql = "INSERT INTO
-						" . $this->statisticTable . "
-					SET
-						user_id = '". $row_attendees['user_id'] ."',
-						raids = 1,
-						accepted = CASE WHEN ". $row_attendees['status'] ." = 4 THEN 1 ELSE 0 END,
-						attending = CASE WHEN ". $row_attendees['status'] ." = 1 THEN 1 ELSE 0 END,
-						substitute = CASE WHEN ". $row_attendees['status'] ." = 3 THEN 1 ELSE 0 END,
-						declined = CASE WHEN ". $row_attendees['status'] ." = 2 THEN 1 ELSE 0 END,
-						created = UNIX_TIMESTAMP(),
-						modified = UNIX_TIMESTAMP()
-					ON DUPLICATE KEY UPDATE
-						raids = raids + 1,
-						accepted = CASE WHEN ". $row_attendees['status'] ." = 4 THEN accepted + 1 ELSE accepted END,
-						attending = CASE WHEN ". $row_attendees['status'] ." = 1 THEN attending + 1 ELSE attending END,
-						substitute = CASE WHEN ". $row_attendees['status'] ." = 3 THEN substitute + 1 ELSE substitute END,
-						declined = CASE WHEN ". $row_attendees['status'] ." = 2 THEN declined + 1 ELSE declined END,
-						modified = UNIX_TIMESTAMP()
+				// Get attendees of raid
+				$sql = "SELECT * FROM " . $this->attendeeTable . " 
+					WHERE 
+						raid_id = '". $row_raids['raid_id'] . "'
 					";
-				$result_stat = $this->db->sql_query($sql);
+				$result_attendees = $this->db->sql_query($sql);
+				
+				while($row_attendees = $this->db->sql_fetchrow($result_attendees))
+				{
+					$sql = "INSERT INTO
+							" . $this->statisticTable . "
+						SET
+							user_id = '". $row_attendees['user_id'] ."',
+							raids = 1,
+							accepted = CASE WHEN ". $row_attendees['status'] ." = 4 THEN 1 ELSE 0 END,
+							attending = CASE WHEN ". $row_attendees['status'] ." = 1 THEN 1 ELSE 0 END,
+							substitute = CASE WHEN ". $row_attendees['status'] ." = 3 THEN 1 ELSE 0 END,
+							declined = CASE WHEN ". $row_attendees['status'] ." = 2 THEN 1 ELSE 0 END,
+							created = UNIX_TIMESTAMP(),
+							modified = UNIX_TIMESTAMP()
+						ON DUPLICATE KEY UPDATE
+							raids = raids + 1,
+							accepted = CASE WHEN ". $row_attendees['status'] ." = 4 THEN accepted + 1 ELSE accepted END,
+							attending = CASE WHEN ". $row_attendees['status'] ." = 1 THEN attending + 1 ELSE attending END,
+							substitute = CASE WHEN ". $row_attendees['status'] ." = 3 THEN substitute + 1 ELSE substitute END,
+							declined = CASE WHEN ". $row_attendees['status'] ." = 2 THEN declined + 1 ELSE declined END,
+							modified = UNIX_TIMESTAMP()
+						";
+					$result_stat = $this->db->sql_query($sql);
+				}
+				$this->db->sql_freeresult($result_attendees);
+				
+				$sql = "UPDATE " . $this->raidsTable . " 
+					SET
+						processed = UNIX_TIMESTAMP()
+					WHERE 
+						raid_id = '". $row_raids['raid_id'] . "'
+					";
+				$result_updateraid = $this->db->sql_query($sql);
 			}
-			$this->db->sql_freeresult($result_attendees);
-			
-			$sql = "UPDATE " . $this->raidsTable . " 
-				SET
-					processed = UNIX_TIMESTAMP()
-				WHERE 
-					raid_id = '". $row_raids['raid_id'] . "'
-				";
-			$result_updateraid = $this->db->sql_query($sql);
 		}
 		$this->db->sql_freeresult($result_raids);
 		
@@ -118,13 +121,16 @@ class raidplaner_cron extends \phpbb\cron\task\base
 		$result_next = $this->db->sql_query($sql);
 		$row_next = $this->db->sql_fetchrow($result_next);
 
-		$sql = "UPDATE " . $this->statisticTable . " 
-			SET
-				deleted = UNIX_TIMESTAMP()
-			WHERE 
-				user_id not in (SELECT user_id FROM " . $this->attendeeTable . " WHERE raid_id = " . $row_next['raid_id'] . " )
-			";
-		$this->db->sql_query($sql);
+		if(!empty($row_next['raid_id']))
+		{
+			$sql = "UPDATE " . $this->statisticTable . " 
+				SET
+					deleted = UNIX_TIMESTAMP()
+				WHERE 
+					user_id not in (SELECT user_id FROM " . $this->attendeeTable . " WHERE raid_id = " . $row_next['raid_id'] . " )
+				";
+			$this->db->sql_query($sql);
+		}
 	}
 	
 	
